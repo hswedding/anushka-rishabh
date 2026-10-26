@@ -70,7 +70,7 @@ Once I have these I'll send you a preview link to check before anything goes out
 | Contact numbers | `host.contacts` | `+` and country code |
 | RSVP WhatsApp | `host.rsvpWhatsApp` | Digits only, with country code |
 | Functions | `events[]` + a venue `const` per venue | `id` kebab-case; film path in `video` |
-| Dress code | `events[].dressCode` | Mainly goes into the film; only the colour dot shows in `?host` |
+| Dress code | `events[].dressCode` | Mainly goes into the film; only the colour dot shows in the builder |
 | Photos | `public/photos/` (run `scripts/compress-photos.ps1` first) + `photos` in `src/data.js` | 4–8 photos for the photo reel; also material for the films |
 | Videos, song | Sandeep's films → `public/videos/`; song → music `.mp3` in `public/` + `config.bgMusic` | H.264 MP4 ≤ 25 MiB |
 | Printed card / colours | `src/styles/tokens.css` palette, fonts in `index.html` | |

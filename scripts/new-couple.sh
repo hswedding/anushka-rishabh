@@ -6,7 +6,8 @@
 #
 # Creates ../invite-<slug> as a full clone of invite-base-single (history kept, so
 # `git merge upstream/main` can pull base fixes later), renames the Worker,
-# commits, and — if the GitHub CLI is logged in — creates the private repo
+# writes fresh secret link ids (config.links in src/data.js), commits, and —
+# if the GitHub CLI is logged in — creates the private repo
 # hswedding/invite-<slug> and pushes it.
 set -euo pipefail
 
@@ -37,7 +38,10 @@ echo "→ Renaming the Worker and package to $NAME"
 sed -i.bak -E "s/\"name\": \"[^\"]+\"/\"name\": \"$NAME\"/" wrangler.jsonc && rm wrangler.jsonc.bak
 node -e "const f='package.json',p=require('./'+f);p.name='$NAME';require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')"
 
-git add wrangler.jsonc package.json
+echo "→ Writing fresh secret link ids (config.links in src/data.js)"
+node scripts/new-links.mjs
+
+git add wrangler.jsonc package.json src/data.js
 git commit --quiet -m "Start $NAME from invite-base-single"
 
 if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then

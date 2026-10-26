@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
-import { useConfig } from './hooks/useConfig.js';
 import { selectedEvents } from './lib/config.js';
 import { config } from './data.js';
 import { gsap, ScrollTrigger } from './lib/gsap.js';
@@ -15,21 +14,19 @@ import EventFilms from './sections/EventFilms.jsx';
 import Venue from './sections/Venue.jsx';
 import Rsvp from './sections/Rsvp.jsx';
 import Footer from './sections/Footer.jsx';
-import ControlPanel from './sections/ControlPanel.jsx';
 import Petals from './components/Petals.jsx';
 import Icon from './components/Icons.jsx';
 import customSections from './custom/index.js';
 
-export default function App() {
-  const invite = useConfig();
+export default function App({ invite, preview }) {
   const events = selectedEvents(invite.eventIds);
   const reduced = useReducedMotion();
-  // Host preview skips the envelope so the page is visible behind the panel.
-  const [opened, setOpened] = useState(invite.isHost);
+  // The builder's live preview skips the envelope and starts muted.
+  const [opened, setOpened] = useState(preview);
   // App-wide sound: the looping background score plus the invitation films
   // (videos autoplay muted). On by default — the envelope tap is the gesture
   // that lets the browser start audio.
-  const [soundOn, setSoundOn] = useState(true);
+  const [soundOn, setSoundOn] = useState(!preview);
 
   // The score runs for the whole page — the films carry no audio of their own,
   // so nothing ever interrupts it except the toggle.
@@ -92,7 +89,6 @@ export default function App() {
           <Icon name={soundOn ? 'speaker' : 'speakerOff'} size={20} />
         </button>
       )}
-      {invite.isHost && <ControlPanel />}
     </>
   );
 }

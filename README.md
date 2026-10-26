@@ -40,7 +40,8 @@ Name them after the couple plus the side:
 ```
 
 The script clones the base (history kept), renames the remote to `upstream`,
-sets the Worker name in `wrangler.jsonc` to `invite-<slug>`, commits, and
+sets the Worker name in `wrangler.jsonc` to `invite-<slug>`, writes fresh secret
+link ids into `config.links` (`scripts/new-links.mjs`), commits, and
 pushes a new private repo if the GitHub CLI is logged in (otherwise it prints
 the two commands to run). Don't use GitHub's "Use this template" button: a
 template copy starts with unrelated history and can never merge base fixes.
@@ -55,6 +56,7 @@ you meant to diverge:
 | Names, hosting family (`host`, incl. `host.side`), events, venues, phones, RSVP number | `src/data.js` |
 | Page title, description, WhatsApp preview, `noindex`, analytics token | `site` in `src/data.js` |
 | Envelope film path, Ganesha image on/off, music | `config` in `src/data.js` |
+| Secret builder and ready-made link paths | `config.links` in `src/data.js` (fresh ids: `node scripts/new-links.mjs`) |
 | Palette, fonts, spacing | `src/styles/tokens.css`, `src/styles/fonts.css` |
 | Films, music, preview image (`og-image.jpg`, 1200×630) | `public/` (max 25 MiB per file on Cloudflare) |
 | Couple photos (the swipeable reel after the countdown) | `public/photos/` (shrink with `scripts/compress-photos.ps1`) + `photos` in `src/data.js` |
@@ -73,7 +75,7 @@ git merge upstream/main
 ## Hosting on Cloudflare (free)
 
 `wrangler.jsonc` serves `dist/` as static assets and sends unknown paths (the
-opaque `/<slug>` guest links) to `index.html`. Requests to static assets are
+secret pages and guest links) to `index.html`. Requests to static assets are
 free and unlimited.
 
 Films and music (`/videos/*`, `*.mp4`, `*.mp3`) go through a tiny Worker,
@@ -94,37 +96,52 @@ One-time per repo, in the Cloudflare dashboard:
 4. Optional: **Settings → Domains & Routes** to add the couple's own domain.
 
 Every push to `main` redeploys. Pushes to other branches get a stable preview
-URL, handy for sending a couple a draft.
+URL, handy for sending a couple a draft (add a `config.links` path — the bare
+root shows the closed page).
 
 **Analytics (optional):** dashboard → Web Analytics → add a site → copy the
 token from the snippet into `site.cloudflareAnalyticsToken` in `src/data.js`.
 
 ## Sending different guests different functions
 
-Open the **host control panel** at `https://your-site/?host`. Pick the
-guest's functions (checkboxes or a quick preset), optional sections and an
-optional guest name. The page previews live, and you get a
-**shareable link** + a **Share on WhatsApp** button.
+There is no public front door: the site root (`/`) only shows an "open the link
+you received" page. Every page lives at a secret path, `https://your-site/<id>`,
+with the ids set in `config.links` in [`src/data.js`](src/data.js):
 
-The shareable link is an opaque token — `https://your-site/c2lkZT1icmlkZQ` —
-which is just the query string below, base64url-encoded into the path (no
-backend or storage; the link *is* the config). Append `?host` to any such link
-to reopen the builder on that variant. Unrecognisable tokens fall back to the
-full invitation (every function).
+| `config.links` | Page |
+|---|---|
+| `builder` | the **Invitation Builder** (the family only) |
+| `all` | the invitation with every function |
 
-> The `?host` panel is hidden, not secured — anyone with the URL (or who edits
-> the query string) can change the view. That's fine for a wedding invite; don't
-> put anything private behind it.
+Every family's site gets its own random ids (`new-couple.sh` writes them; by
+hand: `node scripts/new-links.mjs`). Change an id to revoke it — links already
+sent with the old id stop working.
 
-### The link format (you rarely need this — the panel builds it)
+In the builder, pick a quick preset, adjust functions and sections, add an
+optional guest name, and check the live phone preview. The share bar has
+**Copy link** and **Send on WhatsApp**; the every-function link is under
+**Ready-made link**. The hosting side is fixed by `host.side`, so there is no
+side switch.
 
-| Param | Meaning | Example |
-|---|---|---|
-| `preset` | a named set | `?preset=shagun-wedding` |
-| `fns` | exact functions (ids from `data.js`) | `?fns=haldi,wedding` |
-| `to` | personalised greeting | `?to=Sharma%20Family` |
-| `countdown` `photos` `venue` `rsvp` | set to `0` to hide | `?photos=0` |
+A single-guest link is a scrambled, check-summed token
+(`https://your-site/agJWah0d…`) holding the settings below — no backend, the
+link *is* the config. A guest can't read or edit it into another variant: a
+changed token, an added query string, or the bare root all land on the closed
+page. Older plain-base64 `/<slug>` links still open (a `side` in them is
+ignored).
 
-A bare URL with no params = every function, everything on. A `side` param
-from an old link is ignored. Presets are the named guest groups in
-`presets` (`all` plus the family's own).
+> Obscure, not secured — the paths and the scheme ship inside the site's
+> JavaScript. Fine for a wedding invite; don't put anything private behind it.
+
+### What a token holds (the builder writes it)
+
+| Param | Meaning |
+|---|---|
+| `preset` | a key of `presets` in `data.js` |
+| `fns` | exact functions (event ids from `data.js`) |
+| `to` | personalised greeting |
+| `countdown` `photos` `venue` `rsvp` | `0` hides that section |
+
+Presets are the named guest groups in `presets` (`all` plus the family's own),
+in builder order. A preset's optional `hide` turns sections off (e.g.
+`hide: ['rsvp']`).
