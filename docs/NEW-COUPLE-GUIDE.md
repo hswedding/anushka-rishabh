@@ -54,7 +54,11 @@ must match the Cloudflare dashboard):
 - `wrangler.jsonc` → `"name": "invite-<slug>"`
 - `package.json` → `"name": "invite-<slug>"`
 
+Give the family its own secret page ids (builder and ready-made link; the
+base's ids must never be reused):
+
 ```bash
+node scripts/new-links.mjs              # rewrites config.links in src/data.js
 git commit -am "Start invite-<slug> from invite-base-single"
 git push -u origin main
 ```
@@ -147,7 +151,7 @@ latest function, usually the wedding).
 | `video` | One film in `public/videos/` (URL-encode spaces as they appear in the path, e.g. `/videos/HS Haldi.mp4` works as written) |
 | `videoBySide` | Not needed here; use `video`. (Still supported: it plays the film for `host.side`) |
 | `nameDeva`, `dateISO`, `timeLabel`, `icon`, `blurb` | **Not rendered by the current UI.** Keep them filled (they document the function and a custom section may use them). `icon` must be a key in `components/Icons.jsx`: `kirtan mehndi path sangeet haldi chooda baarat wedding heart lotus sparkle` |
-| `dressCode.color` | Only shown as the colour dot in the `?host` panel. The label isn't rendered |
+| `dressCode.color` | Only shown as the colour dot in the builder. The label isn't rendered |
 
 **Important:** a function **without a film doesn't get its own card** on the
 page; it only appears by name in the venue list. Its time, dress code and
@@ -157,9 +161,11 @@ film shown properly, build a small card section in `src/custom/` that renders
 
 ### `presets`
 
-Named guest groups for the `?host` panel and `preset=` links, e.g.
+Named guest groups for the builder's quick presets, in button order, e.g.
 `{ label: 'Office friends', ids: ['sangeet', 'wedding'] }` (ids must exist).
-Keep `all`: it is the full invitation. A bare link shows every function.
+Keep `all`: it is the full invitation and the ready-made link. Optional
+`hide: ['rsvp']` turns sections off when the preset is picked. Preset keys are
+stored in guest links: never rename one after links are out.
 
 ### `photos`
 
@@ -193,6 +199,7 @@ and `rsvp` can be hidden per link.
 | `yaySfx` | Optional RSVP success sound at `public/assets/yay.mp3`; missing file is fine |
 | `bgMusic` | Looping music path in `public/`. Encode spaces as `%20` here |
 | `siteUrl` | Leave `''` (auto-detected). Set it only if a custom domain should be used in share links built on another domain |
+| `links` | Secret page ids: `builder` (the family's builder) and `all` (the ready-made every-function link), each opened at `https://<site>/<id>`. Fresh random ids per site: `node scripts/new-links.mjs`. Changing an id revokes that link |
 | `envelopeVideo` | Opening film path, default `/videos/envelop.mp4` |
 | `showGanesha` | `false` hides the Ganesha image at the top of the hero |
 
@@ -268,8 +275,9 @@ npm run dev                        # http://localhost:5173
 
 Open and check each of:
 
-- `/`: hosts, invocation, name order (the host's child first), parents lines, every film
-- `/?host`: the panel lists every function (no side switch); presets select the right ones; a generated `/<slug>` link opens the same view
+- `/` and any made-up path: the closed "open the link you received" page
+- `/<links.all>`: hosts, invocation, name order (the host's child first), parents lines, every film
+- `/<links.builder>`: the builder lists every function (no side switch); presets select the right ones; a copied link opens the same view as the live preview
 - RSVP opens WhatsApp to `host.rsvpWhatsApp`
 - Footer contacts, hashtag and sign-off
 - Countdown targets the right date
@@ -293,21 +301,26 @@ curl -sI -H "Range: bytes=0-1" "http://localhost:8787/videos/envelop.mp4"   # ex
 3. Live at `https://invite-<slug>.hs-amazonsellers.workers.dev`. Add the
    couple's own domain under the Worker's Domains & Routes if they have one.
 4. With preview builds on, each pushed branch gets a stable preview URL: send
-   it to the couple for review, then merge to `main` to go live.
+   it to the couple for review with a page path added (`/<links.all>`, or
+   `/<links.builder>`; the bare root shows the closed page), then merge to
+   `main` to go live.
 
 After deploy, check on a real phone (ideally an iPhone too): envelope film
-plays, films play, a `/<slug>` guest link opens, and the WhatsApp preview shows
+plays, films play, a builder-made guest link opens, and the WhatsApp preview shows
 title, text and image.
 
 ---
 
 ## 7. Hand over to the family
 
-Send the family its builder link: `https://<site>/?host`.
+Send the family its builder link: `https://<site>/<links.builder>`.
 
-In the panel they pick a guest's functions (or a preset), optionally type the
-guest's name, and copy the link or tap "Share on WhatsApp". Remind them the
-panel is hidden, not secured.
+In the builder they pick a guest's functions (or a preset) and sections,
+optionally type the guest's name, check the live preview, then copy the link
+or tap "Send on WhatsApp". **Ready-made link** in the builder has the
+every-function link for family WhatsApp groups. The site root shows nothing,
+so guests only ever see their own link. Remind them the builder link is
+obscure, not secured: keep it within the family.
 
 ---
 
@@ -318,7 +331,8 @@ panel is hidden, not secured.
 
 ## Gotchas
 
-- Changing or removing an event `id` breaks links already sent.
+- Changing or removing an event `id` or a preset key breaks links already sent. Never change `KEY` in `src/lib/config.js`.
+- Every family's site needs its own `config.links` ids (`node scripts/new-links.mjs`); changing one revokes that link.
 - `dayLabel` and `dateLabel` are typed by hand: check they match the dates.
 - `bgMusic` needs `%20` for spaces; event `video` paths can be written with spaces.
 - Every film must be H.264 MP4 under 25 MiB, or it won't deploy or won't play on iPhone.

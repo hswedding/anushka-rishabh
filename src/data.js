@@ -130,7 +130,9 @@ export const events = [
   },
 ];
 
-/* Quick presets for the host control panel — named guest groups. --------- */
+/* Quick presets for the invitation builder — named guest groups, in button
+   order. `hide` (optional) lists sections the preset turns off, e.g.
+   hide: ['rsvp']. Keys are stored in guest links — don't rename them. */
 const byIds = (...ids) => ids;
 export const presets = {
   all: { label: 'All functions', ids: events.map((e) => e.id) },       // keep: the default
@@ -168,9 +170,18 @@ export const config = {
   // Looping background score, played while the sound toggle is on. Lives in
   // public/ — the %20 is the space in the file name. ⟵ EDIT
   bgMusic: '/global%20music.mp3',
-  // Default site URL used by the control panel to build share links.
+  // Default site URL used by the builder to build share links.
   // Leave '' to auto-detect from the browser. ⟵ EDIT once deployed.
   siteUrl: '',
+  // Secret page paths: https://your-site/<id>. `builder` is the family's page;
+  // `all` is the ready-made invitation with every function. Change an id to
+  // revoke it — links already sent with the old id stop working. The site
+  // root (/) opens nothing. Every family's site needs its own ids:
+  // `node scripts/new-links.mjs` writes fresh ones. ⟵ EDIT
+  links: {
+    builder: '8RLVf-FVg8Ia',
+    all: 'Y0HAHELgq8sq',
+  },
   // The opening envelope film (public/). ⟵ EDIT per couple
   envelopeVideo: '/videos/envelop.mp4',
   // Show the Ganesha image at the top of the hero. Set false for couples

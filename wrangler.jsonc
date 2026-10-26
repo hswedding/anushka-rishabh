@@ -12,7 +12,7 @@
     // Vite's build output.
     "directory": "./dist",
     "binding": "ASSETS",
-    // Unknown paths (the opaque /<slug> guest links) fall back to index.html.
+    // Unknown paths (the secret pages and guest links) fall back to index.html.
     "not_found_handling": "single-page-application",
     // Only media goes through the Worker; everything else is served directly.
     "run_worker_first": ["/videos/*", "/*.mp4", "/*.mp3"]

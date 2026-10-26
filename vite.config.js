@@ -9,10 +9,10 @@ import { site } from './src/data.js'
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-/** Writes the page title, description, link-preview tags, robots and the
- *  optional Cloudflare Web Analytics beacon into index.html from `site` in
- *  src/data.js, so a new couple only edits data.js. (Restart `npm run dev`
- *  after changing `site` — the dev server reads it once.) */
+/** Writes the page title, description, link-preview tags and robots into
+ *  index.html from `site` in src/data.js, so a new couple only edits data.js.
+ *  (Restart `npm run dev` after changing `site` — the dev server reads it
+ *  once.) The optional analytics beacon is added by src/main.jsx. */
 function siteMeta() {
   return {
     name: 'site-meta',
@@ -32,8 +32,6 @@ function siteMeta() {
         `<meta name="twitter:title" content="${esc(site.shareTitle)}" />`,
         `<meta name="twitter:description" content="${esc(site.shareDescription)}" />`,
         `<meta name="twitter:image" content="${esc(site.shareImage)}" />`,
-        site.cloudflareAnalyticsToken &&
-          `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='${JSON.stringify({ token: site.cloudflareAnalyticsToken })}'></script>`,
       ].filter(Boolean)
       return html.replace('<!--SITE_META-->', tags.join('\n    '))
     },
