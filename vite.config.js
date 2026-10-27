@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { readdirSync, statSync, writeFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
-import { site } from './src/data.js'
+import { site, config } from './src/data.js'
 
 // Single-page wedding invitation. No router, no SSR — mirrors the Invifest reference.
 
@@ -10,7 +10,8 @@ const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
 /** Writes the page title, description, link-preview tags and robots into
- *  index.html from `site` in src/data.js, so a new couple only edits data.js.
+ *  index.html from `site` in src/data.js, plus the envelope poster preload
+ *  from `config.envelopePoster`, so a new couple only edits data.js.
  *  (Restart `npm run dev` after changing `site` — the dev server reads it
  *  once.) The optional analytics beacon is added by src/main.jsx. */
 function siteMeta() {
@@ -33,7 +34,12 @@ function siteMeta() {
         `<meta name="twitter:description" content="${esc(site.shareDescription)}" />`,
         `<meta name="twitter:image" content="${esc(site.shareImage)}" />`,
       ].filter(Boolean)
-      return html.replace('<!--SITE_META-->', tags.join('\n    '))
+      const poster = config.envelopePoster
+        ? `<link rel="preload" as="image" type="image/webp" href="${esc(config.envelopePoster)}" />`
+        : ''
+      return html
+        .replace('<!--SITE_META-->', tags.join('\n    '))
+        .replace('<!--ENVELOPE_POSTER-->', poster)
     },
   }
 }

@@ -1,13 +1,15 @@
-import { StrictMode } from 'react';
+import { StrictMode, Suspense, lazy } from 'react';
 import { createRoot } from 'react-dom/client';
 import 'react-phone-number-input/style.css';
 import './styles/base.css';
 import './styles/components.css';
 import App from './App.jsx';
-import Builder from './sections/Builder.jsx';
 import Closed from './sections/Closed.jsx';
 import { parseRoute } from './lib/config.js';
 import { site } from './data.js';
+
+// Hosts only — kept out of the bundle every guest downloads.
+const Builder = lazy(() => import('./sections/Builder.jsx'));
 
 const route = parseRoute(window.location.pathname);
 // The builder's live preview loads the invitation in an iframe at #preview.
@@ -25,7 +27,7 @@ if (route.page === 'invite' && !preview && site.cloudflareAnalyticsToken) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {route.page === 'builder' ? <Builder />
+    {route.page === 'builder' ? <Suspense><Builder /></Suspense>
       : route.page === 'invite' ? <App invite={route.invite} preview={preview} />
       : <Closed />}
   </StrictMode>

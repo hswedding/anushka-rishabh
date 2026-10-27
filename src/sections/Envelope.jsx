@@ -10,10 +10,10 @@ import { config } from '../data.js';
 const STALL_TIMEOUT_MS = 8000;
 
 /* Scene 0 — the envelope film IS the opening screen. It sits full-screen on
-   its first frame; a tap plays it with sound, and when it ends (or is
-   skipped) the page is revealed. Reduced motion or a video error skips
-   straight to the page. */
-export default function Envelope({ onOpen }) {
+   its first frame (also the poster, so it shows before any video loads); a
+   tap plays it with sound, and when it ends (or is skipped) the page is
+   revealed. Reduced motion or a video error skips straight to the page. */
+export default function Envelope({ onStart, onOpen }) {
   const root = useRef(null);
   const videoRef = useRef(null);
   const watchdog = useRef(null);
@@ -40,6 +40,7 @@ export default function Envelope({ onOpen }) {
     const video = videoRef.current;
     if (!video) return closeOverlay();
     setPlaying(true);
+    onStart?.();
     // Mobile browsers on cellular skip preload, so nothing may be buffered
     // yet — show a hint and bail out if playback never starts.
     setBuffering(true);
@@ -72,6 +73,7 @@ export default function Envelope({ onOpen }) {
         ref={videoRef}
         className="envelope__film"
         src={config.envelopeVideo}
+        poster={config.envelopePoster || undefined}
         playsInline
         preload="auto"
         onPlaying={() => { setBuffering(false); clearWatchdog(); }}

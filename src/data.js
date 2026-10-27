@@ -184,6 +184,10 @@ export const config = {
   },
   // The opening envelope film (public/). ⟵ EDIT per couple
   envelopeVideo: '/videos/envelop.mp4',
+  // The envelope film's first frame (public/), shown and preloaded before
+  // the film loads so the opening screen paints at once. Re-export it
+  // whenever envelopeVideo changes — README "Films". '' to skip. ⟵ EDIT
+  envelopePoster: '/videos/envelop-poster.webp',
   // Show the Ganesha image at the top of the hero. Set false for couples
   // who want a different (or no) invocation image. ⟵ EDIT
   showGanesha: true,

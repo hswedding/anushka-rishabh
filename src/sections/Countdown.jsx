@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap, useGSAP } from '../lib/gsap.js';
 import { wedding } from '../data.js';
-import feather from '../Images/decor/feather.png';
-import divider from '../Images/decor/divider.png';
+import feather from '../Images/decor/feather.webp';
+import divider from '../Images/decor/divider.webp';
 
 const target = new Date(wedding.dateTimeISO).getTime();
 

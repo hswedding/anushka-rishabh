@@ -27,10 +27,12 @@ export default function App({ invite, preview }) {
   // (videos autoplay muted). On by default — the envelope tap is the gesture
   // that lets the browser start audio.
   const [soundOn, setSoundOn] = useState(!preview);
+  // The envelope tap — the score starts buffering while the film plays.
+  const [tapped, setTapped] = useState(false);
 
   // The score runs for the whole page — the films carry no audio of their own,
   // so nothing ever interrupts it except the toggle.
-  useBackgroundMusic(config.bgMusic, opened && soundOn);
+  useBackgroundMusic(config.bgMusic, opened && soundOn, tapped);
 
   // Lock scroll behind the envelope; refresh scroll positions once revealed.
   useEffect(() => {
@@ -63,13 +65,13 @@ export default function App({ invite, preview }) {
     <>
       <Petals active={opened} />
 
-      {!opened && <Envelope onOpen={() => setOpened(true)} />}
+      {!opened && <Envelope onStart={() => setTapped(true)} onOpen={() => setOpened(true)} />}
 
       <main className="page" id="main-content" aria-hidden={!opened}>
         <Hero invite={invite} />
         {invite.sections.countdown && <Countdown />}
         {invite.sections.photos && <Photos />}
-        <EventFilms events={events} side={invite.side} soundOn={soundOn} />
+        <EventFilms events={events} side={invite.side} soundOn={soundOn} ready={opened} />
         {invite.sections.venue && <Venue events={events} />}
         {invite.sections.rsvp && <Rsvp invite={invite} />}
         {customSections.map(({ id, Component }) => (

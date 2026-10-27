@@ -55,7 +55,7 @@ you meant to diverge:
 | --- | --- |
 | Names, hosting family (`host`, incl. `host.side`), events, venues, phones, RSVP number | `src/data.js` |
 | Page title, description, WhatsApp preview, `noindex`, analytics token | `site` in `src/data.js` |
-| Envelope film path, Ganesha image on/off, music | `config` in `src/data.js` |
+| Envelope film and its poster, Ganesha image on/off, music | `config` in `src/data.js` |
 | Secret builder and ready-made link paths | `config.links` in `src/data.js` (fresh ids: `node scripts/new-links.mjs`) |
 | Palette, fonts, spacing | `src/styles/tokens.css`, `src/styles/fonts.css` |
 | Films, music, preview image (`og-image.jpg`, 1200×630) | `public/` (max 25 MiB per file on Cloudflare) |
@@ -64,6 +64,28 @@ you meant to diverge:
 | One-off sections or animations | `src/custom/`, listed in `src/custom/index.js` |
 
 Edit other base files only when the couple's design truly needs it.
+
+### Films
+
+Encode a new film for `public/videos/` as H.264 with its index up front, so it
+starts streaming at once (CRF 20 is visually lossless here; use 14 for the
+envelope film, which phones show zoomed in):
+
+```bash
+ffmpeg -i in.mp4 -c:v libx264 -preset slower -crf 20 -pix_fmt yuv420p -c:a copy -movflags +faststart out.mp4
+```
+
+`config.envelopePoster` (`videos/envelop-poster.webp`) is the envelope film's
+first frame: it shows, and is preloaded, before the film loads. Re-export it
+whenever the envelope film changes, or the opening screen jumps on tap:
+
+```bash
+ffmpeg -i envelop.mp4 -frames:v 1 -vf "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=bgra" -c:v libwebp -quality 95 envelop-poster.webp
+```
+
+Event films load nothing until the envelope is open, then buffer a screen
+ahead; the music buffers from the envelope tap. Keep new media off the
+envelope's critical path.
 
 ### Pulling a base fix into a couple's repo
 
@@ -85,6 +107,9 @@ and Safari on iPhone/Mac won't play video served that way. The Worker needs
 each file's size, which the build writes to `worker/media-sizes.json`
 (generated, git-ignored), so always deploy via `npm run build` first. These
 media requests count towards the free plan's 100,000 Worker requests a day.
+
+`public/_headers` lets browsers cache Vite's hashed `/assets/*` bundles for a
+year (a changed file always gets a new name); everything else revalidates.
 
 One-time per repo, in the Cloudflare dashboard:
 
