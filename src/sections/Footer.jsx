@@ -1,7 +1,7 @@
 import { couple, host, studio } from '../data.js';
 import { orderedCouple } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
-import palace from '../Images/decor/palace.png';
+import palace from '../Images/decor/palace.webp';
 
 /* Footer — gratitude, family contacts, and hashtag. */
 export default function Footer({ invite }) {

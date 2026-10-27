@@ -7,14 +7,19 @@ import { gsap } from '../lib/gsap.js';
    Autoplay with sound needs a user gesture: for guests the envelope tap
    provides it, so playback starts the moment the page is revealed. The host
    preview skips the envelope, so if the browser blocks the first attempt we
-   retry on the first interaction instead. */
-export default function useBackgroundMusic(src, playing, volume = 0.35) {
+   retry on the first interaction instead.
+
+   Nothing is fetched until `buffer` turns on (the envelope tap) or playback
+   starts, so the score never competes with the envelope film for bandwidth;
+   the film's run is ample time for it to be ready by the reveal. */
+export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) {
   const audioRef = useRef(null);
 
   useEffect(() => {
-    const audio = new Audio(src);
+    const audio = new Audio();
+    audio.preload = 'none'; // set before src, so loading waits
+    audio.src = src;
     audio.loop = true;
-    audio.preload = 'auto';
     audio.volume = 0; // faded up on play
     audioRef.current = audio;
     return () => {
@@ -23,6 +28,10 @@ export default function useBackgroundMusic(src, playing, volume = 0.35) {
       audioRef.current = null;
     };
   }, [src]);
+
+  useEffect(() => {
+    if (buffer && audioRef.current) audioRef.current.preload = 'auto';
+  }, [buffer, src]);
 
   useEffect(() => {
     const audio = audioRef.current;

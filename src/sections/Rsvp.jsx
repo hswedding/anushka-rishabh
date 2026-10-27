@@ -1,10 +1,14 @@
-import { useRef, useState } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
-import PhoneInput from 'react-phone-number-input';
 import { gsap, useGSAP } from '../lib/gsap.js';
 import { config, host } from '../data.js';
 import { buildRsvpWhatsApp } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
+
+// The phone field's library and country data are a third of the page's JS, so
+// they load on their own — fetched as the page mounts, long before a guest
+// scrolls down here. The fallback is the same-sized input, so nothing shifts.
+const PhoneInput = lazy(() => import('react-phone-number-input'));
 
 /* Scene 6 — RSVP. Validates client-side, fires confetti + a sound, then opens a
    pre-filled WhatsApp message to the hosts (no backend). */
@@ -86,9 +90,15 @@ export default function Rsvp({ invite }) {
 
             <div className={`field ${errors.phone ? 'field--error' : ''}`}>
               <label className="field__label" htmlFor="phone">Phone <span aria-hidden>*</span></label>
-              <PhoneInput
-                id="phone" international defaultCountry="IN" value={form.phone}
-                onChange={(v) => set('phone')(v || '')} className="rsvp__phone" />
+              <Suspense fallback={
+                <div className="PhoneInput rsvp__phone">
+                  <input id="phone" className="PhoneInputInput" type="tel" disabled />
+                </div>
+              }>
+                <PhoneInput
+                  id="phone" international defaultCountry="IN" value={form.phone}
+                  onChange={(v) => set('phone')(v || '')} className="rsvp__phone" />
+              </Suspense>
               {errors.phone && <p className="field__err" role="alert">{errors.phone}</p>}
             </div>
 

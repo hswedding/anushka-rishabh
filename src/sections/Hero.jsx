@@ -4,10 +4,10 @@ import { wedding, host, config } from '../data.js';
 import { orderedCouple } from '../lib/config.js';
 import ScratchCard from '../components/ScratchCard.jsx';
 import Icon from '../components/Icons.jsx';
-import floralLeft from '../Images/decor/floral-corner-left.png';
-import floralRight from '../Images/decor/floral-corner-right.png';
-import wash from '../Images/decor/wash.png';
-import ganesha from '../Images/ganesha.png';
+import floralLeft from '../Images/decor/floral-corner-left.webp';
+import floralRight from '../Images/decor/floral-corner-right.webp';
+import wash from '../Images/decor/wash.webp';
+import ganesha from '../Images/ganesha.webp';
 
 /* Scene 1 — Save the Date. Opens with the Ganesha invocation (Indian fusion),
    the couple's names, and a scratch card hiding the wedding date. */

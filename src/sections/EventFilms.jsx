@@ -10,7 +10,7 @@ import Icon from '../components/Icons.jsx';
    in App.jsx unmutes every film at once. The films carry no audio of their
    own, so they play over the background score rather than replacing it. */
 
-function Film({ event, soundOn }) {
+function Film({ event, soundOn, ready }) {
   const wrap = useRef(null);
   const videoRef = useRef(null);
   const reduced = useReducedMotion();
@@ -19,6 +19,20 @@ function Film({ event, soundOn }) {
   useEffect(() => {
     if (videoRef.current) videoRef.current.muted = !soundOn;
   }, [soundOn]);
+
+  // Buffer a screen ahead, so each film is ready by the time it scrolls in —
+  // and only once the invitation is open, so none compete with the envelope.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!ready || !video) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      video.preload = 'auto';
+      io.disconnect();
+    }, { rootMargin: '100% 0px' });
+    io.observe(video);
+    return () => io.disconnect();
+  }, [ready]);
 
   // Autoplay / pause driven by visibility.
   useEffect(() => {
@@ -63,7 +77,7 @@ function Film({ event, soundOn }) {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             controls={reduced}
             aria-label={`${event.name} invitation film`}
           />
@@ -80,7 +94,7 @@ function Film({ event, soundOn }) {
   );
 }
 
-export default function EventFilms({ events, side, soundOn }) {
+export default function EventFilms({ events, side, soundOn, ready }) {
   // `video` is a single film; `videoBySide` holds one per hosting side —
   // side variants get their own, joint shows both (groom first, like the hero).
   const films = events.flatMap((e) => {
@@ -92,5 +106,5 @@ export default function EventFilms({ events, side, soundOn }) {
       .map((s) => ({ ...e, id: sides.length > 1 ? `${e.id}-${s}` : e.id, video: e.videoBySide[s] }));
   });
   if (!films.length) return null;
-  return films.map((e) => <Film key={e.id} event={e} soundOn={soundOn} />);
+  return films.map((e) => <Film key={e.id} event={e} soundOn={soundOn} ready={ready} />);
 }
