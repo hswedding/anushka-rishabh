@@ -165,8 +165,6 @@ export const config = {
   // WhatsApp number that RSVP submissions are sent to (digits + country code,
   // no + or spaces). Used for both RSVP delivery and the footer share CTA. ⟵ EDIT
   rsvpWhatsApp: '919876500001',
-  // RSVP success sound effect (optional). public/assets/yay.mp3
-  yaySfx: '/assets/yay.mp3',
   // Looping background score, played while the sound toggle is on. Lives in
   // public/ — the %20 is the space in the file name. ⟵ EDIT
   bgMusic: '/global%20music.mp3',
@@ -196,6 +194,10 @@ export const config = {
 /* Page meta — written into index.html at build time (see vite.config.js).
    This is what WhatsApp shows in the link preview. ⟵ EDIT per couple */
 export const site = {
+  // The deployed site, no trailing slash. Link-preview crawlers (WhatsApp)
+  // need absolute image URLs, so shareImage is prefixed with it at build
+  // time. scripts/new-couple.sh sets it from the Worker name. ⟵ EDIT
+  url: 'https://invite-base-single.hs-invites.workers.dev',
   title: 'Hemant & Sukriti · Wedding Invitation',
   description:
     'With the blessings of our families, we joyfully invite you to celebrate the wedding of Hemant & Sukriti — 24 November 2026.',

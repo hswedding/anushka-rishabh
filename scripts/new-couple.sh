@@ -37,6 +37,8 @@ echo "→ Renaming the Worker and package to $NAME"
 # Worker name = the site URL (https://$NAME.<subdomain>.workers.dev)
 sed -i.bak -E "s/\"name\": \"[^\"]+\"/\"name\": \"$NAME\"/" wrangler.jsonc && rm wrangler.jsonc.bak
 node -e "const f='package.json',p=require('./'+f);p.name='$NAME';require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')"
+# site.url feeds the absolute WhatsApp preview image URL
+sed -i.bak -E "s#url: 'https://invite-base-single\.#url: 'https://$NAME.#" src/data.js && rm src/data.js.bak
 
 echo "→ Writing fresh secret link ids (config.links in src/data.js)"
 node scripts/new-links.mjs

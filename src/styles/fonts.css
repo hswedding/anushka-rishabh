@@ -1,7 +1,25 @@
+/* Fonts are self-hosted (Fontsource packages, the same files Google Fonts
+   serves): they come from our own domain with the rest of the CSS and get the
+   year-long cache of /assets — no extra connections before the first paint.
+   Each file is split by script (unicode-range), so a browser only downloads
+   the Latin / Devanagari parts a page actually uses. */
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource/cormorant-garamond/400-italic.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/500-italic.css';
+@import '@fontsource/tenor-sans/400.css';
+@import '@fontsource/italianno/400.css';
+@import '@fontsource/great-vibes/400.css';
+@import '@fontsource/tiro-devanagari-sanskrit/400.css';
+@import '@fontsource/tiro-devanagari-sanskrit/400-italic.css';
+
 /* Optional self-hosted display font.
    To use it: drop the file at public/fonts/Distrela.ttf and UNCOMMENT the block
    below. Until then the display stack falls back to Great Vibes / Italianno
-   (loaded from Google Fonts in index.html), so nothing 404s. */
+   (imported above), so nothing 404s. */
 
 /*
 @font-face {

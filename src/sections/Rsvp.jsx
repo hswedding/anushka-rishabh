@@ -10,7 +10,7 @@ import Icon from '../components/Icons.jsx';
 // scrolls down here. The fallback is the same-sized input, so nothing shifts.
 const PhoneInput = lazy(() => import('react-phone-number-input'));
 
-/* Scene 6 — RSVP. Validates client-side, fires confetti + a sound, then opens a
+/* Scene 6 — RSVP. Validates client-side, fires confetti, then opens a
    pre-filled WhatsApp message to the hosts (no backend). */
 export default function Rsvp({ invite }) {
   const root = useRef(null);
@@ -46,7 +46,6 @@ export default function Rsvp({ invite }) {
     fire(0.25, { spread: 26, startVelocity: 55 });
     fire(0.35, { spread: 60 });
     fire(0.2, { spread: 100, decay: 0.91, scalar: 0.9 });
-    try { new Audio(config.yaySfx).play().catch(() => {}); } catch { /* optional */ }
   };
 
   const onSubmit = (ev) => {

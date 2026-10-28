@@ -196,7 +196,6 @@ and `rsvp` can be hidden per link.
 | Field | Notes |
 | --- | --- |
 | `rsvpWhatsApp` | Fallback RSVP number (digits with country code, no `+` or spaces) when `host.rsvpWhatsApp` is empty |
-| `yaySfx` | Optional RSVP success sound at `public/assets/yay.mp3`; missing file is fine |
 | `bgMusic` | Looping music path in `public/`. Encode spaces as `%20` here |
 | `siteUrl` | Leave `''` (auto-detected). Set it only if a custom domain should be used in share links built on another domain |
 | `links` | Secret page ids: `builder` (the family's builder) and `all` (the ready-made every-function link), each opened at `https://<site>/<id>`. Fresh random ids per site: `node scripts/new-links.mjs`. Changing an id revokes that link |
@@ -208,10 +207,11 @@ and `rsvp` can be hidden per link.
 
 | Field | Notes |
 | --- | --- |
+| `url` | The deployed site, no trailing slash (set by `new-couple.sh` from the Worker name). Update it if the couple gets a custom domain — WhatsApp needs it to find the preview image |
 | `title` | Browser tab, e.g. `'Aarav & Diya · Wedding Invitation'` |
 | `description` | Search/preview description |
 | `shareTitle`, `shareDescription` | WhatsApp/social preview title and text |
-| `shareImage` | `/og-image.jpg`, a 1200×630 JPG in `public/`. **Add it**: without it the preview has no image |
+| `shareImage` | `/og-image.jpg`, a 1200×630 JPG in `public/` (made absolute with `url` at build). **Replace it per couple** — the base ships the sample HS envelope. Keep it under ~300 KB or WhatsApp may drop it |
 | `themeColor` | Mobile browser bar colour; match the page background |
 | `noindex` | Keep `true` (home addresses and phone numbers are on the page) |
 | `cloudflareAnalyticsToken` | Optional Web Analytics token; `''` = none |
@@ -252,8 +252,10 @@ All of this is per couple and free to change:
 - **Palette:** `src/styles/tokens.css` (CSS variables: cream paper, gold
   family, rani/blush accents, leaf greens, envelope maroon). Match the couple's
   printed card or chosen colours; keep text contrast (labels ≥ 4.5:1).
-- **Fonts:** Google Fonts link in `index.html`, font stacks in `tokens.css`,
-  optional self-hosted font in `src/styles/fonts.css`. Check licences for any
+- **Fonts:** self-hosted `@fontsource/*` packages imported in
+  `src/styles/fonts.css` (no Google Fonts link — add a family with
+  `npm i @fontsource/<name>` plus an `@import` per weight), font stacks in
+  `tokens.css`, optional custom font block in `fonts.css`. Check licences for any
   paid font.
 - **Decor art:** `src/Images/` (florals, palace, feather, divider, wash,
   Ganesha). Easiest is to replace files keeping the same names; otherwise edit

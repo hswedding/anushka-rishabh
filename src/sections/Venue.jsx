@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap, useGSAP } from '../lib/gsap.js';
 import Icon from '../components/Icons.jsx';
 
@@ -6,6 +6,8 @@ import Icon from '../components/Icons.jsx';
    with a directions link, plus an embedded map for the primary one. */
 export default function Venue({ events }) {
   const root = useRef(null);
+  const mapRef = useRef(null);
+  const [mapNear, setMapNear] = useState(false);
 
   useGSAP(() => {
     gsap.from('.venue__card, .venue__map', {
@@ -13,6 +15,21 @@ export default function Venue({ events }) {
       y: 24, autoAlpha: 0, duration: 0.7, ease: 'power3.out', stagger: 0.12,
     });
   }, { scope: root });
+
+  // The reveal above hides the map (visibility: hidden), and browsers load
+  // hidden iframes at once despite loading="lazy" — so the heavy Google Maps
+  // embed gets its src only when it's a screen away.
+  useEffect(() => {
+    const el = mapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setMapNear(true);
+      io.disconnect();
+    }, { rootMargin: '100% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // unique venues, primary = the last (wedding) event's venue
   const seen = new Map();
@@ -52,10 +69,10 @@ export default function Venue({ events }) {
           ))}
         </div>
 
-        <div className="venue__map card">
+        <div className="venue__map card" ref={mapRef}>
           <iframe
             title={`Map to ${primary.name}`}
-            src={embedSrc}
+            src={mapNear ? embedSrc : undefined}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             allowFullScreen
