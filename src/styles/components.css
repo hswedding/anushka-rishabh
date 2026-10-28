@@ -119,14 +119,19 @@
 .hero__amp--word {
   font-size: 0.5em; margin: 0.1em 0;
 }
+/* Hosts and parents are who is inviting — set in a weighted serif at full
+   heading contrast so elders' names read clearly (Tenor Sans has no bold). */
 .hero__parents {
-  font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.14em;
-  font-size: 0.7rem; color: var(--sage-dark); line-height: 1.5; margin: 6px 0 4px;
+  font-family: var(--font-body); font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; font-size: clamp(0.86rem, 3.4vw, 1rem);
+  color: var(--sage-deep); line-height: 1.4; margin: 8px 0 6px; text-wrap: balance;
 }
 .hero__hosts {
-  font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.22em;
-  font-size: 0.78rem; color: var(--sage-dark); margin: 0;
+  font-family: var(--font-body); font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; font-size: clamp(1rem, 4.2vw, 1.2rem);
+  color: var(--sage-deep); line-height: 1.35; margin: 0; text-wrap: balance;
 }
+.hero__name-run { white-space: nowrap; }
 .hero__line {
   font-family: var(--font-body); font-style: italic; color: var(--text-mid);
   max-width: 30ch; margin: 0;
