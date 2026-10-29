@@ -77,7 +77,7 @@ couple completely: search for every `⟵ EDIT` marker and for the old names.
 
 | Field | Example | Used for |
 | --- | --- | --- |
-| `groom.first`, `bride.first` | `'Aarav'`, `'Diya'` | Hero names, footer, share message |
+| `groom.first`, `bride.first` | `'Aarav'`, `'Diya'` | Hero names, closed page, share message |
 | `groom.full`, `bride.full` | `'Aarav Mehta'` | Not displayed today; keep filled |
 | `monogram` | `'A&D'` | Not displayed today |
 | `hashtag` | `'#AaravWedsDiya'` | Footer. `''` leaves that line empty |
@@ -99,12 +99,12 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 | Field | Example | Notes |
 | --- | --- | --- |
 | `side` | `'bride'` | `'bride'` or `'groom'`. Whose child is named first, with their parents' line |
-| `ganesha` | `['॥ श्री गणेशाय नमः ॥']` | Optional array of invocation lines (Sanskrit/Hindi). Omit for none |
+| `ganesha` | `['॥ श्री गणेशाय नमः ॥']` | Optional array of invocation lines (Sanskrit/Hindi). The first is the invocation; any further line (a blessing, e.g. a guru's grace) is set a size smaller and wraps in balanced lines. Write dandas (`॥`, `।`) with spaces as usual: they're kept on the same line as the next word. Omit for none |
 | `invocation` | `'ੴ ਸਤਿ ਨਾਮੁ'` | Optional single line (any script). Omit for none |
-| `hosts` | `'Mrs. & Mr. Rajesh Mehta'` | Who is inviting. Shown in capitals |
+| `hosts` | `'Mrs. & Mr. Rajesh Mehta'` | Who is inviting. Shown as written (mixed case); a line only wraps after an `&`, never inside a name |
 | `inviteLine` | `'joyfully invite you to celebrate the wedding of their daughter'` | Sentence after the hosts |
-| `parents.bride`, `parents.groom` | `'D/o Mrs. Neha & Mr. Rajesh Mehta'` | Line under each name. Omit a key to hide it |
-| `sign` | `'With love, the Mehta Family'` | Footer sign-off |
+| `parents.bride`, `parents.groom` | `'D/o Mrs. Neha & Mr. Rajesh Mehta'` | Line under each name, wrapping only after an `&` like `hosts`. Omit a key to hide it |
+| `sign` | `'With love, the Mehta Family'` | Footer sign-off, right under "Thank You" (the couple's names aren't repeated there) |
 | `rsvpWhatsApp` | `'919800000000'` | RSVPs go here (falls back to `config.rsvpWhatsApp`) |
 | `contacts` | `[{ name: 'Rajesh Mehta', phone: '+919800000000' }]` | Footer tap-to-call list. Phones with `+` and country code |
 

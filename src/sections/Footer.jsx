@@ -1,12 +1,10 @@
 import { couple, host, studio } from '../data.js';
-import { orderedCouple } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
 import palace from '../Images/decor/palace.webp';
 
 /* Footer — gratitude, family contacts, and hashtag. */
 export default function Footer({ invite }) {
   const family = host;
-  const names = orderedCouple(invite.side).map((c) => c.first).join(' & ');
 
   return (
     <footer className="footer section" id="footer-section">
@@ -14,7 +12,6 @@ export default function Footer({ invite }) {
       <div className="section__inner">
         <Icon name="lotus" size={30} className="footer__crest" />
         <h2 className="display footer__thanks">Thank You</h2>
-        <p className="footer__names">{names}</p>
         <p className="footer__sign">{family.sign}</p>
 
         <div className="divider" aria-hidden="true"><Icon name="sparkle" size={16} /></div>

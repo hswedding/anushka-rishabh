@@ -17,6 +17,10 @@ const keepNames = (text) => text.split(' & ').map((name, i, all) => (
   </Fragment>
 ));
 
+/* Keep the "॥" / "।" dandas glued to their neighbouring word so a line never
+   starts or ends on a stray danda when the blessing wraps on a phone. */
+const glueDandas = (text) => text.replace(/(॥|।) /g, '$1\u00a0').replace(/ (॥|।)/g, '\u00a0$1');
+
 /* Scene 1 — Save the Date. Opens with the Ganesha invocation (Indian fusion),
    the couple's names, and a scratch card hiding the wedding date. */
 export default function Hero({ invite }) {
@@ -49,7 +53,7 @@ export default function Hero({ invite }) {
         {family.ganesha && (
           <p className="hero__invocation hero__reveal" lang="sa">
             {family.ganesha.map((line, i) => (
-              <span key={i} className="hero__invocation-line">{line}</span>
+              <span key={i} className="hero__invocation-line">{glueDandas(line)}</span>
             ))}
           </p>
         )}

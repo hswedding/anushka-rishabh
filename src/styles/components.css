@@ -98,43 +98,64 @@
     radial-gradient(circle 40px at 8% 70%, #f4a9be1f, transparent 70%),
     radial-gradient(140% 80% at 50% -10%, var(--gold-wash), transparent 60%);
 }
-.hero__inner { display: grid; justify-items: center; gap: var(--sp-4); text-align: center; }
+.hero__inner {
+  display: grid; justify-items: center; gap: var(--sp-4); text-align: center;
+  padding-inline: var(--sp-2);
+}
 .hero__ganesha {
   width: clamp(84px, 26vw, 128px); height: auto; margin: 0 auto var(--sp-2);
   display: block;
 }
+/* Devanagari never takes letter-spacing — tracking breaks the shirorekha
+   (headline bar) and conjuncts. The first line is the invocation proper; any
+   following line (a blessing) steps down a size and wraps in balanced lines. */
 .hero__invocation {
-  font-family: var(--font-deva); font-size: 1.15rem; color: var(--sage-deep);
-  letter-spacing: 0.04em; margin: 0;
+  font-family: var(--font-deva); color: var(--gold-deep);
+  font-size: clamp(1.08rem, 4.6vw, 1.25rem); line-height: 1.55;
+  letter-spacing: 0; margin: 0; display: grid; gap: var(--sp-1);
 }
-.hero__invocation-line { display: block; }
+.hero__invocation-line { display: block; text-wrap: balance; }
+.hero__invocation-line + .hero__invocation-line {
+  font-size: 0.86em; line-height: 1.65; color: var(--gold-strong);
+  max-width: 21em; margin-inline: auto;
+}
 .hero__guest { font-family: var(--font-script); font-size: 1.7rem; color: var(--sage-dark); margin: 0; }
+/* Couple's names — the one flourish on the card, sized so a long name still
+   sits on one line at 320px and the parents' line under it stays in view. */
 .hero__names {
   font-family: var(--font-display); color: var(--sage-deep);
-  font-size: clamp(3.2rem, 17vw, 6rem); line-height: 0.92;
-  display: grid; gap: 2px; margin: 0;
+  font-size: clamp(2.7rem, 13.5vw, 4.75rem); line-height: 1.02;
+  display: grid; gap: 0; margin: var(--sp-2) 0 0; font-weight: 400;
 }
-.hero__amp { font-family: var(--font-script); color: var(--gold); font-size: 0.6em; }
+.hero__amp {
+  font-family: var(--font-script); color: var(--gold); font-size: 0.55em;
+  line-height: 1; margin: var(--sp-2) 0 var(--sp-1);
+}
 /* a word ("with") keeps the script font but needs less scale than the "&" glyph */
 .hero__amp--word {
   font-size: 0.5em; margin: 0.1em 0;
 }
-/* Hosts and parents are who is inviting — set in a weighted serif at full
-   heading contrast so elders' names read clearly (Tenor Sans has no bold). */
+/* Hosts and parents are who is inviting. Set in mixed case, in Playfair (its
+   taller x-height reads far better on a phone than tracked Cormorant capitals),
+   with only a hair of tracking so a full name fits on one line. */
 .hero__parents {
-  font-family: var(--font-body); font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.08em; font-size: clamp(0.86rem, 3.4vw, 1rem);
-  color: var(--sage-deep); line-height: 1.4; margin: 8px 0 6px; text-wrap: balance;
+  font-family: var(--font-serif); font-weight: 500; font-style: normal;
+  text-transform: none; letter-spacing: 0.01em;
+  font-size: clamp(0.94rem, 3.9vw, 1.05rem); line-height: 1.45;
+  color: var(--text-mid); margin: var(--sp-2) 0 0; text-wrap: balance;
 }
 .hero__hosts {
-  font-family: var(--font-body); font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.1em; font-size: clamp(1rem, 4.2vw, 1.2rem);
-  color: var(--sage-deep); line-height: 1.35; margin: 0; text-wrap: balance;
+  font-family: var(--font-serif); font-weight: 500;
+  text-transform: none; letter-spacing: 0.01em;
+  font-size: clamp(1.02rem, 4.3vw, 1.25rem); line-height: 1.4;
+  color: var(--gold-deep); margin: var(--sp-2) 0 0; text-wrap: balance;
+  max-width: 22em;
 }
 .hero__name-run { white-space: nowrap; }
 .hero__line {
   font-family: var(--font-body); font-style: italic; color: var(--text-mid);
-  max-width: 30ch; margin: 0;
+  font-size: clamp(1.1rem, 4.6vw, 1.25rem); line-height: 1.4;
+  max-width: 26ch; margin: calc(-1 * var(--sp-2)) 0 0; text-wrap: balance;
 }
 .hero__date { display: grid; gap: 4px; padding: var(--sp-4) var(--sp-5); }
 .hero__date-day {
@@ -346,8 +367,10 @@ textarea.field__input { resize: vertical; line-height: 1.5; }
 }
 .footer__crest { margin: 0 auto var(--sp-3); color: var(--gold); }
 .footer__thanks { color: var(--sage-deep); }
-.footer__names { font-family: var(--font-serif); font-size: 1.3rem; margin: var(--sp-3) 0 0; }
-.footer__sign { font-family: var(--font-body); font-style: italic; color: var(--text-mid); margin: 4px 0 0; }
+.footer__sign {
+  font-family: var(--font-body); font-style: italic; color: var(--text-mid);
+  font-size: clamp(1.15rem, 4.8vw, 1.3rem); line-height: 1.4; margin: var(--sp-2) 0 0;
+}
 .footer__contacts { list-style: none; padding: 0; margin: 0 0 var(--sp-5); display: flex; flex-wrap: wrap; gap: var(--sp-4); justify-content: center; }
 .footer__contacts a { font-family: var(--font-sans); font-size: 0.9rem; color: var(--sage-deep); text-decoration: none; }
 .footer__share { margin: 0 auto; }
