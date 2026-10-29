@@ -142,7 +142,7 @@
   font-family: var(--font-serif); font-weight: 500; font-style: normal;
   text-transform: none; letter-spacing: 0.01em;
   font-size: clamp(0.94rem, 3.9vw, 1.05rem); line-height: 1.45;
-  color: var(--text-mid); margin: var(--sp-2) 0 0; text-wrap: balance;
+  color: var(--gold-deep); margin: var(--sp-2) 0 0; text-wrap: balance;
 }
 .hero__hosts {
   font-family: var(--font-serif); font-weight: 500;

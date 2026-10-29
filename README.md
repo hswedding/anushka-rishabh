@@ -75,6 +75,10 @@ envelope film, which phones show zoomed in):
 ffmpeg -i in.mp4 -c:v libx264 -preset slower -crf 20 -pix_fmt yuv420p -c:a copy -movflags +faststart out.mp4
 ```
 
+An event film plays once and then holds its last frame, so that frame must
+show all the details. If a film fades them out or has an outro, cut it at the
+last good frame (`-frames:v <n>` in the command above, `n` = frames to keep).
+
 `config.envelopePoster` (`videos/envelop-poster.webp`) is the envelope film's
 first frame: it shows, and is preloaded, before the film loads. Re-export it
 whenever the envelope film changes, or the opening screen jumps on tap:

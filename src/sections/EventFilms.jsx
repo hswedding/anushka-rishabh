@@ -34,14 +34,15 @@ function Film({ event, soundOn, ready }) {
     return () => io.disconnect();
   }, [ready]);
 
-  // Autoplay / pause driven by visibility.
+  // Autoplay / pause driven by visibility. Films play once and hold their
+  // last frame (all the details) — an ended film isn't restarted on re-entry.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
-          if (!reduced) video.play().catch(() => {});
+          if (!reduced && !video.ended) video.play().catch(() => {});
         } else {
           video.pause();
         }
@@ -75,7 +76,6 @@ function Film({ event, soundOn, ready }) {
             className="film__video"
             src={event.video}
             muted
-            loop
             playsInline
             preload="none"
             controls={reduced}
