@@ -381,13 +381,18 @@ textarea.field__input { resize: vertical; line-height: 1.5; }
 /* Builder page: form + live phone preview side by side on desktop; on phones
    an Edit / Preview tab switch. The share bar is always pinned at the bottom. */
 .builder { height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; background: var(--cream-2); }
+/* One column, never wider than the screen — without minmax(0, …) a row that
+   can't shrink (a long header, a long link) widens the whole page and the
+   right edge gets cut off on phones. */
+.builder, .builder__main { grid-template-columns: minmax(0, 1fr); }
+.builder > *, .builder__main > * { min-width: 0; }
 .builder__bar {
   display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4); background: var(--white); border-bottom: 1px solid var(--border);
 }
-.builder__title { margin: 0; font-family: var(--font-sans); font-size: 1rem; font-weight: 400; color: var(--sage-deep); display: flex; align-items: center; gap: 8px; }
-.builder__tabs { display: flex; gap: 4px; background: var(--cream-3); padding: 4px; border-radius: var(--r-pill); }
-.builder__tabs button { min-height: 36px; padding: 0 16px; border: none; border-radius: var(--r-pill); background: none; font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-mid); }
+.builder__title { min-width: 0; margin: 0; font-family: var(--font-sans); font-size: 1rem; font-weight: 400; color: var(--sage-deep); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.builder__tabs { flex: none; display: flex; gap: 4px; background: var(--cream-3); padding: 4px; border-radius: var(--r-pill); }
+.builder__tabs button { min-height: 36px; padding: 0 14px; border: none; border-radius: var(--r-pill); background: none; font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-mid); }
 .builder__tabs button.is-on { background: var(--white); color: var(--sage-deep); box-shadow: var(--shadow-sm); }
 .builder__main { min-height: 0; display: grid; }
 .builder__form { overflow-y: auto; padding: var(--sp-5) var(--sp-4); display: grid; gap: var(--sp-5); align-content: start; background: var(--white); }
