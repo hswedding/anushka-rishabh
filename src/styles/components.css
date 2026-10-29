@@ -281,6 +281,28 @@
   display: block; width: 100%; aspect-ratio: 9 / 16;
   object-fit: cover; border-radius: 19px; background: var(--cream-3);
 }
+/* While a film is still arriving, a band of light drifts across its screen —
+   held back 300ms so a quick start never flashes it. */
+.film__sheen {
+  position: absolute; inset: 10px; border-radius: 19px; overflow: hidden;
+  pointer-events: none; opacity: 0; transition: opacity 0.3s var(--ease-soft);
+}
+.film__sheen::after {
+  content: ""; position: absolute; inset: 0 -60%;
+  background: linear-gradient(105deg, transparent 40%, #fff8e6d9 50%, transparent 60%);
+  transform: translateX(-60%);
+}
+.film__frame[data-state="loading"] .film__sheen { opacity: 1; transition-delay: 0.3s; }
+.film__frame[data-state="loading"] .film__sheen::after {
+  animation: film-sheen 1.8s var(--ease-soft) infinite;
+}
+@keyframes film-sheen { to { transform: translateX(60%); } }
+/* Shown only when the phone refuses to autoplay (Low Power Mode, data saver) */
+.film__play {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+  cursor: pointer; animation: film-play-in 0.3s var(--ease-soft);
+}
+@keyframes film-play-in { from { opacity: 0; scale: 0.92; } }
 .film__meta {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   margin: var(--sp-5) auto 0; color: var(--gold-strong);

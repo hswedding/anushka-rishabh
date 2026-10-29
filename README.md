@@ -87,9 +87,14 @@ whenever the envelope film changes, or the opening screen jumps on tap:
 ffmpeg -i envelop.mp4 -frames:v 1 -vf "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=bgra" -c:v libwebp -quality 95 envelop-poster.webp
 ```
 
-Event films load nothing until the envelope is open, then buffer a screen
-ahead; the music buffers from the envelope tap. Keep new media off the
-envelope's critical path.
+Event films load nothing until the envelope is open; then each one downloads
+in full, one at a time in page order, so it is on the phone before the guest
+reaches it (a film reached earlier streams straight away). A film starts when
+40% of it is on screen, plays through once without pausing and holds its last
+frame; if the phone blocks autoplay (Low Power Mode, data saver) a **Play
+film** button appears. The music buffers from the envelope tap. Keep new
+media off the envelope's critical path, and keep films lean: a guest's phone
+downloads every film on their link.
 
 ### Pulling a base fix into a couple's repo
 
