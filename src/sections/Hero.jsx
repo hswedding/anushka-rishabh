@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import { gsap, useGSAP } from '../lib/gsap.js';
 import { wedding, host, config } from '../data.js';
 import { orderedCouple } from '../lib/config.js';
@@ -9,8 +9,21 @@ import floralRight from '../Images/decor/floral-corner-right.webp';
 import wash from '../Images/decor/wash.webp';
 import ganesha from '../Images/ganesha.webp';
 
+/* "Smt. A & Sh. B" may only wrap after the "&", never inside a person's name. */
+const keepNames = (text) => text.split(' & ').map((name, i, all) => (
+  <Fragment key={i}>
+    <span className="hero__name-run">{name}{i < all.length - 1 && ' &'}</span>
+    {i < all.length - 1 && ' '}
+  </Fragment>
+));
+
+/* Keep the "॥" / "।" dandas glued to their neighbouring word so a line never
+   starts or ends on a stray danda when the blessing wraps on a phone. */
+const glueDandas = (text) => text.replace(/(॥|।) /g, '$1\u00a0').replace(/ (॥|।)/g, '\u00a0$1');
+
 /* Scene 1 — Save the Date. Opens with the Ganesha invocation (Indian fusion),
-   the couple's names, and a scratch card hiding the wedding date. */
+   the couple's names, and a scratch card hiding the wedding date — or, with
+   the card turned off in the builder, the date in plain sight. */
 export default function Hero({ invite }) {
   const root = useRef(null);
   const family = host;
@@ -41,7 +54,7 @@ export default function Hero({ invite }) {
         {family.ganesha && (
           <p className="hero__invocation hero__reveal" lang="sa">
             {family.ganesha.map((line, i) => (
-              <span key={i} className="hero__invocation-line">{line}</span>
+              <span key={i} className="hero__invocation-line">{glueDandas(line)}</span>
             ))}
           </p>
         )}
@@ -53,23 +66,23 @@ export default function Hero({ invite }) {
           <p className="hero__guest hero__reveal">Dear {invite.guestName},</p>
         )}
 
-        <p className="hero__hosts hero__reveal">{family.hosts}</p>
+        <p className="hero__hosts hero__reveal">{keepNames(family.hosts)}</p>
         <p className="hero__line hero__reveal">{family.inviteLine}</p>
 
         <h1 className="hero__names hero__reveal">
           <span>{first.first}</span>
           {family.parents?.[first.role] && (
-            <span className="hero__parents">{family.parents[first.role]}</span>
+            <span className="hero__parents">{keepNames(family.parents[first.role])}</span>
           )}
           <span className="hero__amp">&amp;</span>
           <span>{second.first}</span>
           {family.parents?.[second.role] && (
-            <span className="hero__parents">{family.parents[second.role]}</span>
+            <span className="hero__parents">{keepNames(family.parents[second.role])}</span>
           )}
         </h1>
 
         <div className="hero__reveal">
-          <ScratchCard prompt={wedding.scratchPrompt}>
+          <ScratchCard prompt={wedding.scratchPrompt} covered={invite.sections.scratch}>
             <div className="hero__date">
               <span className="hero__date-day">{wedding.dayLabel}</span>
               <span className="hero__date-main">{wedding.dateLabel}</span>

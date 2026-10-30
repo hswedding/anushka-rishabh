@@ -75,6 +75,10 @@ envelope film, which phones show zoomed in):
 ffmpeg -i in.mp4 -c:v libx264 -preset slower -crf 20 -pix_fmt yuv420p -c:a copy -movflags +faststart out.mp4
 ```
 
+An event film plays once and then holds its last frame, so that frame must
+show all the details. If a film fades them out or has an outro, cut it at the
+last good frame (`-frames:v <n>` in the command above, `n` = frames to keep).
+
 `config.envelopePoster` (`videos/envelop-poster.webp`) is the envelope film's
 first frame: it shows, and is preloaded, before the film loads. Re-export it
 whenever the envelope film changes, or the opening screen jumps on tap:
@@ -83,9 +87,14 @@ whenever the envelope film changes, or the opening screen jumps on tap:
 ffmpeg -i envelop.mp4 -frames:v 1 -vf "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=bgra" -c:v libwebp -quality 95 envelop-poster.webp
 ```
 
-Event films load nothing until the envelope is open, then buffer a screen
-ahead; the music buffers from the envelope tap. Keep new media off the
-envelope's critical path.
+Event films load nothing until the envelope is open; then each one downloads
+in full, one at a time in page order, so it is on the phone before the guest
+reaches it (a film reached earlier streams straight away). A film starts when
+40% of it is on screen, plays through once without pausing and holds its last
+frame; if the phone blocks autoplay (Low Power Mode, data saver) a **Play
+film** button appears. The music buffers from the envelope tap. Keep new
+media off the envelope's critical path, and keep films lean: a guest's phone
+downloads every film on their link.
 
 ### Pulling a base fix into a couple's repo
 
@@ -165,7 +174,7 @@ ignored).
 | `preset` | a key of `presets` in `data.js` |
 | `fns` | exact functions (event ids from `data.js`) |
 | `to` | personalised greeting |
-| `countdown` `photos` `venue` `rsvp` | `0` hides that section |
+| `scratch` `countdown` `photos` `venue` `rsvp` | `0` hides that section (without `scratch` the date simply shows) |
 
 Presets are the named guest groups in `presets` (`all` plus the family's own),
 in builder order. A preset's optional `hide` turns sections off (e.g.

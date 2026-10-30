@@ -77,7 +77,7 @@ couple completely: search for every `⟵ EDIT` marker and for the old names.
 
 | Field | Example | Used for |
 | --- | --- | --- |
-| `groom.first`, `bride.first` | `'Aarav'`, `'Diya'` | Hero names, footer, share message |
+| `groom.first`, `bride.first` | `'Aarav'`, `'Diya'` | Hero names, closed page, share message |
 | `groom.full`, `bride.full` | `'Aarav Mehta'` | Not displayed today; keep filled |
 | `monogram` | `'A&D'` | Not displayed today |
 | `hashtag` | `'#AaravWedsDiya'` | Footer. `''` leaves that line empty |
@@ -90,21 +90,21 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 | Field | Example | Notes |
 | --- | --- | --- |
 | `dateTimeISO` | `'2027-02-14T19:30:00'` | Main ceremony, local time, no timezone. Drives the countdown |
-| `dateLabel` | `'14 February 2027'` | Shown under the scratch card and countdown |
+| `dateLabel` | `'14 February 2027'` | Shown under the scratch card (or plainly, on links with the card off) and in the countdown |
 | `dayLabel` | `'Sunday'` | Check it matches the date |
-| `scratchPrompt` | `'Scratch to reveal our wedding date'` | Text on the scratch card |
+| `scratchPrompt` | `'Scratch to reveal our wedding date'` | Engraved on the gold foil, split over two lines; keep it short (about 6 words) |
 
 ### `host` — the one family this site speaks for
 
 | Field | Example | Notes |
 | --- | --- | --- |
 | `side` | `'bride'` | `'bride'` or `'groom'`. Whose child is named first, with their parents' line |
-| `ganesha` | `['॥ श्री गणेशाय नमः ॥']` | Optional array of invocation lines (Sanskrit/Hindi). Omit for none |
+| `ganesha` | `['॥ श्री गणेशाय नमः ॥']` | Optional array of invocation lines (Sanskrit/Hindi). The first is the invocation; any further line (a blessing, e.g. a guru's grace) is set a size smaller and wraps in balanced lines. Write dandas (`॥`, `।`) with spaces as usual: they're kept on the same line as the next word. Omit for none |
 | `invocation` | `'ੴ ਸਤਿ ਨਾਮੁ'` | Optional single line (any script). Omit for none |
-| `hosts` | `'Mrs. & Mr. Rajesh Mehta'` | Who is inviting. Shown in capitals |
+| `hosts` | `'Mrs. & Mr. Rajesh Mehta'` | Who is inviting. Shown as written (mixed case); a line only wraps after an `&`, never inside a name |
 | `inviteLine` | `'joyfully invite you to celebrate the wedding of their daughter'` | Sentence after the hosts |
-| `parents.bride`, `parents.groom` | `'D/o Mrs. Neha & Mr. Rajesh Mehta'` | Line under each name. Omit a key to hide it |
-| `sign` | `'With love, the Mehta Family'` | Footer sign-off |
+| `parents.bride`, `parents.groom` | `'D/o Mrs. Neha & Mr. Rajesh Mehta'` | Line under each name, wrapping only after an `&` like `hosts`. Omit a key to hide it |
+| `sign` | `'With love, the Mehta Family'` | Footer sign-off, right under "Thank You" (the couple's names aren't repeated there) |
 | `rsvpWhatsApp` | `'919800000000'` | RSVPs go here (falls back to `config.rsvpWhatsApp`) |
 | `contacts` | `[{ name: 'Rajesh Mehta', phone: '+919800000000' }]` | Footer tap-to-call list. Phones with `+` and country code |
 
@@ -188,15 +188,16 @@ hide it with `photos=0` (the builder has a Photos toggle).
 
 ### `toggleableSections`
 
-Leave as is unless a section is removed. Only `countdown`, `photos`, `venue`
-and `rsvp` can be hidden per link.
+Leave as is unless a section is removed. Only `scratch` (the scratch card over
+the hero's date; off, the date simply shows), `countdown`, `photos`, `venue`
+and `rsvp` can be turned off per link — in the builder, or with a preset's
+`hide`.
 
 ### `config`
 
 | Field | Notes |
 | --- | --- |
 | `rsvpWhatsApp` | Fallback RSVP number (digits with country code, no `+` or spaces) when `host.rsvpWhatsApp` is empty |
-| `yaySfx` | Optional RSVP success sound at `public/assets/yay.mp3`; missing file is fine |
 | `bgMusic` | Looping music path in `public/`. Encode spaces as `%20` here |
 | `siteUrl` | Leave `''` (auto-detected). Set it only if a custom domain should be used in share links built on another domain |
 | `links` | Secret page ids: `builder` (the family's builder) and `all` (the ready-made every-function link), each opened at `https://<site>/<id>`. Fresh random ids per site: `node scripts/new-links.mjs`. Changing an id revokes that link |
@@ -208,10 +209,11 @@ and `rsvp` can be hidden per link.
 
 | Field | Notes |
 | --- | --- |
+| `url` | The deployed site, no trailing slash (set by `new-couple.sh` from the Worker name). Update it if the couple gets a custom domain — WhatsApp needs it to find the preview image |
 | `title` | Browser tab, e.g. `'Aarav & Diya · Wedding Invitation'` |
 | `description` | Search/preview description |
 | `shareTitle`, `shareDescription` | WhatsApp/social preview title and text |
-| `shareImage` | `/og-image.jpg`, a 1200×630 JPG in `public/`. **Add it**: without it the preview has no image |
+| `shareImage` | `/og-image.jpg`, a 1200×630 JPG in `public/` (made absolute with `url` at build). **Replace it per couple** — the base ships the sample HS envelope. Keep it under ~300 KB or WhatsApp may drop it |
 | `themeColor` | Mobile browser bar colour; match the page background |
 | `noindex` | Keep `true` (home addresses and phone numbers are on the page) |
 | `cloudflareAnalyticsToken` | Optional Web Analytics token; `''` = none |
@@ -230,7 +232,7 @@ otherwise.
 
 | File | Rules |
 | --- | --- |
-| `videos/*.mp4` | **H.264 MP4** (Safari can't play other codecs), ≤ **25 MiB** each (Cloudflare's per-file limit), index up front (`+faststart`). Encode with the README "Films" command (CRF 20). Today's films are 1–7 MB |
+| `videos/*.mp4` | **H.264 MP4** (Safari can't play other codecs), ≤ **25 MiB** each (Cloudflare's per-file limit), index up front (`+faststart`). Encode with the README "Films" command (CRF 20). Today's films are 1–7 MB. A film plays once and holds its last frame, so it must **end on a frame showing all the details**: trim any fade-out, outro or glitch after it (README "Films") |
 | `videos/envelop.mp4` | Opening film; plays with sound on tap, then reveals the page. CRF 14 (phones show it zoomed in) |
 | `videos/envelop-poster.webp` | The envelope film's first frame (README "Films"); replace it together with `envelop.mp4` |
 | music `.mp3` | Looping background score; check the couple is OK using it |
@@ -252,8 +254,10 @@ All of this is per couple and free to change:
 - **Palette:** `src/styles/tokens.css` (CSS variables: cream paper, gold
   family, rani/blush accents, leaf greens, envelope maroon). Match the couple's
   printed card or chosen colours; keep text contrast (labels ≥ 4.5:1).
-- **Fonts:** Google Fonts link in `index.html`, font stacks in `tokens.css`,
-  optional self-hosted font in `src/styles/fonts.css`. Check licences for any
+- **Fonts:** self-hosted `@fontsource/*` packages imported in
+  `src/styles/fonts.css` (no Google Fonts link — add a family with
+  `npm i @fontsource/<name>` plus an `@import` per weight), font stacks in
+  `tokens.css`, optional custom font block in `fonts.css`. Check licences for any
   paid font.
 - **Decor art:** `src/Images/` (florals, palace, feather, divider, wash,
   Ganesha). Easiest is to replace files keeping the same names; otherwise edit
@@ -339,5 +343,6 @@ obscure, not secured: keep it within the family.
 - `bgMusic` needs `%20` for spaces; event `video` paths can be written with spaces.
 - Every film must be H.264 MP4 under 25 MiB, or it won't deploy or won't play on iPhone.
 - A new envelope film needs a new `envelop-poster.webp` (its first frame), or the opening screen jumps on tap.
+- Event films don't loop: each one stops on its last frame, so that frame must show the function's details.
 - `worker/media-sizes.json` is generated by `npm run build`; run a build before `wrangler dev` or `wrangler deploy`.
 - The Cloudflare Worker name and `wrangler.jsonc` `name` must match, or the Cloudflare build fails.

@@ -18,6 +18,10 @@ function siteMeta() {
   return {
     name: 'site-meta',
     transformIndexHtml(html) {
+      // WhatsApp and other crawlers ignore relative og:image URLs.
+      const shareImage = /^https?:\/\//.test(site.shareImage) || !site.url
+        ? site.shareImage
+        : site.url.replace(/\/$/, '') + site.shareImage
       const tags = [
         `<meta name="theme-color" content="${esc(site.themeColor)}" />`,
         `<title>${esc(site.title)}</title>`,
@@ -26,13 +30,14 @@ function siteMeta() {
         `<meta property="og:type" content="website" />`,
         `<meta property="og:title" content="${esc(site.shareTitle)}" />`,
         `<meta property="og:description" content="${esc(site.shareDescription)}" />`,
-        `<meta property="og:image" content="${esc(site.shareImage)}" />`,
+        `<meta property="og:image" content="${esc(shareImage)}" />`,
+        `<meta property="og:image:type" content="image/jpeg" />`,
         `<meta property="og:image:width" content="1200" />`,
         `<meta property="og:image:height" content="630" />`,
         `<meta name="twitter:card" content="summary_large_image" />`,
         `<meta name="twitter:title" content="${esc(site.shareTitle)}" />`,
         `<meta name="twitter:description" content="${esc(site.shareDescription)}" />`,
-        `<meta name="twitter:image" content="${esc(site.shareImage)}" />`,
+        `<meta name="twitter:image" content="${esc(shareImage)}" />`,
       ].filter(Boolean)
       const poster = config.envelopePoster
         ? `<link rel="preload" as="image" type="image/webp" href="${esc(config.envelopePoster)}" />`
@@ -78,5 +83,11 @@ export default defineConfig({
     // Ignore Visual Studio's .vs index (locks .vsidx files → EBUSY watcher crash) and VCS dirs.
     watch: { ignored: ['**/.vs/**', '**/.git/**', '**/.wrangler/**'] },
   },
-  build: { target: 'es2020', cssCodeSplit: false },
+  build: {
+    target: 'es2020',
+    cssCodeSplit: false,
+    // Never inline fonts into the render-blocking CSS as base64 — as files they
+    // download only when a page uses that script, and stay cached.
+    assetsInlineLimit: (file) => (/\.woff2?$/.test(file) ? false : undefined),
+  },
 })

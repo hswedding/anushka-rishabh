@@ -23,9 +23,8 @@ export default function App({ invite, preview }) {
   const reduced = useReducedMotion();
   // The builder's live preview skips the envelope and starts muted.
   const [opened, setOpened] = useState(preview);
-  // App-wide sound: the looping background score plus the invitation films
-  // (videos autoplay muted). On by default — the envelope tap is the gesture
-  // that lets the browser start audio.
+  // App-wide sound: the looping background score. On by default — the
+  // envelope tap is the gesture that lets the browser start audio.
   const [soundOn, setSoundOn] = useState(!preview);
   // The envelope tap — the score starts buffering while the film plays.
   const [tapped, setTapped] = useState(false);
@@ -71,7 +70,7 @@ export default function App({ invite, preview }) {
         <Hero invite={invite} />
         {invite.sections.countdown && <Countdown />}
         {invite.sections.photos && <Photos />}
-        <EventFilms events={events} side={invite.side} soundOn={soundOn} ready={opened} />
+        <EventFilms events={events} side={invite.side} ready={opened} />
         {invite.sections.venue && <Venue events={events} />}
         {invite.sections.rsvp && <Rsvp invite={invite} />}
         {customSections.map(({ id, Component }) => (

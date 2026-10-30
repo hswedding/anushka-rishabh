@@ -10,7 +10,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion.js';
    fainter and slower for depth. */
 
 /* [base, tip] pairs — petals darken toward the base like the real thing */
-const COLORS = [
+export const COLORS = [
   ['#e09a2f', '#f7cf6f'], // marigold
   ['#d98f2b', '#efc55e'], // deep marigold
   ['#e58fa8', '#f8c7d4'], // blush

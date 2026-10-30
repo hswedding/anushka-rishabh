@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from '../lib/gsap.js';
 
 /* App-wide background score — one looped <audio> element that follows the
@@ -11,9 +11,27 @@ import { gsap } from '../lib/gsap.js';
 
    Nothing is fetched until `buffer` turns on (the envelope tap) or playback
    starts, so the score never competes with the envelope film for bandwidth;
-   the film's run is ample time for it to be ready by the reveal. */
+   the film's run is ample time for it to be ready by the reveal.
+
+   Phones keep a page's audio going after the guest leaves the browser, so the
+   score stops while the page is hidden and fades back in on return. */
 export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) {
   const audioRef = useRef(null);
+  const [visible, setVisible] = useState(!document.hidden);
+
+  useEffect(() => {
+    const onChange = () => {
+      // Pause at once — a hidden tab doesn't run the fade, so it would never finish.
+      if (document.hidden && audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.volume = 0;
+      }
+      setVisible(!document.hidden);
+    };
+    document.addEventListener('visibilitychange', onChange);
+    return () => document.removeEventListener('visibilitychange', onChange);
+  }, []);
+  playing = playing && visible;
 
   useEffect(() => {
     const audio = new Audio();

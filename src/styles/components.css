@@ -98,38 +98,64 @@
     radial-gradient(circle 40px at 8% 70%, #f4a9be1f, transparent 70%),
     radial-gradient(140% 80% at 50% -10%, var(--gold-wash), transparent 60%);
 }
-.hero__inner { display: grid; justify-items: center; gap: var(--sp-4); text-align: center; }
+.hero__inner {
+  display: grid; justify-items: center; gap: var(--sp-4); text-align: center;
+  padding-inline: var(--sp-2);
+}
 .hero__ganesha {
   width: clamp(84px, 26vw, 128px); height: auto; margin: 0 auto var(--sp-2);
   display: block;
 }
+/* Devanagari never takes letter-spacing — tracking breaks the shirorekha
+   (headline bar) and conjuncts. The first line is the invocation proper; any
+   following line (a blessing) steps down a size and wraps in balanced lines. */
 .hero__invocation {
-  font-family: var(--font-deva); font-size: 1.15rem; color: var(--sage-deep);
-  letter-spacing: 0.04em; margin: 0;
+  font-family: var(--font-deva); color: var(--gold-deep);
+  font-size: clamp(1.08rem, 4.6vw, 1.25rem); line-height: 1.55;
+  letter-spacing: 0; margin: 0; display: grid; gap: var(--sp-1);
 }
-.hero__invocation-line { display: block; }
+.hero__invocation-line { display: block; text-wrap: balance; }
+.hero__invocation-line + .hero__invocation-line {
+  font-size: 0.86em; line-height: 1.65; color: var(--gold-strong);
+  max-width: 21em; margin-inline: auto;
+}
 .hero__guest { font-family: var(--font-script); font-size: 1.7rem; color: var(--sage-dark); margin: 0; }
+/* Couple's names — the one flourish on the card, sized so a long name still
+   sits on one line at 320px and the parents' line under it stays in view. */
 .hero__names {
   font-family: var(--font-display); color: var(--sage-deep);
-  font-size: clamp(3.2rem, 17vw, 6rem); line-height: 0.92;
-  display: grid; gap: 2px; margin: 0;
+  font-size: clamp(2.7rem, 13.5vw, 4.75rem); line-height: 1.02;
+  display: grid; gap: 0; margin: var(--sp-2) 0 0; font-weight: 400;
 }
-.hero__amp { font-family: var(--font-script); color: var(--gold); font-size: 0.6em; }
+.hero__amp {
+  font-family: var(--font-script); color: var(--gold); font-size: 0.55em;
+  line-height: 1; margin: var(--sp-2) 0 var(--sp-1);
+}
 /* a word ("with") keeps the script font but needs less scale than the "&" glyph */
 .hero__amp--word {
   font-size: 0.5em; margin: 0.1em 0;
 }
+/* Hosts and parents are who is inviting. Set in mixed case, in Playfair (its
+   taller x-height reads far better on a phone than tracked Cormorant capitals),
+   with only a hair of tracking so a full name fits on one line. */
 .hero__parents {
-  font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.14em;
-  font-size: 0.7rem; color: var(--sage-dark); line-height: 1.5; margin: 6px 0 4px;
+  font-family: var(--font-serif); font-weight: 500; font-style: normal;
+  text-transform: none; letter-spacing: 0.01em;
+  font-size: clamp(0.94rem, 3.9vw, 1.05rem); line-height: 1.45;
+  color: var(--gold-deep); margin: var(--sp-2) 0 0; text-wrap: balance;
 }
 .hero__hosts {
-  font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.22em;
-  font-size: 0.78rem; color: var(--sage-dark); margin: 0;
+  font-family: var(--font-serif); font-weight: 500;
+  text-transform: none; letter-spacing: 0.01em;
+  font-size: clamp(1.02rem, 4.3vw, 1.25rem); line-height: 1.4;
+  color: var(--gold-deep); margin: var(--sp-2) 0 0; text-wrap: balance;
+  max-width: 22em;
 }
+.hero__name-run { white-space: nowrap; }
 .hero__line {
   font-family: var(--font-body); font-style: italic; color: var(--text-mid);
-  max-width: 30ch; margin: 0;
+  font-size: clamp(1.1rem, 4.6vw, 1.25rem); line-height: 1.4;
+  max-width: 26ch; margin: calc(-1 * var(--sp-2)) 0 0; text-wrap: balance;
 }
 .hero__date { display: grid; gap: 4px; padding: var(--sp-4) var(--sp-5); }
 .hero__date-day {
@@ -151,25 +177,62 @@
 
 /* ---- Scratch card --------------------------------------------------------- */
 .scratch { display: grid; justify-items: center; gap: var(--sp-2); }
-.scratch__prompt {
-  font-family: var(--font-sans); font-size: 0.74rem; color: var(--text-light);
-  display: inline-flex; align-items: center; gap: 6px; margin: 0;
-}
 .scratch__wrap {
   position: relative; width: min(320px, 80vw); border-radius: var(--r-md);
   overflow: hidden; background: var(--white);
   border: 1px solid var(--sage-border); box-shadow: var(--shadow-sm);
   display: grid; place-items: center;
+  transition: border-color 0.4s var(--ease-soft), box-shadow 0.4s var(--ease-soft);
 }
 .scratch__reveal { padding: var(--sp-4); text-align: center; }
 .scratch__canvas {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  cursor: crosshair; touch-action: none; border-radius: var(--r-md);
+  cursor: crosshair; border-radius: var(--r-md);
+  touch-action: pan-y; /* vertical swipes scroll the page; side to side scratches */
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
+/* the wrap clips outlines, so the focus ring sits inside the foil */
+.scratch__canvas:focus-visible {
+  outline: 2px solid var(--gold-deep); outline-offset: -6px; border-radius: var(--r-md);
+}
+/* light crossing the leaf, until the first scratch */
+.scratch__glint {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+}
+.scratch__glint::after {
+  content: ""; position: absolute; inset: 0 -60%;
+  background: linear-gradient(105deg, transparent 42%, #fff8e6b3 50%, transparent 58%);
+  transform: translateX(-60%);
+  animation: scratch-glint 4.5s var(--ease-soft) 1.6s infinite;
+}
+@keyframes scratch-glint { 30%, 100% { transform: translateX(60%); } }
+.scratch.is-scratched .scratch__glint::after { animation: none; }
 .scratch__skip {
   background: none; border: none; color: var(--sage-deep); text-decoration: underline;
-  font-family: var(--font-sans); font-size: 0.8rem; min-height: 44px;
+  font-family: var(--font-sans); font-size: 0.8rem; min-height: 44px; cursor: pointer;
 }
+/* The reveal: the last of the foil lifts away and the date settles into a
+   card that now wears a gold edge, with one last pass of light. The link keeps
+   its space so nothing below it jumps. */
+.scratch.is-revealed .scratch__canvas {
+  opacity: 0; visibility: hidden; transform: scale(1.04);
+  transition: opacity 0.3s var(--ease-in), transform 0.3s var(--ease-in), visibility 0s 0.3s;
+}
+.scratch.is-revealed .scratch__wrap {
+  border-color: var(--gold-mid); box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow-md);
+  animation: scratch-bloom 1.1s var(--ease-soft);
+}
+@keyframes scratch-bloom {
+  30% { box-shadow: 0 0 0 3px var(--gold-light), 0 0 52px 16px #efc55ecc; }
+}
+.scratch.is-revealed .scratch__reveal { animation: scratch-settle 0.5s var(--ease-soft); }
+@keyframes scratch-settle { from { transform: scale(0.94); } }
+.scratch.is-revealed .scratch__glint::after {
+  animation: scratch-sweep 0.9s var(--ease-soft) 0.15s both;
+}
+@keyframes scratch-sweep { to { transform: translateX(60%); } }
+.scratch.is-revealed .scratch__skip { visibility: hidden; }
 
 /* ---- Countdown (scene 2) -------------------------------------------------- */
 .countdown { text-align: center; }
@@ -255,6 +318,28 @@
   display: block; width: 100%; aspect-ratio: 9 / 16;
   object-fit: cover; border-radius: 19px; background: var(--cream-3);
 }
+/* While a film is still arriving, a band of light drifts across its screen —
+   held back 300ms so a quick start never flashes it. */
+.film__sheen {
+  position: absolute; inset: 10px; border-radius: 19px; overflow: hidden;
+  pointer-events: none; opacity: 0; transition: opacity 0.3s var(--ease-soft);
+}
+.film__sheen::after {
+  content: ""; position: absolute; inset: 0 -60%;
+  background: linear-gradient(105deg, transparent 40%, #fff8e6d9 50%, transparent 60%);
+  transform: translateX(-60%);
+}
+.film__frame[data-state="loading"] .film__sheen { opacity: 1; transition-delay: 0.3s; }
+.film__frame[data-state="loading"] .film__sheen::after {
+  animation: film-sheen 1.8s var(--ease-soft) infinite;
+}
+@keyframes film-sheen { to { transform: translateX(60%); } }
+/* Shown only when the phone refuses to autoplay (Low Power Mode, data saver) */
+.film__play {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+  cursor: pointer; animation: film-play-in 0.3s var(--ease-soft);
+}
+@keyframes film-play-in { from { opacity: 0; scale: 0.92; } }
 .film__meta {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   margin: var(--sp-5) auto 0; color: var(--gold-strong);
@@ -341,8 +426,10 @@ textarea.field__input { resize: vertical; line-height: 1.5; }
 }
 .footer__crest { margin: 0 auto var(--sp-3); color: var(--gold); }
 .footer__thanks { color: var(--sage-deep); }
-.footer__names { font-family: var(--font-serif); font-size: 1.3rem; margin: var(--sp-3) 0 0; }
-.footer__sign { font-family: var(--font-body); font-style: italic; color: var(--text-mid); margin: 4px 0 0; }
+.footer__sign {
+  font-family: var(--font-body); font-style: italic; color: var(--text-mid);
+  font-size: clamp(1.15rem, 4.8vw, 1.3rem); line-height: 1.4; margin: var(--sp-2) 0 0;
+}
 .footer__contacts { list-style: none; padding: 0; margin: 0 0 var(--sp-5); display: flex; flex-wrap: wrap; gap: var(--sp-4); justify-content: center; }
 .footer__contacts a { font-family: var(--font-sans); font-size: 0.9rem; color: var(--sage-deep); text-decoration: none; }
 .footer__share { margin: 0 auto; }
@@ -376,13 +463,18 @@ textarea.field__input { resize: vertical; line-height: 1.5; }
 /* Builder page: form + live phone preview side by side on desktop; on phones
    an Edit / Preview tab switch. The share bar is always pinned at the bottom. */
 .builder { height: 100dvh; display: grid; grid-template-rows: auto 1fr auto; background: var(--cream-2); }
+/* One column, never wider than the screen — without minmax(0, …) a row that
+   can't shrink (a long header, a long link) widens the whole page and the
+   right edge gets cut off on phones. */
+.builder, .builder__main { grid-template-columns: minmax(0, 1fr); }
+.builder > *, .builder__main > * { min-width: 0; }
 .builder__bar {
   display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4); background: var(--white); border-bottom: 1px solid var(--border);
 }
-.builder__title { margin: 0; font-family: var(--font-sans); font-size: 1rem; font-weight: 400; color: var(--sage-deep); display: flex; align-items: center; gap: 8px; }
-.builder__tabs { display: flex; gap: 4px; background: var(--cream-3); padding: 4px; border-radius: var(--r-pill); }
-.builder__tabs button { min-height: 36px; padding: 0 16px; border: none; border-radius: var(--r-pill); background: none; font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-mid); }
+.builder__title { min-width: 0; margin: 0; font-family: var(--font-sans); font-size: 1rem; font-weight: 400; color: var(--sage-deep); display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.builder__tabs { flex: none; display: flex; gap: 4px; background: var(--cream-3); padding: 4px; border-radius: var(--r-pill); }
+.builder__tabs button { min-height: 36px; padding: 0 14px; border: none; border-radius: var(--r-pill); background: none; font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-mid); }
 .builder__tabs button.is-on { background: var(--white); color: var(--sage-deep); box-shadow: var(--shadow-sm); }
 .builder__main { min-height: 0; display: grid; }
 .builder__form { overflow-y: auto; padding: var(--sp-5) var(--sp-4); display: grid; gap: var(--sp-5); align-content: start; background: var(--white); }
