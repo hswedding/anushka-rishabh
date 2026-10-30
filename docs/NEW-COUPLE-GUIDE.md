@@ -90,9 +90,9 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 | Field | Example | Notes |
 | --- | --- | --- |
 | `dateTimeISO` | `'2027-02-14T19:30:00'` | Main ceremony, local time, no timezone. Drives the countdown |
-| `dateLabel` | `'14 February 2027'` | Shown under the scratch card and countdown |
+| `dateLabel` | `'14 February 2027'` | Shown under the scratch card (or plainly, on links with the card off) and in the countdown |
 | `dayLabel` | `'Sunday'` | Check it matches the date |
-| `scratchPrompt` | `'Scratch to reveal our wedding date'` | Text on the scratch card |
+| `scratchPrompt` | `'Scratch to reveal our wedding date'` | Engraved on the gold foil, split over two lines; keep it short (about 6 words) |
 
 ### `host` — the one family this site speaks for
 
@@ -188,8 +188,10 @@ hide it with `photos=0` (the builder has a Photos toggle).
 
 ### `toggleableSections`
 
-Leave as is unless a section is removed. Only `countdown`, `photos`, `venue`
-and `rsvp` can be hidden per link.
+Leave as is unless a section is removed. Only `scratch` (the scratch card over
+the hero's date; off, the date simply shows), `countdown`, `photos`, `venue`
+and `rsvp` can be turned off per link — in the builder, or with a preset's
+`hide`.
 
 ### `config`
 

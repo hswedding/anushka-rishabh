@@ -17,12 +17,13 @@
  *    fns       csv of event ids             (which functions to show)
  *    preset    a key of `presets` in data.js
  *    to        guest name (personalised greeting)
- *    countdown/photos/venue/rsvp = 0        (hide that section)
+ *    scratch/countdown/photos/venue/rsvp = 0   (hide that section; without
+ *                                           the scratch card the date just shows)
  * ========================================================================== */
 import { couple, events, presets, host, config } from '../data.js';
 
 const EVENT_IDS = events.map((e) => e.id);
-export const SECTION_IDS = ['countdown', 'photos', 'venue', 'rsvp'];
+export const SECTION_IDS = ['scratch', 'countdown', 'photos', 'venue', 'rsvp'];
 
 /** Keep only known ids, preserve canonical chronological order. */
 function sanitiseIds(ids) {
