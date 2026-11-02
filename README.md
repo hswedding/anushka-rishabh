@@ -174,7 +174,7 @@ ignored).
 | `preset` | a key of `presets` in `data.js` |
 | `fns` | exact functions (event ids from `data.js`) |
 | `to` | personalised greeting |
-| `scratch` `countdown` `photos` `venue` `rsvp` | `0` hides that section (without `scratch` the date simply shows) |
+| `scratch` `countdown` `photos` `venue` `rsvp` | `0` hides that section (without `scratch` the Hero's date card is left out too) |
 
 Presets are the named guest groups in `presets` (`all` plus the family's own),
 in builder order. A preset's optional `hide` turns sections off (e.g.

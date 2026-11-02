@@ -152,8 +152,8 @@ export const photos = [
   { src: '/photos/2.jpg', alt: 'The couple running hand in hand through tall grass' },
 ];
 
-/* Toggleable parts (Envelope / Hero / Footer always show; 'scratch' is the card
-   over the Hero's date, which shows plainly without it) ---------------------- */
+/* Toggleable parts (Envelope / Hero / Footer always show; 'scratch' is the
+   Hero's date card, which is left out without it) --------------------------- */
 export const toggleableSections = [
   { id: 'scratch', label: 'Scratch card' },
   { id: 'countdown', label: 'Countdown' },

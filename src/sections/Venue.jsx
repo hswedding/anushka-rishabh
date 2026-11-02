@@ -2,8 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap, useGSAP } from '../lib/gsap.js';
 import Icon from '../components/Icons.jsx';
 
-/* Scene 5 — The Venue. Shows each unique venue across the selected functions
-   with a directions link, plus an embedded map for the primary one. */
+/* Scene 5 — The Venue. One card per unique venue across the selected
+   functions. Guests look for their function first ("where's the Haldi?"), so
+   each card leads with the functions and their dates; the venue name and
+   address sit underneath, above the directions link. An embedded map shows
+   the primary venue. */
 export default function Venue({ events }) {
   const root = useRef(null);
   const mapRef = useRef(null);
@@ -36,7 +39,7 @@ export default function Venue({ events }) {
   for (const e of events) {
     const key = e.venue?.name + '|' + e.venue?.area;
     if (!seen.has(key)) seen.set(key, { venue: e.venue, events: [] });
-    seen.get(key).events.push(e.name);
+    seen.get(key).events.push(e);
   }
   const venues = [...seen.values()];
   if (!venues.length) return null;
@@ -54,9 +57,18 @@ export default function Venue({ events }) {
         <div className="venue__cards">
           {venues.map(({ venue, events: ev }, i) => (
             <div className="venue__card card" key={i}>
-              <h3 className="serif-h">{venue.name}</h3>
-              {venue.area && <p className="venue__area">{venue.area}</p>}
-              <p className="venue__for">{ev.join(' · ')}</p>
+              <ul className="venue__fns">
+                {ev.map((e) => (
+                  <li key={e.id}>
+                    <h3 className="venue__fn">{e.name}</h3>
+                    <p className="venue__when">{e.dayLabel}, {e.dateLabel}</p>
+                  </li>
+                ))}
+              </ul>
+              <div className="venue__place">
+                <p className="venue__name">{venue.name}</p>
+                {venue.area && <p className="venue__area">{venue.area}</p>}
+              </div>
               <a
                 className="btn btn--gold"
                 href={venue.mapUrl}

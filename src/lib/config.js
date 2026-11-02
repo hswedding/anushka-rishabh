@@ -18,7 +18,8 @@
  *    preset    a key of `presets` in data.js
  *    to        guest name (personalised greeting)
  *    scratch/countdown/photos/venue/rsvp = 0   (hide that section; without
- *                                           the scratch card the date just shows)
+ *                                           the scratch card the Hero's date
+ *                                           card is left out too)
  * ========================================================================== */
 import { couple, events, presets, host, config } from '../data.js';
 
