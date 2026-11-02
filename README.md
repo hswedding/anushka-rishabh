@@ -92,8 +92,9 @@ in full, one at a time in page order, so it is on the phone before the guest
 reaches it (a film reached earlier streams straight away). A film starts when
 40% of it is on screen, plays through once without pausing and holds its last
 frame; if the phone blocks autoplay (Low Power Mode, data saver) a **Play
-film** button appears. The music buffers from the envelope tap. Keep new
-media off the envelope's critical path, and keep films lean: a guest's phone
+film** button appears. The music buffers from the envelope tap (on links
+without the envelope it starts on the guest's first tap). Keep new media off
+the envelope's critical path, and keep films lean: a guest's phone
 downloads every film on their link.
 
 ### Pulling a base fix into a couple's repo
@@ -174,7 +175,7 @@ ignored).
 | `preset` | a key of `presets` in `data.js` |
 | `fns` | exact functions (event ids from `data.js`) |
 | `to` | personalised greeting |
-| `scratch` `countdown` `photos` `venue` `rsvp` | `0` hides that section (without `scratch` the Hero's date card is left out too) |
+| `envelope` `scratch` `countdown` `photos` `rsvp` | `0` hides that part (without `envelope` the page opens straight away and the envelope film never loads; without `scratch` the Hero's date card is left out too). Venue & Travel always shows — an old link's `venue=0` is ignored |
 
 Presets are the named guest groups in `presets` (`all` plus the family's own),
 in builder order. A preset's optional `hide` turns sections off (e.g.

@@ -5,9 +5,11 @@ import { gsap } from '../lib/gsap.js';
    global sound toggle in App.jsx. Fades in/out so it never snaps on.
 
    Autoplay with sound needs a user gesture: for guests the envelope tap
-   provides it, so playback starts the moment the page is revealed. The host
-   preview skips the envelope, so if the browser blocks the first attempt we
-   retry on the first interaction instead.
+   provides it, so playback starts the moment the page is revealed. Links
+   without the envelope (and the host preview, once unmuted) have no such
+   tap, so if the browser blocks the first attempt we retry on each tap or
+   key press until one is allowed — a scroll doesn't count, so we keep
+   listening. A tap on the sound toggle itself is left to the toggle.
 
    Nothing is fetched until `buffer` turns on (the envelope tap) or playback
    starts, so the score never competes with the envelope film for bandwidth;
@@ -62,20 +64,25 @@ export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) 
     }
 
     let cancelled = false;
-    let retry = null;
     const fadeIn = () => { if (!cancelled) gsap.to(audio, { volume, duration: 1.4 }); };
     // Older Safari returns undefined from play() instead of a promise.
     const attempt = () => Promise.resolve(audio.play()).then(fadeIn);
 
+    // pointerup, not pointerdown: a touch only counts as a gesture on release.
+    const events = ['pointerup', 'keydown'];
+    const stop = () => events.forEach((t) => window.removeEventListener(t, retry));
+    const retry = (e) => {
+      if (e.target.closest?.('.music-toggle')) return;
+      attempt().then(stop, () => {});
+    };
+
     attempt().catch(() => {
-      if (cancelled) return;
-      retry = () => { attempt().catch(() => {}); };
-      window.addEventListener('pointerdown', retry, { once: true });
+      if (!cancelled) events.forEach((t) => window.addEventListener(t, retry));
     });
 
     return () => {
       cancelled = true;
-      if (retry) window.removeEventListener('pointerdown', retry);
+      stop();
     };
   }, [playing, volume]);
 }

@@ -190,10 +190,12 @@ hide it with `photos=0` (the builder has a Photos toggle).
 
 ### `toggleableSections`
 
-Leave as is unless a section is removed. Only `scratch` (the scratch card over
-the hero's date; off, the date card is left out), `countdown`, `photos`, `venue`
-and `rsvp` can be turned off per link — in the builder, or with a preset's
-`hide`.
+Leave as is unless a section is removed. Only `envelope` (the opening envelope
+film; off, the invitation opens straight away, the film never downloads and the
+music starts on the guest's first tap), `scratch` (the scratch card over the
+hero's date; off, the date card is left out), `countdown`, `photos` and `rsvp`
+can be turned off per link — in the builder, or with a preset's `hide`. Hero,
+Venue & Travel and Footer always show.
 
 ### `config`
 

@@ -156,13 +156,15 @@ export const photos = [
   { src: '/photos/2.jpg', alt: 'The couple running hand in hand through tall grass' },
 ];
 
-/* Toggleable parts (Envelope / Hero / Footer always show; 'scratch' is the
-   Hero's date card, which is left out without it) --------------------------- */
+/* Toggleable parts (Hero / Venue & Travel / Footer always show). 'envelope'
+   is the opening envelope video — without it the invitation opens straight
+   away and the video never downloads. 'scratch' is the Hero's date card,
+   which is left out without it. ------------------------------------------- */
 export const toggleableSections = [
+  { id: 'envelope', label: 'Envelope video' },
   { id: 'scratch', label: 'Scratch card' },
   { id: 'countdown', label: 'Countdown' },
   { id: 'photos', label: 'Photos' },
-  { id: 'venue', label: 'Venue & Travel' },
   { id: 'rsvp', label: 'RSVP' },
 ];
 
