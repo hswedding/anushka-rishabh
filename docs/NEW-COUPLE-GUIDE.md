@@ -151,6 +151,7 @@ venue name and address, then a "Get directions" button. A map of the
 | `dateLabel`, `dayLabel` | Shown above the film (`13 Feb · Saturday`) and under the name on its venue card |
 | `video` | One film in `public/videos/` (URL-encode spaces as they appear in the path, e.g. `/videos/HS Haldi.mp4` works as written) |
 | `videoBySide` | Not needed here; use `video`. (Still supported: it plays the film for `host.side`) |
+| `comesWith` | Optional, an event id, e.g. `comesWith: 'wedding'`. For a function whose details are in another function's film (say the Sehrabandi inside the groom's wedding film): it gets no builder checkbox and stays out of the presets, and joins that function on the page — its venue card — whenever that function is on the link. Give it no `video` |
 | `nameDeva`, `dateISO`, `timeLabel`, `icon`, `blurb` | **Not rendered by the current UI.** Keep them filled (they document the function and a custom section may use them). `icon` must be a key in `components/Icons.jsx`: `kirtan mehndi path sangeet haldi chooda baarat wedding heart lotus sparkle` |
 | `dressCode.color` | Only shown as the colour dot in the builder. The label isn't rendered |
 

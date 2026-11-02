@@ -67,6 +67,9 @@ const dullatResort = {
  *  THE FUNCTIONS this family invites guests to (its own and the shared ones).
  *  `icon` is a key in components/Icons.jsx.  `dressCode.color` is the dot.
  *  `order` controls chronological sort.
+ *  `comesWith` (an event id): no builder checkbox of its own — it joins that
+ *  event on the page (e.g. its venue card), for a function whose details are
+ *  in that event's film.
  * -------------------------------------------------------------------------- */
 export const events = [
   {
@@ -134,8 +137,9 @@ export const events = [
    order. `hide` (optional) lists sections the preset turns off, e.g.
    hide: ['rsvp']. Keys are stored in guest links — don't rename them. */
 const byIds = (...ids) => ids;
+const selectable = events.filter((e) => !e.comesWith);
 export const presets = {
-  all: { label: 'All functions', ids: events.map((e) => e.id) },       // keep: the default
+  all: { label: 'All functions', ids: selectable.map((e) => e.id) },       // keep: the default
   wedding: { label: 'Wedding only', ids: byIds('wedding') },              // ⟵ EDIT
   'shagun-wedding': { label: 'Shagun + Wedding', ids: byIds('shagun-sangeet', 'wedding') }, // ⟵ EDIT
 };

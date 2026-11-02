@@ -128,11 +128,12 @@ export function parseInvitation(query = '') {
   };
 }
 
-/** Ordered, hydrated event objects for the current selection. */
+/** Ordered, hydrated event objects for the current selection, plus any
+ *  `comesWith` event that joins a selected one. */
 export function selectedEvents(eventIds) {
   const set = new Set(eventIds);
   return events
-    .filter((e) => set.has(e.id))
+    .filter((e) => set.has(e.id) || set.has(e.comesWith))
     .sort((a, b) => a.order - b.order);
 }
 
