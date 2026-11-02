@@ -5,6 +5,9 @@ import {
 } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
 
+// A `comesWith` event has no checkbox of its own: it joins its partner on the page.
+const choosable = events.filter((e) => !e.comesWith);
+
 /* Invitation builder — its own page at /{links.builder}. Pick what a guest
    sees (the hosting side is fixed for this single-family site); a live
    preview renders the real invitation and the share bar builds their link. */
@@ -93,10 +96,10 @@ export default function Builder() {
 
           <div className="panel__group">
             <span className="panel__group-label">
-              Functions ({state.eventIds.length}/{events.length})
+              Functions ({state.eventIds.length}/{choosable.length})
             </span>
             <ul className="panel__checks">
-              {events.map((e) => (
+              {choosable.map((e) => (
                 <li key={e.id}>
                   <label className={state.eventIds.includes(e.id) ? 'is-on' : ''}>
                     <input type="checkbox" checked={state.eventIds.includes(e.id)}

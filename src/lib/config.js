@@ -17,13 +17,18 @@
  *    fns       csv of event ids             (which functions to show)
  *    preset    a key of `presets` in data.js
  *    to        guest name (personalised greeting)
- *    scratch/countdown/photos/venue/rsvp = 0   (hide that section; without
- *                                           the scratch card the date just shows)
+ *    envelope/scratch/countdown/photos/rsvp = 0   (hide that part; without
+ *                                           the envelope the page opens straight
+ *                                           away and its film never loads;
+ *                                           without the scratch card the Hero's
+ *                                           date card is left out too)
+ *  Venue & Travel is on every invitation — an old link's venue=0 is ignored.
  * ========================================================================== */
+import { TOKEN_KEY } from './tokenKey.js';
 import { couple, events, presets, host, config } from '../data.js';
 
 const EVENT_IDS = events.map((e) => e.id);
-export const SECTION_IDS = ['scratch', 'countdown', 'photos', 'venue', 'rsvp'];
+export const SECTION_IDS = ['envelope', 'scratch', 'countdown', 'photos', 'rsvp'];
 
 /** Keep only known ids, preserve canonical chronological order. */
 function sanitiseIds(ids) {
@@ -47,8 +52,9 @@ export function presetState(key) {
 }
 
 /* ---- tokens -------------------------------------------------------------- */
-// Never change KEY: every guest link already sent is scrambled with it.
-const KEY = new TextEncoder().encode('hs-wedding-invites');
+// Never change TOKEN_KEY (src/lib/tokenKey.js): every guest link already
+// sent is scrambled with it.
+const KEY = new TextEncoder().encode(TOKEN_KEY);
 const scramble = (bytes) => bytes.map((b, i) => b ^ KEY[i % KEY.length]);
 const toB64 = (bytes) =>
   btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -82,7 +88,9 @@ function decodeToken(token) {
 // Links sent before tokens were plain base64 of the query string. Accept them
 // only if every key is one the old builder wrote, so a random path stays closed.
 // ponytail: these stay readable/forgeable; delete once guests have new links.
-const LEGACY_KEYS = new Set(['side', 'fns', 'preset', 'to', 'host', 'story', 'music', ...SECTION_IDS]);
+const LEGACY_KEYS = new Set([
+  'side', 'fns', 'preset', 'to', 'host', 'story', 'music', 'venue', ...SECTION_IDS,
+]);
 function decodeLegacy(slug) {
   try {
     const q = atob(slug.replace(/-/g, '+').replace(/_/g, '/'));
@@ -127,11 +135,12 @@ export function parseInvitation(query = '') {
   };
 }
 
-/** Ordered, hydrated event objects for the current selection. */
+/** Ordered, hydrated event objects for the current selection, plus any
+ *  `comesWith` event that joins a selected one. */
 export function selectedEvents(eventIds) {
   const set = new Set(eventIds);
   return events
-    .filter((e) => set.has(e.id))
+    .filter((e) => set.has(e.id) || set.has(e.comesWith))
     .sort((a, b) => a.order - b.order);
 }
 

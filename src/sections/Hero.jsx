@@ -22,8 +22,9 @@ const keepNames = (text) => text.split(' & ').map((name, i, all) => (
 const glueDandas = (text) => text.replace(/(॥|।) /g, '$1\u00a0').replace(/ (॥|।)/g, '\u00a0$1');
 
 /* Scene 1 — Save the Date. Opens with the Ganesha invocation (Indian fusion),
-   the couple's names, and a scratch card hiding the wedding date — or, with
-   the card turned off in the builder, the date in plain sight. */
+   the couple's names, and a scratch card hiding the wedding date. With the
+   card turned off in the builder the date card goes too — the countdown and
+   the films carry the date from there. */
 export default function Hero({ invite }) {
   const root = useRef(null);
   const family = host;
@@ -81,14 +82,16 @@ export default function Hero({ invite }) {
           )}
         </h1>
 
-        <div className="hero__reveal">
-          <ScratchCard prompt={wedding.scratchPrompt} covered={invite.sections.scratch}>
-            <div className="hero__date">
-              <span className="hero__date-day">{wedding.dayLabel}</span>
-              <span className="hero__date-main">{wedding.dateLabel}</span>
-            </div>
-          </ScratchCard>
-        </div>
+        {invite.sections.scratch && (
+          <div className="hero__reveal">
+            <ScratchCard prompt={wedding.scratchPrompt}>
+              <div className="hero__date">
+                <span className="hero__date-day">{wedding.dayLabel}</span>
+                <span className="hero__date-main">{wedding.dateLabel}</span>
+              </div>
+            </ScratchCard>
+          </div>
+        )}
       </div>
 
       <button

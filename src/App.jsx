@@ -21,10 +21,13 @@ import customSections from './custom/index.js';
 export default function App({ invite, preview }) {
   const events = selectedEvents(invite.eventIds);
   const reduced = useReducedMotion();
-  // The builder's live preview skips the envelope and starts muted.
-  const [opened, setOpened] = useState(preview);
+  // No envelope for the builder's live preview, or for links that turned it
+  // off — those open straight away, and the envelope film never loads.
+  const envelope = invite.sections.envelope && !preview;
+  const [opened, setOpened] = useState(!envelope);
   // App-wide sound: the looping background score. On by default — the
-  // envelope tap is the gesture that lets the browser start audio.
+  // envelope tap is the gesture that lets the browser start audio; without
+  // the envelope it starts on the guest's first tap. The preview is muted.
   const [soundOn, setSoundOn] = useState(!preview);
   // The envelope tap — the score starts buffering while the film plays.
   const [tapped, setTapped] = useState(false);
@@ -64,14 +67,14 @@ export default function App({ invite, preview }) {
     <>
       <Petals active={opened} />
 
-      {!opened && <Envelope onStart={() => setTapped(true)} onOpen={() => setOpened(true)} />}
+      {envelope && !opened && <Envelope onStart={() => setTapped(true)} onOpen={() => setOpened(true)} />}
 
       <main className="page" id="main-content" aria-hidden={!opened}>
         <Hero invite={invite} />
         {invite.sections.countdown && <Countdown />}
         {invite.sections.photos && <Photos />}
         <EventFilms events={events} side={invite.side} ready={opened} />
-        {invite.sections.venue && <Venue events={events} />}
+        <Venue events={events} />
         {invite.sections.rsvp && <Rsvp invite={invite} />}
         {customSections.map(({ id, Component }) => (
           <Component key={id} invite={invite} />

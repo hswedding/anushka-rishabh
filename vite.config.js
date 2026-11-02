@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { readdirSync, statSync, writeFileSync } from 'node:fs'
 import { join, relative, sep } from 'node:path'
 import { site, config } from './src/data.js'
+import { TOKEN_KEY } from './src/lib/tokenKey.js'
 
 // Single-page wedding invitation. No router, no SSR — mirrors the Invifest reference.
 
@@ -11,7 +12,8 @@ const esc = (s) =>
 
 /** Writes the page title, description, link-preview tags and robots into
  *  index.html from `site` in src/data.js, plus the envelope poster preload
- *  from `config.envelopePoster`, so a new couple only edits data.js.
+ *  from `config.envelopePoster` (skipped on envelope=0 links), so a new
+ *  couple only edits data.js.
  *  (Restart `npm run dev` after changing `site` — the dev server reads it
  *  once.) The optional analytics beacon is added by src/main.jsx. */
 function siteMeta() {
@@ -39,8 +41,28 @@ function siteMeta() {
         `<meta name="twitter:description" content="${esc(site.shareDescription)}" />`,
         `<meta name="twitter:image" content="${esc(shareImage)}" />`,
       ].filter(Boolean)
+      // The envelope's first frame, preloaded so the opening screen paints
+      // whole — except for the builder preview and for guest links that turned
+      // the envelope off (envelope=0 inside the token, decoded as in
+      // src/lib/config.js with TOKEN_KEY), which never show it.
       const poster = config.envelopePoster
-        ? `<link rel="preload" as="image" type="image/webp" href="${esc(config.envelopePoster)}" />`
+        ? `<script>
+      (function () {
+        if (location.hash === '#preview') return;
+        try {
+          var k = ${JSON.stringify(TOKEN_KEY)}, q = '';
+          // the token is the path's last segment (after any base path)
+          var t = location.pathname.split('/').filter(Boolean).pop() || '';
+          var b = atob(t.replace(/-/g, '+').replace(/_/g, '/'));
+          for (var i = 4; i < b.length; i++) q += String.fromCharCode(b.charCodeAt(i) ^ k.charCodeAt(i % k.length));
+          if (/(^|&)envelope=0(&|$)/.test(q)) return;
+        } catch (e) { /* not a token — a fixed link, so it has the envelope */ }
+        var l = document.createElement('link');
+        l.rel = 'preload'; l.as = 'image'; l.type = 'image/webp';
+        l.href = ${JSON.stringify(config.envelopePoster)};
+        document.head.appendChild(l);
+      })();
+    </script>`
         : ''
       return html
         .replace('<!--SITE_META-->', tags.join('\n    '))

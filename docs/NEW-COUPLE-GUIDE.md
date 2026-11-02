@@ -90,7 +90,7 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 | Field | Example | Notes |
 | --- | --- | --- |
 | `dateTimeISO` | `'2027-02-14T19:30:00'` | Main ceremony, local time, no timezone. Drives the countdown |
-| `dateLabel` | `'14 February 2027'` | Shown under the scratch card (or plainly, on links with the card off) and in the countdown |
+| `dateLabel` | `'14 February 2027'` | Shown under the scratch card and in the countdown (links with the card off leave the hero's date card out) |
 | `dayLabel` | `'Sunday'` | Check it matches the date |
 | `scratchPrompt` | `'Scratch to reveal our wedding date'` | Engraved on the gold foil, split over two lines; keep it short (about 6 words) |
 
@@ -123,9 +123,10 @@ const banquet = {
 };
 ```
 
-The Venue section lists each unique venue of the guest's selected functions
-with a "Get directions" button, and embeds a map of the **last** one (the
-latest function, usually the wedding).
+The Venue section has one card per unique venue of the guest's selected
+functions. Each card leads with those functions' names and days, then the
+venue name and address, then a "Get directions" button. A map of the
+**last** venue (the latest function, usually the wedding) is embedded below.
 
 ### `events` — the functions
 
@@ -146,15 +147,16 @@ latest function, usually the wedding).
 | --- | --- |
 | `id` | Lowercase kebab-case, unique. It is the vocabulary of guest links (`fns=`) and presets. **Never rename or remove an id after links have been sent**: those guests silently lose that function |
 | `order` | Chronological sort. Guest links always show functions in this order |
-| `name` | Title on the film card and in the venue list |
-| `dateLabel`, `dayLabel` | Shown above the film (`13 Feb · Saturday`) |
+| `name` | Title on the film card and on its venue card |
+| `dateLabel`, `dayLabel` | Shown above the film (`13 Feb · Saturday`) and under the name on its venue card |
 | `video` | One film in `public/videos/` (URL-encode spaces as they appear in the path, e.g. `/videos/HS Haldi.mp4` works as written) |
 | `videoBySide` | Not needed here; use `video`. (Still supported: it plays the film for `host.side`) |
+| `comesWith` | Optional, an event id, e.g. `comesWith: 'wedding'`. For a function whose details are in another function's film (say the Sehrabandi inside the groom's wedding film): it gets no builder checkbox and stays out of the presets, and joins that function on the page — its venue card — whenever that function is on the link. Give it no `video` |
 | `nameDeva`, `dateISO`, `timeLabel`, `icon`, `blurb` | **Not rendered by the current UI.** Keep them filled (they document the function and a custom section may use them). `icon` must be a key in `components/Icons.jsx`: `kirtan mehndi path sangeet haldi chooda baarat wedding heart lotus sparkle` |
 | `dressCode.color` | Only shown as the colour dot in the builder. The label isn't rendered |
 
 **Important:** a function **without a film doesn't get its own card** on the
-page; it only appears by name in the venue list. Its time, dress code and
+page; it only appears by name and day on its venue card. Its time, dress code and
 details reach guests through its film. If a couple wants a function without a
 film shown properly, build a small card section in `src/custom/` that renders
 `name`, `dateLabel`, `timeLabel`, `dressCode` and `blurb` for film-less events.
@@ -188,10 +190,12 @@ hide it with `photos=0` (the builder has a Photos toggle).
 
 ### `toggleableSections`
 
-Leave as is unless a section is removed. Only `scratch` (the scratch card over
-the hero's date; off, the date simply shows), `countdown`, `photos`, `venue`
-and `rsvp` can be turned off per link — in the builder, or with a preset's
-`hide`.
+Leave as is unless a section is removed. Only `envelope` (the opening envelope
+film; off, the invitation opens straight away, the film never downloads and the
+music starts on the guest's first tap), `scratch` (the scratch card over the
+hero's date; off, the date card is left out), `countdown`, `photos` and `rsvp`
+can be turned off per link — in the builder, or with a preset's `hide`. Hero,
+Venue & Travel and Footer always show.
 
 ### `config`
 
