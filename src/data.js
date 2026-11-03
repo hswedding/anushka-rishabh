@@ -192,8 +192,8 @@ export const config = {
   // root (/) opens nothing. Every family's site needs its own ids:
   // `node scripts/new-links.mjs` writes fresh ones. ⟵ EDIT
   links: {
-    builder: '8RLVf-FVg8Ia',
-    all: 'Y0HAHELgq8sq',
+    builder: 'dVEa3L0E4hjr',
+    all: 'LkeKUErEhB7N',
   },
   // The opening envelope film (public/). ⟵ EDIT per couple
   envelopeVideo: '/videos/envelop.mp4',
@@ -212,7 +212,7 @@ export const site = {
   // The deployed site, no trailing slash. Link-preview crawlers (WhatsApp)
   // need absolute image URLs, so shareImage is prefixed with it at build
   // time. scripts/new-couple.sh sets it from the Worker name. ⟵ EDIT
-  url: 'https://invite-base-single.hs-invites.workers.dev',
+  url: 'https://anushka-rishabh.hs-invites.workers.dev',
   title: 'Hemant & Sukriti · Wedding Invitation',
   description:
     'With the blessings of our families, we joyfully invite you to celebrate the wedding of Hemant & Sukriti — 24 November 2026.',

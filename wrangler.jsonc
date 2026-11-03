@@ -4,7 +4,7 @@
 // and must match the Worker name in the Cloudflare dashboard.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "invite-base-single",
+  "name": "anushka-rishabh",
   "compatibility_date": "2026-09-01",
   // Adds Range (206) support for films and music so Safari/iPhone can play them.
   "main": "worker/index.js",
