@@ -42,7 +42,7 @@ export default function Rsvp({ invite }) {
   const celebrate = () => {
     const fire = (ratio, opts) =>
       confetti({ ...opts, origin: { y: 0.7 }, particleCount: Math.floor(180 * ratio),
-        colors: ['#b39257', '#dcc594', '#f3ebd8', '#8fa58a', '#3e5141'] });
+        colors: ['#c9a227', '#e9c768', '#f8edc6', '#8fa58a', '#3e5141'] });
     fire(0.25, { spread: 26, startVelocity: 55 });
     fire(0.35, { spread: 60 });
     fire(0.2, { spread: 100, decay: 0.91, scalar: 0.9 });

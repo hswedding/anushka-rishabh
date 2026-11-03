@@ -18,7 +18,7 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 }
 .btn--primary, .btn--gold {
   background: var(--silk); color: var(--on-silk); border-color: transparent;
-  box-shadow: 0 10px 24px -12px #2f3f3299, inset 0 0 0 1px #dcc5944d;
+  box-shadow: 0 10px 24px -12px #2f3f3299, inset 0 0 0 1px #e9c7684d;
 }
 .btn--primary:hover, .btn--gold:hover { background: var(--silk-deep); }
 
@@ -54,7 +54,12 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 }
 .hero__line { font-size: clamp(1.12rem, 4.7vw, 1.28rem); }
 .hero__names { font-size: clamp(3.2rem, 15.5vw, 5rem); line-height: 1.05; }
-.hero__amp { font-size: 0.6em; margin: var(--sp-3) 0 var(--sp-1); }
+/* the "&" in gold foil: light catching the top, deeper gold below */
+.hero__amp {
+  font-size: 0.6em; margin: var(--sp-3) 0 var(--sp-1);
+  background: linear-gradient(170deg, #f6dc85 10%, #d4a933 45%, #a67a12 75%, #e9c768);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 .hero__parents {
   font-weight: 600; font-size: clamp(1.04rem, 4.4vw, 1.16rem);
   color: var(--text-mid); margin-top: var(--sp-1);
@@ -90,7 +95,7 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 /* where a band begins it rises as a shallow arch, edged in gold */
 :not(.film) + .film, .rsvp {
   border-radius: 50% 50% 0 0 / clamp(44px, 10vw, 96px) clamp(44px, 10vw, 96px) 0 0;
-  box-shadow: inset 0 1px 0 #dcc594a6;
+  box-shadow: inset 0 1px 0 #e9c768a6;
   padding-top: calc(var(--sp-7) + var(--sp-6));
 }
 .film .display, .rsvp .display { color: var(--gold-pale); }
@@ -105,10 +110,10 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 /* a thin gilt edge around the film, lifted off the silk */
 .film__frame {
   padding: 6px; border-radius: 26px;
-  background: linear-gradient(160deg, #f3e6c4, #c4a466 30%, #8f7140 55%, #e3cf9f 80%, #f3e6c4);
+  background: linear-gradient(160deg, #fff1b8, #e2b84a 28%, #b8861e 52%, #f3d36f 78%, #fff1b8);
   box-shadow: 0 40px 70px -30px #0b130dcc;
 }
-.film__frame::before { inset: 3px; border-radius: 23px; border-color: #fff8e180; }
+.film__frame::before { inset: 3px; border-radius: 23px; border-color: #fff6cc99; }
 .film__video { border-radius: 20px; }
 .film__sheen { inset: 6px; border-radius: 20px; }
 .film__meta {
@@ -121,7 +126,7 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
   background: var(--white);
   border: 1px solid var(--gold-light);
   border-radius: 50% 50% 10px 10px / 120px 120px 10px 10px;
-  box-shadow: inset 0 0 0 6px var(--white), inset 0 0 0 7px #e9dcbc,
+  box-shadow: inset 0 0 0 6px var(--white), inset 0 0 0 7px #ecd69a,
     0 24px 48px -28px #3e514166;
   padding-top: 76px;
 }
@@ -138,7 +143,7 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 .rsvp__lead { color: var(--on-silk-mid); font-size: 1.1rem; }
 .rsvp__panel {
   border: 1px solid var(--gold-light); border-radius: 14px;
-  box-shadow: inset 0 0 0 6px var(--white), inset 0 0 0 7px #e9dcbc,
+  box-shadow: inset 0 0 0 6px var(--white), inset 0 0 0 7px #ecd69a,
     0 40px 70px -30px #0b130dcc;
 }
 .field__label { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; }
@@ -165,17 +170,17 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 /* ---- Envelope, music toggle -------------------------------------------------- */
 .envelope__cta {
   font-family: var(--font-display); font-size: 1.85rem; color: var(--gold-pale);
-  background: #2f3f32d9; border-color: #dcc59499; text-shadow: none;
+  background: #2f3f32d9; border-color: #e9c76899; text-shadow: none;
 }
 .envelope__loading, .envelope__skip {
-  background: #2f3f32b3; color: var(--gold-pale); border-color: #dcc59466;
+  background: #2f3f32b3; color: var(--gold-pale); border-color: #e9c76866;
   font-family: var(--font-body); font-style: italic; font-size: 1rem;
   text-transform: none; letter-spacing: 0.02em;
 }
 .envelope__skip:hover { background: #2f3f32e6; }
 @keyframes pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 #dcc59466; }
-  50% { transform: scale(1.04); box-shadow: 0 0 0 12px #dcc59400; }
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 #e9c76866; }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 12px #e9c76800; }
 }
 .music-toggle {
   background: var(--white); border-color: var(--gold-light); color: var(--gold-deep);

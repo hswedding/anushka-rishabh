@@ -6,7 +6,7 @@ import { COLORS } from '../components/Petals.jsx';
 
 COLORS.splice(0, COLORS.length,
   ['#d8ceb4', '#fbf8ef'], // ivory petal
-  ['#c6b68c', '#f2ead6'], // champagne petal
+  ['#d4a933', '#f7e3a1'], // gold petal
   ['#8fa37e', '#d3dec7'], // sage leaf
   ['#a6b697', '#e6ecdf'], // pale sage
 );
