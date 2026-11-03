@@ -123,10 +123,17 @@ export const presets = {
    Files live in public/photos; shrink new ones first with
    scripts/compress-photos.ps1. Order here = order in the strip. Cards are
    portrait, so landscape shots get their sides cropped — `focus` (CSS
-   object-position x %) picks which part stays in frame.
-   ⟵ TODO the family is sending photos on WhatsApp; until then the section
-   stays hidden. Example: { src: '/photos/1.jpg', alt: 'Anushka and Rishabh …' } */
-export const photos = [];
+   object-position x %) picks which part stays in frame. */
+export const photos = [
+  { src: '/photos/1.jpg', alt: 'Anushka and Rishabh laughing, cheek to cheek' },
+  { src: '/photos/2.jpg', alt: 'Anushka and Rishabh holding hands in a sunlit garden' },
+  { src: '/photos/3.jpg', alt: 'Anushka and Rishabh laughing in front of blue wooden doors' },
+  { src: '/photos/4.jpg', alt: 'Rishabh chasing Anushka under the trees' },
+  { src: '/photos/5.jpg', alt: 'Anushka resting her head on Rishabh’s shoulder', focus: '45%' },
+  { src: '/photos/6.jpg', alt: 'Anushka and Rishabh sitting by an old carved door' },
+  { src: '/photos/7.jpg', alt: 'Anushka and Rishabh sitting back to back on a bench', focus: '40%' },
+  { src: '/photos/8.jpg', alt: 'Anushka and Rishabh holding hands by blue doors' },
+];
 
 /* Toggleable parts (Hero / Venue & Travel / Footer always show). 'envelope'
    is the opening envelope video — without it the invitation opens straight
