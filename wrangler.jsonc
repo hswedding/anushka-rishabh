@@ -10,6 +10,9 @@
   // worker/media-sizes.json exist even when Cloudflare's dashboard has no
   // build command set (its deploy command alone would fail on a fresh clone).
   "build": { "command": "npm run build" },
+  // Serve the site at https://<name>.<subdomain>.workers.dev — set explicitly,
+  // since a Worker created by "Import a repository" can start with it off.
+  "workers_dev": true,
   // Adds Range (206) support for films and music so Safari/iPhone can play them.
   "main": "worker/index.js",
   "assets": {
