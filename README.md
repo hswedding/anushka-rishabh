@@ -137,6 +137,29 @@ root shows the closed page).
 **Analytics (optional):** dashboard → Web Analytics → add a site → copy the
 token from the snippet into `site.cloudflareAnalyticsToken` in `src/data.js`.
 
+### RSVP sheet
+
+The RSVP form posts to `/api/rsvp` on the Worker (`worker/rsvp.js`), which
+appends one row — received time, name, phone, guests, arrival, the guest name
+on their link — to the Google Sheet the family saved in the builder. The
+sheet id lives in the `SETTINGS` KV namespace (created by the first
+`wrangler deploy`). A Google service account writes the rows:
+
+1. **Once for the studio:** Google Cloud console → create a project → enable
+   the **Google Sheets API** → IAM → **Service accounts** → create one → Keys
+   → **Add key → JSON**. The same key serves every family's site.
+2. **Once per site:** `npx wrangler secret put GOOGLE_SA_KEY` and paste the
+   whole JSON file (or Worker → Settings → Variables and Secrets → Secret).
+   For `npm run cf:dev`, put `GOOGLE_SA_KEY='<json on one line>'` in
+   `.dev.vars` (git-ignored).
+3. **The family:** makes a Google Sheet, Share → General access → **Anyone
+   with the link → Editor** (or shares it with the service account's
+   `client_email`), and pastes its link into the builder's **RSVP Google
+   Sheet** → Save. Saving checks the sheet is editable and writes a header
+   row on an empty sheet. RSVPs fail with a "try again" until a sheet is saved.
+
+`/api/*` doesn't exist under `npm run dev` — test the form with `npm run cf:dev`.
+
 ## Sending different guests different functions
 
 There is no public front door: the site root (`/`) only shows an "open the link

@@ -41,8 +41,6 @@ export const host = {
   sign: 'With love, The Jain Family',
   // Closes the builder's WhatsApp message.
   waSignoff: 'With love,\nThe Jain Family',
-  // RSVPs go to this WhatsApp number (digits + country code, no + or spaces).
-  rsvpWhatsApp: '919810421242',
   contacts: [
     { name: 'Amit Jain', phone: '+919810421242' },
     // ⟵ TODO Animesh Jain was named as the second contact but no number was
@@ -155,9 +153,6 @@ export const toggleableSections = [
 
 /* Global config ------------------------------------------------------------- */
 export const config = {
-  // WhatsApp number that RSVP submissions are sent to (digits + country code,
-  // no + or spaces). Fallback when host.rsvpWhatsApp is empty.
-  rsvpWhatsApp: '919810421242',
   // Looping background score, played while the sound toggle is on. Lives in
   // public/ — the %20 is the space in the file name.
   // ⟵ TODO swap for the family's song (https://youtu.be/CnEqrgMlWLQ) once
