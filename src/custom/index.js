@@ -15,4 +15,7 @@
  *  Animations: import gsap from '../lib/gsap.js' and honour useReducedMotion.
  * ========================================================================== */
 
+// Anushka & Rishabh: the Ivory & Sage colour overrides (no extra sections).
+import './theme.js';
+
 export default [];

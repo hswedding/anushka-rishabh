@@ -1,0 +1,59 @@
+/* Ivory & Sage — the colours the base hard-codes outside tokens.css (gold-dust
+   grain, the hero's bokeh, the films' gilt frame, the scratch-card glow),
+   re-tinted for Anushka & Rishabh. Loaded from src/custom/theme.js, after
+   components.css, so equal-specificity rules here win without touching base
+   files (keeps `git merge upstream/main` clean). */
+
+/* ivory paper with a whisper of sage grain */
+body {
+  background-image: radial-gradient(#46553b0a 1px, transparent 1.4px);
+}
+
+/* hero: soft sage + champagne bokeh instead of marigold and blush */
+.hero {
+  background:
+    radial-gradient(circle 90px at 12% 18%, #b7c3a62e, transparent 70%),
+    radial-gradient(circle 60px at 88% 12%, #d9c79b33, transparent 70%),
+    radial-gradient(circle 70px at 84% 76%, #b7c3a626, transparent 70%),
+    radial-gradient(circle 40px at 8% 70%, #d9c79b26, transparent 70%),
+    radial-gradient(140% 80% at 50% -10%, var(--gold-wash), transparent 60%);
+}
+
+/* "॥ शुभ विवाह ॥" heading — a touch larger and airier than an invocation */
+.hero__invocation {
+  font-size: clamp(1.15rem, 5vw, 1.35rem);
+  color: var(--gold-strong);
+}
+
+/* the film frame: sage leaf with a champagne hairline inside */
+.film__frame {
+  background:
+    linear-gradient(160deg, #e3e9da, #a9b998 30%, #74876a 56%, #c3cfb4 80%, #e3e9da);
+}
+.film__frame::before { border-color: #f2ecdccc; }
+.film__meta { color: var(--gold-strong); }
+
+/* scratch card: soften the marigold foil to champagne, and let the reveal
+   bloom in champagne too */
+.scratch__canvas { filter: saturate(0.5) brightness(1.05); }
+@keyframes scratch-bloom {
+  30% { box-shadow: 0 0 0 3px var(--gold-light), 0 0 52px 16px #d9c79bcc; }
+}
+
+/* the hashtag reads in sage (champagne is too pale for thin script) */
+.footer__hashtag { color: var(--gold-strong); }
+
+/* Hindi lines in the footer: Devanagari type, never tracked or upper-cased
+   (tracking breaks the shirorekha) */
+.footer__closing dt,
+.footer__closing dd { font-family: var(--font-deva); }
+.footer__closing dt {
+  letter-spacing: 0; text-transform: none; font-size: 1rem;
+  color: var(--gold-strong);
+}
+.footer__closing dd { font-size: 1.15rem; }
+
+/* builder: sage nudge and shadows */
+@keyframes nudge { 50% { box-shadow: 0 0 0 5px #5e6f5033; } }
+.builder__share { box-shadow: 0 -8px 24px #46553b0f; }
+.photos__card { box-shadow: 0 1px 2px #46553b14, var(--shadow-md); }

@@ -24,6 +24,7 @@ export default function Photos() {
 
   useEffect(() => {
     const el = track.current;
+    if (!el) return; // no photos: the section isn't rendered
     const f = flags.current;
     let x = 0, v = 0, period = 0, onScreen = false;
     let dragging = false, lastX = 0, lastT = 0;

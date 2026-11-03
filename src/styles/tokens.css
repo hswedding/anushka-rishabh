@@ -1,39 +1,47 @@
-/* Design tokens — palette extracted from the couple's Canva invitation films
-   ("Ubtan & Utsav" / "Mehndi"): warm ivory paper, marigold gold, rani pink,
-   blush pink and foliage green, with Mughal/Pichwai ornament accents.
+/* Design tokens — Anushka & Rishabh (Jain family): IVORY & SAGE, the colours
+   the family chose. Ivory paper, a sage-green family for headings, labels and
+   buttons, and a quiet champagne gold kept only for ornament (dividers, the
+   "&", the film frames' gilt edge) so it echoes the gold in the floral art.
+
+   The variable names are the base's: the `--gold-*` family is the site-wide
+   accent, so its text tones (strong/deep), surfaces and borders are sage here,
+   while `--gold` / `--gold-light` / `--gold-pale` stay champagne for ornament.
+   Text contrast on ivory: --gold-strong 5.1:1, --gold-deep 7.5:1,
+   --text-light 4.6:1; white on the --rani button 5.4:1.
    Plus a spacing + z-index scale (ui-ux-pro-max: 4/8pt rhythm, layered z-index). */
 :root {
-  /* base — warm ivory paper */
-  --cream: #fdf9ef; --cream-2: #faf2e0; --cream-3: #f3e7cd; --white: #fff;
+  /* base — ivory paper */
+  --cream: #faf7f0; --cream-2: #f4efe3; --cream-3: #ebe5d5; --white: #fff;
 
-  /* marigold gold family (primary) */
-  --gold-wash: #fffaf0;      /* palest gold tint (section washes) */
-  --gold-soft: #f6e7bd;      /* light gold surface (icon chips) */
-  --gold-mid: #e3bc5f;       /* soft gold (ornament) */
-  --gold-border: #e9d5a4;    /* hairline gold borders */
-  --gold-strong: #96690f;    /* small-caps labels — 4.5:1 on cream */
-  --gold-deep: #7a5410;      /* headings / links — 7:1 on cream */
-  --gold: #d9a02b;           /* the marigold itself (decor, dividers) */
-  --gold-light: #efc55e; --gold-pale: #faefd2;
+  /* accent family (sage), named `gold-*` in the base */
+  --gold-wash: #f5f4ea;      /* palest sage-ivory tint (section washes) */
+  --gold-soft: #e5ebdc;      /* light sage surface (icon chips, focus halo) */
+  --gold-mid: #b7c3a6;       /* soft sage (ornament, revealed scratch edge) */
+  --gold-border: #d6ddc9;    /* hairline sage borders */
+  --gold-strong: #5e6f50;    /* small-caps labels — 5.1:1 on ivory */
+  --gold-deep: #46553b;      /* headings / links — 7.5:1 on ivory */
+  /* champagne — ornament only (dividers, ampersand, frame gilt, focus ring) */
+  --gold: #b39a64;
+  --gold-light: #d9c79b; --gold-pale: #f2ecdc;
 
-  /* rani + blush pink accents (from the Canva palette swatches) */
-  --rani: #d63775; --rani-deep: #a4275a; --rani-text: #b02a60;
-  --blush: #f4a9be; --blush-pale: #fbe9ef;
+  /* primary buttons and chosen chips — deep sage (the base's rani slot) */
+  --rani: #5e6f50; --rani-deep: #46553b; --rani-text: #4a5a3f;
+  --blush: #d9c9a8; --blush-pale: #f6f1e6;
 
-  /* foliage green (vines, palms) */
-  --leaf: #7e9257; --leaf-deep: #55673a; --leaf-pale: #eef2e3;
+  /* foliage (matches the sage leaves in the floral corners) */
+  --leaf: #8fa37e; --leaf-deep: #5c6e4f; --leaf-pale: #eef1e7;
 
-  /* type */
-  --text-dark: #33291a; --text-mid: #5f5443; --text-light: #8d8271; --border: #efe3cd;
+  /* type — a green-leaning charcoal reads softer than black on ivory */
+  --text-dark: #2f3329; --text-mid: #565b4d; --text-light: #6e7364; --border: #e7e4d6;
 
-  /* shadows — warm golden-brown */
-  --shadow: 0 24px 64px -12px #7a54101f;
-  --shadow-sm: 0 8px 24px #7a54100f;
-  --shadow-md: 0 16px 48px -8px #7a541024;
+  /* shadows — soft olive */
+  --shadow: 0 24px 64px -12px #46553b1f;
+  --shadow-sm: 0 8px 24px #46553b0f;
+  --shadow-md: 0 16px 48px -8px #46553b24;
 
-  /* the one dark, dramatic surface: the wax-seal envelope (deep rani) */
-  --maroon: #7c1f47; --maroon-deep: #55112f; --maroon-light: #9b2e5c;
-  --wax: #f7ecd7; --wax-shadow: #d3bc90;
+  /* dark surface slot (unused by the film envelope; kept for the base) */
+  --maroon: #46553b; --maroon-deep: #2f3a28; --maroon-light: #5e6f50;
+  --wax: #f4efe3; --wax-shadow: #c9bfa4;
 
   /* fonts */
   --font-display: "Distrela", "Great Vibes", "Italianno", cursive;
