@@ -6,6 +6,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "anushka-rishabh",
   "compatibility_date": "2026-09-01",
+  // Build first on every `wrangler deploy` / `wrangler dev`, so ./dist and
+  // worker/media-sizes.json exist even when Cloudflare's dashboard has no
+  // build command set (its deploy command alone would fail on a fresh clone).
+  "build": { "command": "npm run build" },
   // Adds Range (206) support for films and music so Safari/iPhone can play them.
   "main": "worker/index.js",
   "assets": {
