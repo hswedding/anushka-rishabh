@@ -55,12 +55,12 @@ const brideHome = {
 const hotelRadius = {
   name: 'Hotel Radius',
   area: 'SCO 205-209, Airport Rd, TDI City, Sector 117, Mohali, Punjab 160055',
-  mapUrl: 'https://maps.google.com/?q=Hotel+Radius+TDI+City+Sector+117+Mohali',
+  mapUrl: 'https://maps.app.goo.gl/AFqxaNEauphrKK77A',
 };
 const dullatResort = {
   name: 'Dullat Resort',
-  area: 'Sector 118, Sahibzada Ajit Singh Nagar, Punjab 140307',                                                          // ⟵ EDIT add city/area
-  mapUrl: 'https://maps.google.com/?q=Dullat+Resort',                // ⟵ EDIT refine map link
+  area: 'Sector 118, Sahibzada Ajit Singh Nagar, Punjab 140307',
+  mapUrl: 'https://maps.app.goo.gl/hkQJgvFJdpGhBtcB9',
 };
 
 /* ----------------------------------------------------------------------------
