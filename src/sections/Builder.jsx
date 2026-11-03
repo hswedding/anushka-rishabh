@@ -32,7 +32,10 @@ export default function Builder() {
   // Where RSVPs land: one sheet for every link, saved on the server.
   const [sheetUrl, setSheetUrl] = useState('');
   const [sheetMsg, setSheetMsg] = useState('');
-  useEffect(() => { sheetApi().then((d) => setSheetUrl(d.url || '')).catch(() => {}); }, []);
+  const [sheetEmail, setSheetEmail] = useState('');
+  useEffect(() => {
+    sheetApi().then((d) => { setSheetUrl(d.url || ''); setSheetEmail(d.email || ''); }).catch(() => {});
+  }, []);
   const saveSheet = (e) => {
     e.preventDefault();
     setSheetMsg('Saving…');
@@ -153,7 +156,7 @@ export default function Builder() {
 
           <form className="panel__group" onSubmit={saveSheet}>
             <label className="panel__field">
-              <span>RSVP Google Sheet <small>(share it as “Anyone with the link → Editor”)</small></span>
+              <span>RSVP Google Sheet <small>(Share it as Editor with {sheetEmail || 'the site’s Google account'})</small></span>
               <input
                 type="url" required value={sheetUrl}
                 placeholder="https://docs.google.com/spreadsheets/d/…"

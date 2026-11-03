@@ -323,9 +323,9 @@ title, text and image.
 
 Send the family its builder link: `https://<site>/<links.builder>`.
 
-First they make a Google Sheet, share it as **Anyone with the link → Editor**,
-and paste it into **RSVP Google Sheet → Save sheet** in the builder: every
-guest's RSVP lands there as a row.
+First they make a Google Sheet, share it as **Editor** with the service
+account email the builder shows, and paste it into **RSVP Google Sheet → Save
+sheet**: every guest's RSVP lands there as a row.
 
 In the builder they pick a guest's functions (or a preset) and sections,
 optionally type the guest's name, check the live preview, then copy the link

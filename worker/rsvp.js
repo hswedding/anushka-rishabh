@@ -5,7 +5,7 @@
  *  JSON key is the GOOGLE_SA_KEY secret (README "RSVP sheet").
  *
  *    POST /api/rsvp    { name, phone, party, arrival, guestName } → one row
- *    GET  /api/sheet   the saved sheet link            (X-Builder header)
+ *    GET  /api/sheet   the saved sheet link, the account's email (X-Builder)
  *    POST /api/sheet   { url } → check access, save    (X-Builder header)
  * ========================================================================== */
 import { config } from '../src/data.js';
@@ -46,7 +46,12 @@ async function rsvp(request, env) {
 
 async function sheet(request, env) {
   if (request.headers.get('X-Builder') !== config.links.builder) return json({ error: 'Forbidden' }, 403);
-  if (request.method === 'GET') return json({ url: sheetUrl(await env.SETTINGS.get('sheet')) });
+  if (request.method === 'GET') {
+    // The service account's address, for the builder's "share it with …" hint.
+    let email = '';
+    try { email = JSON.parse(env.GOOGLE_SA_KEY).client_email || ''; } catch { /* not set yet */ }
+    return json({ url: sheetUrl(await env.SETTINGS.get('sheet')), email });
+  }
 
   const { url } = await request.json().catch(() => ({}));
   const id = SHEET_RE.exec(url || '')?.[1];
@@ -66,10 +71,13 @@ async function sheets(env, path, method = 'GET', body) {
     body: body && JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
-  if (res.status === 403 || res.status === 404) {
-    throw new Error('Can’t edit that sheet — share it as “Anyone with the link → Editor”.');
+  if (!res.ok) {
+    // Google's own reason too: a 403 is also what a disabled Sheets API gives.
+    const why = data.error?.message || `Google Sheets error ${res.status}`;
+    throw new Error(res.status === 403 || res.status === 404
+      ? `Can’t edit that sheet — share it with the service account as Editor. (Google: ${why})`
+      : why);
   }
-  if (!res.ok) throw new Error(data.error?.message || 'Google Sheets error');
   return data;
 }
 
