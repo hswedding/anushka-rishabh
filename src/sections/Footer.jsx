@@ -24,6 +24,17 @@ export default function Footer({ invite }) {
           ))}
         </ul>
 
+        {family.closing?.length > 0 && (
+          <dl className="footer__closing">
+            {family.closing.map((c) => (
+              <div key={c.label}>
+                <dt className="eyebrow">{c.label}</dt>
+                {c.lines.map((line) => <dd key={line}>{line}</dd>)}
+              </div>
+            ))}
+          </dl>
+        )}
+
         <p className="footer__hashtag">{couple.hashtag}</p>
 
         <p className="footer__credit">

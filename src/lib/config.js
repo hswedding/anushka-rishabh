@@ -183,16 +183,23 @@ export function siteUrl(path) {
   return (config.siteUrl || window.location.origin).replace(/\/$/, '') + path;
 }
 
-/** wa.me link to forward the invitation to a guest. */
-export function buildWhatsAppShare(url, guestName, coupleNames) {
+// WhatsApp's full send URL, not the wa.me short link: on a laptop wa.me
+// redirects to this one and the redirect mangles emoji (💐 arrives blank on
+// WhatsApp Web), while phones never take that hop.
+const WA_SEND = 'https://api.whatsapp.com/send';
+
+/** WhatsApp link to forward the invitation to a guest, closed with the hosting
+ *  family's `host.waSignoff` (data.js) when it has one. */
+export function buildWhatsAppShare(url, guestName, coupleNames, signoff = '') {
   const greeting = guestName ? `Dear ${guestName},\n\n` : '';
   const msg =
     `${greeting}With great joy, you are invited to the wedding celebrations of ` +
-    `${coupleNames}. 💐\n\nOpen your invitation here:\n${url}`;
-  return `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    `${coupleNames}. 💐\n\nOpen your invitation here:\n${url}` +
+    (signoff ? `\n\n${signoff}` : '');
+  return `${WA_SEND}?text=${encodeURIComponent(msg)}`;
 }
 
-/** wa.me link that delivers a completed RSVP to the hosts. */
+/** WhatsApp link that delivers a completed RSVP to the hosts. */
 export function buildRsvpWhatsApp(number, answers) {
   const lines = [
     '🎉 *RSVP — Wedding*',
@@ -202,5 +209,5 @@ export function buildRsvpWhatsApp(number, answers) {
     `Arrival: ${answers.arrival || '—'}`,
   ];
   const text = encodeURIComponent(lines.join('\n'));
-  return `https://wa.me/${number}?text=${text}`;
+  return `${WA_SEND}?phone=${number}&text=${text}`;
 }

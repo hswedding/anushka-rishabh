@@ -38,12 +38,19 @@ export const host = {
     groom: 'S/o Mrs. Neeru & Mr. Jatinder Bahl',                   // ⟵ EDIT
   },
   sign: 'With love, the Malhotra Family',                          // ⟵ EDIT
+  // Optional: closes the builder's WhatsApp message. ⟵ EDIT
+  // waSignoff: 'With Best Regards,\nMalhotra Family',
   // RSVPs go to this WhatsApp number (digits + country code, no + or spaces).
   rsvpWhatsApp: '919815551592',                                    // ⟵ EDIT
   contacts: [
     { name: 'Manish Malhotra', phone: '+919876500001' },           // ⟵ EDIT
     { name: 'Ashu Malhotra', phone: '+919876500002' },             // ⟵ EDIT
   ],
+  // Optional printed-card style lines in the footer, under the contacts. ⟵ EDIT
+  // closing: [
+  //   { label: 'RSVP', lines: ['Malhotra Family'] },
+  //   { label: 'With Best Compliments From', lines: ['Nanke & Dadke'] },
+  // ],
 };
 
 /* Venues --------------------------------------------------------------------- */
@@ -55,12 +62,12 @@ const brideHome = {
 const hotelRadius = {
   name: 'Hotel Radius',
   area: 'SCO 205-209, Airport Rd, TDI City, Sector 117, Mohali, Punjab 160055',
-  mapUrl: 'https://maps.google.com/?q=Hotel+Radius+TDI+City+Sector+117+Mohali',
+  mapUrl: 'https://maps.app.goo.gl/AFqxaNEauphrKK77A',
 };
 const dullatResort = {
   name: 'Dullat Resort',
-  area: 'Sector 118, Sahibzada Ajit Singh Nagar, Punjab 140307',                                                          // ⟵ EDIT add city/area
-  mapUrl: 'https://maps.google.com/?q=Dullat+Resort',                // ⟵ EDIT refine map link
+  area: 'Sector 118, Sahibzada Ajit Singh Nagar, Punjab 140307',
+  mapUrl: 'https://maps.app.goo.gl/hkQJgvFJdpGhBtcB9',
 };
 
 /* ----------------------------------------------------------------------------
