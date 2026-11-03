@@ -7,18 +7,15 @@
 @import '@fontsource/cormorant-garamond/500.css';
 @import '@fontsource/cormorant-garamond/600.css';
 @import '@fontsource/cormorant-garamond/400-italic.css';
-@import '@fontsource/playfair-display/500.css';
-@import '@fontsource/playfair-display/600.css';
-@import '@fontsource/playfair-display/500-italic.css';
 @import '@fontsource/tenor-sans/400.css';
-@import '@fontsource/italianno/400.css';
 @import '@fontsource/great-vibes/400.css';
-@import '@fontsource/tiro-devanagari-sanskrit/400.css';
-@import '@fontsource/tiro-devanagari-sanskrit/400-italic.css';
+/* Playfair Display, Italianno and Tiro Devanagari Sanskrit aren't imported:
+   this card is English only and its tokens don't use them. Bring a line back
+   from invite-base if a design needs one. */
 
 /* Optional self-hosted display font.
    To use it: drop the file at public/fonts/Distrela.ttf and UNCOMMENT the block
-   below. Until then the display stack falls back to Great Vibes / Italianno
+   below. Until then the display stack falls back to Great Vibes
    (imported above), so nothing 404s. */
 
 /*

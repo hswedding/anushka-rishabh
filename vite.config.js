@@ -103,7 +103,8 @@ export default defineConfig({
     host: true,
     port: 5173,
     // Ignore Visual Studio's .vs index (locks .vsidx files → EBUSY watcher crash) and VCS dirs.
-    watch: { ignored: ['**/.vs/**', '**/.git/**', '**/.wrangler/**'] },
+    // Films too: one still being copied in is locked and crashes the watcher the same way.
+    watch: { ignored: ['**/.vs/**', '**/.git/**', '**/.wrangler/**', '**/*.mp4'] },
   },
   build: {
     target: 'es2020',

@@ -45,8 +45,6 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 }
 .hero__inner::after { inset: 7px; border-color: var(--gold-light); }
 
-/* "॥ शुभ विवाह ॥" — the card's heading, in gold */
-.hero__invocation { font-size: clamp(1.2rem, 5.2vw, 1.4rem); color: var(--gold-ink); }
 .hero__guest { font-size: 1.9rem; color: var(--gold-deep); }
 .hero__hosts {
   font-weight: 600; font-size: clamp(1.18rem, 5vw, 1.38rem); line-height: 1.3;
@@ -84,6 +82,11 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
   font-family: var(--font-body); font-style: italic; font-size: 1.05rem;
   letter-spacing: 0.02em; text-transform: none; color: var(--gold-strong);
 }
+/* The arched card runs nearly the full screen height, so a hint pinned to the
+   bottom of the screen sat on the frame's hairlines. Stack it under the card
+   instead: card and hint are centred together and never overlap. */
+.hero { flex-direction: column; justify-content: center; padding-bottom: var(--sp-4); }
+.hero__scroll { position: static; margin-top: var(--sp-4); }
 
 /* ---- Sage silk bands (films, RSVP) ----------------------------------------- */
 .film, .rsvp {
@@ -157,15 +160,6 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
   font-size: 1.05rem; color: var(--gold-deep); border-color: var(--gold-light);
 }
 .footer__hashtag { font-size: 2rem; color: var(--gold-strong); }
-/* Hindi lines in the footer: Devanagari type, never tracked or upper-cased
-   (tracking breaks the shirorekha) */
-.footer__closing dt,
-.footer__closing dd { font-family: var(--font-deva); }
-.footer__closing dt {
-  letter-spacing: 0; text-transform: none; font-size: 1rem;
-  color: var(--gold-ink);
-}
-.footer__closing dd { font-size: 1.2rem; }
 
 /* ---- Envelope, music toggle -------------------------------------------------- */
 .envelope__cta {
