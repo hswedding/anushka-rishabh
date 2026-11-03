@@ -105,6 +105,7 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 | `inviteLine` | `'joyfully invite you to celebrate the wedding of their daughter'` | Sentence after the hosts |
 | `parents.bride`, `parents.groom` | `'D/o Mrs. Neha & Mr. Rajesh Mehta'` | Line under each name, wrapping only after an `&` like `hosts`. Omit a key to hide it |
 | `sign` | `'With love, the Mehta Family'` | Footer sign-off, right under "Thank You" (the couple's names aren't repeated there) |
+| `waSignoff` | `'With Best Regards,\nMehta Family'` | Optional. Added at the end of the WhatsApp message the builder sends (`\n` starts a new line). Omit to end on the link |
 | `rsvpWhatsApp` | `'919800000000'` | RSVPs go here (falls back to `config.rsvpWhatsApp`) |
 | `contacts` | `[{ name: 'Rajesh Mehta', phone: '+919800000000' }]` | Footer tap-to-call list. Phones with `+` and country code |
 | `closing` | `[{ label: 'RSVP', lines: ['Mehta Family'] }, { label: 'With Best Compliments From', lines: ['Nanke & Dadke'] }]` | Optional printed-card style lines in the footer, under the contacts: each `label` is a small heading over its `lines`. Omit for none |

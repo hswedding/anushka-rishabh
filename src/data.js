@@ -38,6 +38,8 @@ export const host = {
     groom: 'S/o Mrs. Neeru & Mr. Jatinder Bahl',                   // ⟵ EDIT
   },
   sign: 'With love, the Malhotra Family',                          // ⟵ EDIT
+  // Optional: closes the builder's WhatsApp message. ⟵ EDIT
+  // waSignoff: 'With Best Regards,\nMalhotra Family',
   // RSVPs go to this WhatsApp number (digits + country code, no + or spaces).
   rsvpWhatsApp: '919815551592',                                    // ⟵ EDIT
   contacts: [

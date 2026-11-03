@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { events, presets, toggleableSections, config } from '../data.js';
+import { events, presets, toggleableSections, config, host } from '../data.js';
 import {
   presetState, buildQuery, sharePath, siteUrl, buildWhatsAppShare, orderedCouple,
 } from '../lib/config.js';
@@ -21,7 +21,7 @@ export default function Builder() {
   const path = sharePath(state);
   const shareUrl = siteUrl(path);
   const names = orderedCouple().map((c) => c.first).join(' & ');
-  const waHref = buildWhatsAppShare(shareUrl, state.guestName.trim(), names);
+  const waHref = buildWhatsAppShare(shareUrl, state.guestName.trim(), names, host.waSignoff);
   const empty = state.eventIds.length === 0;
   const everyoneUrl = siteUrl(`/${config.links.all}`);
 

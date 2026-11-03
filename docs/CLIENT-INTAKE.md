@@ -31,6 +31,7 @@ To build it I need the details below. Send them whenever you can, in parts or as
 • Closing line, e.g. "With love, the Mehta Family"
 • 1–2 names and numbers guests can call
 • The WhatsApp number where RSVPs should arrive
+• How the WhatsApp message sending the invite should be signed, if at all, e.g. "With Best Regards, the Mehta Family"
 
 *4. Functions your guests are invited to* (for each one)
 • Name, e.g. Mehndi, Haldi, Sangeet, Wedding, Reception
@@ -68,6 +69,7 @@ Once I have these I'll send you a preview link to check before anything goes out
 | Ganesha image yes/no | `config.showGanesha` | |
 | Closing line | `host.sign` | |
 | Contact numbers | `host.contacts` | `+` and country code |
+| WhatsApp sign-off | `host.waSignoff` | `\n` for a new line; omit for none |
 | RSVP WhatsApp | `host.rsvpWhatsApp` | Digits only, with country code |
 | Functions | `events[]` + a venue `const` per venue | `id` kebab-case; film path in `video` |
 | Dress code | `events[].dressCode` | Mainly goes into the film; only the colour dot shows in the builder |
