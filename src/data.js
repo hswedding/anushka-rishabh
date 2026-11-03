@@ -175,8 +175,8 @@ export const config = {
     builder: 'dVEa3L0E4hjr',
     all: 'LkeKUErEhB7N',
   },
-  // The opening envelope film (public/). ⟵ TODO still the studio sample (HS
-  // seal) — replace with the couple's envelope film.
+  // The opening envelope film (public/): the couple's A&R envelope, made
+  // portrait (1080×1920) from their 1280×720 film.
   envelopeVideo: '/videos/envelop.mp4',
   // The envelope film's first frame (public/), shown and preloaded before
   // the film loads so the opening screen paints at once. Re-export it
