@@ -29,9 +29,7 @@ export const wedding = {
    start a second repo from this base and set side: 'groom'. */
 export const host = {
   side: 'bride',
-  // No prayer line and no Ganesha image (per the form). The family asked for
-  // English + Hindi, so the card opens with a plain Hindi heading instead.
-  invocation: '॥ शुभ विवाह ॥',
+  // No prayer line and no Ganesha image (per the form), and English only.
   hosts: 'Mr. Pawan Kumar Jain & Mrs. Urmila Jain',
   inviteLine: 'joyfully invite you to celebrate the wedding of',
   parents: {
@@ -45,10 +43,6 @@ export const host = {
     { name: 'Amit Jain', phone: '+919810421242' },
     // ⟵ TODO Animesh Jain was named as the second contact but no number was
     // given. Add { name: 'Animesh Jain', phone: '+91…' } once it comes in.
-  ],
-  // Printed-card style lines in the footer, under the contacts (Hindi).
-  closing: [
-    { label: 'दर्शनाभिलाषी', lines: ['समस्त जैन परिवार'] },
   ],
 };
 
@@ -77,48 +71,40 @@ const silverSpoons = {
  *  under the SAME file name and nothing else needs to change.
  *
  *  ⟵ TODO no start times were given for any function, and the order within a
- *  day is assumed (Engagement before Sangeet, Haldi before the Wedding).
+ *  day is assumed (Haldi before the Wedding).
  * -------------------------------------------------------------------------- */
 export const events = [
+  // Engagement and Sangeet are one evening at the Radisson with one film, so
+  // they share a card. The id stays 'engagement' (it's stored in guest links).
   {
     id: 'engagement', order: 1,
-    name: 'Engagement', nameDeva: 'सगाई',
+    name: 'Engagement & Sangeet',
     dateISO: '2026-12-19', dateLabel: '19 Dec', dayLabel: 'Saturday',
     timeLabel: 'To be confirmed', icon: 'heart',
-    blurb: 'Two families, one promise — the exchange of rings.',
+    blurb: 'The exchange of rings, then an evening of music and dance.',
     dressCode: { label: 'To be shared', color: '#c9ad78' },
     venue: radissonKaushambi,
-    video: '/videos/Engagement (Anushka).mp4',
-  },
-  {
-    id: 'sangeet', order: 2,
-    name: 'Sangeet', nameDeva: 'संगीत',
-    dateISO: '2026-12-19', dateLabel: '19 Dec', dayLabel: 'Saturday',
-    timeLabel: 'To be confirmed', icon: 'sangeet',
-    blurb: 'An evening of music, dance and celebration.',
-    dressCode: { label: 'To be shared', color: '#8fa37e' },
-    venue: radissonKaushambi,
-    video: '/videos/Sangeet (Anushka).mp4',
+    video: '/videos/Anushka (Engagement).mp4',
   },
   {
     id: 'haldi', order: 3,
-    name: 'Haldi', nameDeva: 'हल्दी',
+    name: 'Haldi',
     dateISO: '2026-12-20', dateLabel: '20 Dec', dayLabel: 'Sunday',
     timeLabel: 'To be confirmed', icon: 'haldi',
     blurb: 'Turmeric, sunshine and blessings for the bride.',
     dressCode: { label: 'To be shared', color: '#e3c565' },
     venue: silverSpoons,
-    video: '/videos/Haldi (Anushka).mp4',
+    video: '/videos/Anushka (Haldi).mp4',
   },
   {
     id: 'wedding', order: 4,
-    name: 'The Wedding', nameDeva: 'शुभ विवाह',
+    name: 'The Wedding',
     dateISO: '2026-12-20', dateLabel: '20 Dec', dayLabel: 'Sunday',
     timeLabel: 'To be confirmed', icon: 'wedding',
     blurb: 'The sacred pheras — where two souls become one.',
     dressCode: { label: 'To be shared', color: '#5c7052' },
     venue: silverSpoons,
-    video: '/videos/Wedding (Anushka).mp4',
+    video: '/videos/Anushka (Wedding).mp4',
   },
 ];
 
@@ -154,10 +140,8 @@ export const toggleableSections = [
 /* Global config ------------------------------------------------------------- */
 export const config = {
   // Looping background score, played while the sound toggle is on. Lives in
-  // public/ — the %20 is the space in the file name.
-  // ⟵ TODO swap for the family's song (https://youtu.be/CnEqrgMlWLQ) once
-  // Sandeep drops the .mp3 into public/.
-  bgMusic: '/global%20music.mp3',
+  // public/. The family's song: "I Think They Call This Love" (cover).
+  bgMusic: '/music.mp3',
   // Default site URL used by the builder to build share links.
   // Leave '' to auto-detect from the browser. ⟵ EDIT once deployed.
   siteUrl: '',
