@@ -44,6 +44,11 @@ export const host = {
     { name: 'Manish Malhotra', phone: '+919876500001' },           // ⟵ EDIT
     { name: 'Ashu Malhotra', phone: '+919876500002' },             // ⟵ EDIT
   ],
+  // Optional printed-card style lines in the footer, under the contacts. ⟵ EDIT
+  // closing: [
+  //   { label: 'RSVP', lines: ['Malhotra Family'] },
+  //   { label: 'With Best Compliments From', lines: ['Nanke & Dadke'] },
+  // ],
 };
 
 /* Venues --------------------------------------------------------------------- */

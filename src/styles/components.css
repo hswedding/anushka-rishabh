@@ -459,6 +459,12 @@ textarea.field__input { resize: vertical; line-height: 1.5; }
 }
 .footer__contacts { list-style: none; padding: 0; margin: 0 0 var(--sp-5); display: flex; flex-wrap: wrap; gap: var(--sp-4); justify-content: center; }
 .footer__contacts a { font-family: var(--font-sans); font-size: 0.9rem; color: var(--sage-deep); text-decoration: none; }
+.footer__closing { display: grid; gap: var(--sp-5); margin: 0; }
+.footer__closing dt { margin: 0 0 var(--sp-2); letter-spacing: 0.22em; }
+.footer__closing dd {
+  margin: 0; font-family: var(--font-serif); font-size: 1.12rem;
+  line-height: 1.45; color: var(--text-dark);
+}
 .footer__share { margin: 0 auto; }
 .footer__hashtag { font-family: var(--font-script); font-size: 1.8rem; color: var(--gold); margin-top: var(--sp-5); }
 .footer__credit {

@@ -107,6 +107,7 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 | `sign` | `'With love, the Mehta Family'` | Footer sign-off, right under "Thank You" (the couple's names aren't repeated there) |
 | `rsvpWhatsApp` | `'919800000000'` | RSVPs go here (falls back to `config.rsvpWhatsApp`) |
 | `contacts` | `[{ name: 'Rajesh Mehta', phone: '+919800000000' }]` | Footer tap-to-call list. Phones with `+` and country code |
+| `closing` | `[{ label: 'RSVP', lines: ['Mehta Family'] }, { label: 'With Best Compliments From', lines: ['Nanke & Dadke'] }]` | Optional printed-card style lines in the footer, under the contacts: each `label` is a small heading over its `lines`. Omit for none |
 
 The Ganesha image above the invocation is controlled separately by
 `config.showGanesha`.
