@@ -6,8 +6,7 @@
  *  Anushka & Rishabh — the BRIDE's side (the Jain family). Filled from the
  *  family's Google Form answers of 3 Nov 2026. Still to come from them:
  *  function timings, the second contact's number, guest groups (presets),
- *  photos, the films and the song — each is marked  ⟵ TODO  below.
- * ========================================================================== */
+ *  photos, the films and the song — each is marked  ⟵ TODO  below. * ========================================================================== */
 
 /* The couple ---------------------------------------------------------------- */
 export const couple = {
@@ -17,14 +16,11 @@ export const couple = {
   hashtag: '#ItsGivingAnuRish',
 };
 
-/* The wedding moment (countdown + hero target). ISO local time. ------------- */
+/* The wedding date, shown under the couple's names in the hero. ------------- */
 export const wedding = {
-  // 20 Dec 2026 — the pheras. ⟵ TODO the form left the time blank; 7 p.m. is a
-  // placeholder so the countdown has a target. Change it once they confirm.
-  dateTimeISO: '2026-12-20T19:00:00',
+  // 20 Dec 2026 — the pheras (the form left the time blank).
   dateLabel: '20 December 2026',
   dayLabel: 'Sunday',
-  scratchPrompt: 'Scratch to reveal our wedding date',
 };
 
 /* The hosting family — this site speaks in ONE family's voice. --------------
@@ -139,7 +135,7 @@ export const presets = {
   wedding: { label: 'Wedding only', ids: byIds('wedding') },
 };
 
-/* Couple photos — the swipeable strip after the countdown (hide with photos=0).
+/* Couple photos — the swipeable strip after the hero (hide with photos=0).
    Files live in public/photos; shrink new ones first with
    scripts/compress-photos.ps1. Order here = order in the strip. Cards are
    portrait, so landscape shots get their sides cropped — `focus` (CSS
@@ -150,12 +146,9 @@ export const photos = [];
 
 /* Toggleable parts (Hero / Venue & Travel / Footer always show). 'envelope'
    is the opening envelope video — without it the invitation opens straight
-   away and the video never downloads. 'scratch' is the Hero's date card,
-   which is left out without it. ------------------------------------------- */
+   away and the video never downloads. ------------------------------------- */
 export const toggleableSections = [
   { id: 'envelope', label: 'Envelope video' },
-  { id: 'scratch', label: 'Scratch card' },
-  { id: 'countdown', label: 'Countdown' },
   { id: 'photos', label: 'Photos' },
   { id: 'rsvp', label: 'RSVP' },
 ];
@@ -209,7 +202,7 @@ export const site = {
   // 1200×630 image in public/ for the WhatsApp / social preview.
   shareImage: '/og-image.jpg',
   // Browser UI colour on mobile — match the page background.
-  themeColor: '#faf7f0',
+  themeColor: '#fbf8f1',
   // Keep invitations (home addresses, phone numbers) out of search engines.
   noindex: true,
   // Optional Cloudflare Web Analytics token (dashboard → Web Analytics →

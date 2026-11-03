@@ -17,18 +17,16 @@
  *    fns       csv of event ids             (which functions to show)
  *    preset    a key of `presets` in data.js
  *    to        guest name (personalised greeting)
- *    envelope/scratch/countdown/photos/rsvp = 0   (hide that part; without
- *                                           the envelope the page opens straight
- *                                           away and its film never loads;
- *                                           without the scratch card the Hero's
- *                                           date card is left out too)
+ *    envelope/photos/rsvp = 0              (hide that part; without the
+ *                                           envelope the page opens straight
+ *                                           away and its film never loads)
  *  Venue & Travel is on every invitation — an old link's venue=0 is ignored.
  * ========================================================================== */
 import { TOKEN_KEY } from './tokenKey.js';
 import { couple, events, presets, host, config } from '../data.js';
 
 const EVENT_IDS = events.map((e) => e.id);
-export const SECTION_IDS = ['envelope', 'scratch', 'countdown', 'photos', 'rsvp'];
+export const SECTION_IDS = ['envelope', 'photos', 'rsvp'];
 
 /** Keep only known ids, preserve canonical chronological order. */
 function sanitiseIds(ids) {
@@ -89,7 +87,8 @@ function decodeToken(token) {
 // only if every key is one the old builder wrote, so a random path stays closed.
 // ponytail: these stay readable/forgeable; delete once guests have new links.
 const LEGACY_KEYS = new Set([
-  'side', 'fns', 'preset', 'to', 'host', 'story', 'music', 'venue', ...SECTION_IDS,
+  'side', 'fns', 'preset', 'to', 'host', 'story', 'music', 'venue', 'scratch', 'countdown',
+  ...SECTION_IDS,
 ]);
 function decodeLegacy(slug) {
   try {

@@ -59,7 +59,7 @@ you meant to diverge:
 | Secret builder and ready-made link paths | `config.links` in `src/data.js` (fresh ids: `node scripts/new-links.mjs`) |
 | Palette, fonts, spacing | `src/styles/tokens.css`, `src/styles/fonts.css` |
 | Films, music, preview image (`og-image.jpg`, 1200×630) | `public/` (max 25 MiB per file on Cloudflare) |
-| Couple photos (the swipeable reel after the countdown) | `public/photos/` (shrink with `scripts/compress-photos.ps1`) + `photos` in `src/data.js` |
+| Couple photos (the swipeable reel after the hero) | `public/photos/` (shrink with `scripts/compress-photos.ps1`) + `photos` in `src/data.js` |
 | Decor art | `src/Images/` (swap files, keep names) |
 | One-off sections or animations | `src/custom/`, listed in `src/custom/index.js` |
 
@@ -175,7 +175,7 @@ ignored).
 | `preset` | a key of `presets` in `data.js` |
 | `fns` | exact functions (event ids from `data.js`) |
 | `to` | personalised greeting |
-| `envelope` `scratch` `countdown` `photos` `rsvp` | `0` hides that part (without `envelope` the page opens straight away and the envelope film never loads; without `scratch` the Hero's date card is left out too). Venue & Travel always shows — an old link's `venue=0` is ignored |
+| `envelope` `photos` `rsvp` | `0` hides that part (without `envelope` the page opens straight away and the envelope film never loads). Venue & Travel always shows — an old link's `venue=0` is ignored |
 
 Presets are the named guest groups in `presets` (`all` plus the family's own),
 in builder order. A preset's optional `hide` turns sections off (e.g.

@@ -42,7 +42,7 @@ export default function Rsvp({ invite }) {
   const celebrate = () => {
     const fire = (ratio, opts) =>
       confetti({ ...opts, origin: { y: 0.7 }, particleCount: Math.floor(180 * ratio),
-        colors: ['#d4af37', '#e2b4b1', '#f7dcda', '#8a4f4c', '#e8ce73'] });
+        colors: ['#b39257', '#dcc594', '#f3ebd8', '#8fa58a', '#3e5141'] });
     fire(0.25, { spread: 26, startVelocity: 55 });
     fire(0.35, { spread: 60 });
     fire(0.2, { spread: 100, decay: 0.91, scalar: 0.9 });
@@ -63,8 +63,7 @@ export default function Rsvp({ invite }) {
   return (
     <section className="rsvp section" id="rsvp-section" ref={root}>
       <div className="section__inner">
-        <p className="eyebrow">Will You Join Us?</p>
-        <h2 className="display">RSVP</h2>
+        <h2 className="display">Will you join us?</h2>
         <p className="rsvp__lead">
           Kindly respond so we can celebrate with you. Your reply opens WhatsApp,
           pre-filled — just press send.

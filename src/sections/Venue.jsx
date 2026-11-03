@@ -51,7 +51,6 @@ export default function Venue({ events }) {
   return (
     <section className="venue section" id="venue-section" ref={root}>
       <div className="section__inner">
-        <p className="eyebrow">Getting There</p>
         <h2 className="display">The Venues</h2>
 
         <div className="venue__cards">

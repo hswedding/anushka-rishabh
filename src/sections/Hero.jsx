@@ -2,7 +2,6 @@ import { Fragment, useRef } from 'react';
 import { gsap, useGSAP } from '../lib/gsap.js';
 import { wedding, host, config } from '../data.js';
 import { orderedCouple } from '../lib/config.js';
-import ScratchCard from '../components/ScratchCard.jsx';
 import Icon from '../components/Icons.jsx';
 import floralLeft from '../Images/decor/floral-corner-left.webp';
 import floralRight from '../Images/decor/floral-corner-right.webp';
@@ -21,10 +20,8 @@ const keepNames = (text) => text.split(' & ').map((name, i, all) => (
    starts or ends on a stray danda when the blessing wraps on a phone. */
 const glueDandas = (text) => text.replace(/(॥|।) /g, '$1\u00a0').replace(/ (॥|।)/g, '\u00a0$1');
 
-/* Scene 1 — Save the Date. Opens with the Ganesha invocation (Indian fusion),
-   the couple's names, and a scratch card hiding the wedding date. With the
-   card turned off in the builder the date card goes too — the countdown and
-   the films carry the date from there. */
+/* Scene 1 — the invitation card. Opens with the Ganesha invocation (Indian
+   fusion), who is inviting, the couple's names and the wedding date. */
 export default function Hero({ invite }) {
   const root = useRef(null);
   const family = host;
@@ -82,16 +79,10 @@ export default function Hero({ invite }) {
           )}
         </h1>
 
-        {invite.sections.scratch && (
-          <div className="hero__reveal">
-            <ScratchCard prompt={wedding.scratchPrompt}>
-              <div className="hero__date">
-                <span className="hero__date-day">{wedding.dayLabel}</span>
-                <span className="hero__date-main">{wedding.dateLabel}</span>
-              </div>
-            </ScratchCard>
-          </div>
-        )}
+        <p className="hero__date hero__reveal">
+          <span className="hero__date-day">{wedding.dayLabel}</span>
+          <span className="hero__date-main">{wedding.dateLabel}</span>
+        </p>
       </div>
 
       <button

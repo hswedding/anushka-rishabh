@@ -1,7 +1,6 @@
 /* Ivory & Sage theme for Anushka & Rishabh — kept in src/custom so base files
-   stay untouched. Loads the colour overrides and re-tints the falling petals
-   (which the scratch card's burst also uses). The rain reads its colours when
-   it starts, after this module has run. */
+   stay untouched. Loads the colour overrides and re-tints the falling petals.
+   The rain reads its colours when it starts, after this module has run. */
 import './theme.css';
 import { COLORS } from '../components/Petals.jsx';
 

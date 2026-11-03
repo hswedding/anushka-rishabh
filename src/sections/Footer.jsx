@@ -19,7 +19,9 @@ export default function Footer({ invite }) {
         <ul className="footer__contacts">
           {family.contacts.map((c) => (
             <li key={c.phone}>
-              <a href={`tel:${c.phone}`}>{c.name}</a>
+              <a className="btn btn--sm" href={`tel:${c.phone}`} aria-label={`Call ${c.name}`}>
+                <Icon name="phone" size={16} /> {c.name}
+              </a>
             </li>
           ))}
         </ul>

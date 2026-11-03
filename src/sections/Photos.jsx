@@ -97,7 +97,6 @@ export default function Photos() {
   return (
     <section className="photos section" id="photos-section" ref={root}>
       <div className="section__inner">
-        <p className="eyebrow">Together</p>
         <h2 className="display">Two of Us</h2>
       </div>
 

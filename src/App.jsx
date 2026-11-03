@@ -8,7 +8,6 @@ import useBackgroundMusic from './hooks/useBackgroundMusic.js';
 
 import Envelope from './sections/Envelope.jsx';
 import Hero from './sections/Hero.jsx';
-import Countdown from './sections/Countdown.jsx';
 import Photos from './sections/Photos.jsx';
 import EventFilms from './sections/EventFilms.jsx';
 import Venue from './sections/Venue.jsx';
@@ -71,7 +70,6 @@ export default function App({ invite, preview }) {
 
       <main className="page" id="main-content" aria-hidden={!opened}>
         <Hero invite={invite} />
-        {invite.sections.countdown && <Countdown />}
         {invite.sections.photos && <Photos />}
         <EventFilms events={events} side={invite.side} ready={opened} />
         <Venue events={events} />

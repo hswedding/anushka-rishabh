@@ -89,10 +89,8 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 
 | Field | Example | Notes |
 | --- | --- | --- |
-| `dateTimeISO` | `'2027-02-14T19:30:00'` | Main ceremony, local time, no timezone. Drives the countdown |
-| `dateLabel` | `'14 February 2027'` | Shown under the scratch card and in the countdown (links with the card off leave the hero's date card out) |
+| `dateLabel` | `'14 February 2027'` | Shown under the couple's names in the hero |
 | `dayLabel` | `'Sunday'` | Check it matches the date |
-| `scratchPrompt` | `'Scratch to reveal our wedding date'` | Engraved on the gold foil, split over two lines; keep it short (about 6 words) |
 
 ### `host` — the one family this site speaks for
 
@@ -174,7 +172,7 @@ stored in guest links: never rename one after links are out.
 ### `photos`
 
 The couple's photos, shown as an endless, slowly drifting reel of tilted prints
-right after the countdown (guests can drag or swipe it; it pauses on hover,
+right after the hero (guests can drag or swipe it; it pauses on hover,
 focus or its pause button).
 
 1. Shrink the originals (Windows, PowerShell):
@@ -194,9 +192,7 @@ hide it with `photos=0` (the builder has a Photos toggle).
 
 Leave as is unless a section is removed. Only `envelope` (the opening envelope
 film; off, the invitation opens straight away, the film never downloads and the
-music starts on the guest's first tap), `scratch` (the scratch card over the
-hero's date; off, the date card is left out), `countdown`, `photos` and `rsvp`
-can be turned off per link — in the builder, or with a preset's `hide`. Hero,
+music starts on the guest's first tap), `photos` and `rsvp` can be turned off per link — in the builder, or with a preset's `hide`. Hero,
 Venue & Travel and Footer always show.
 
 ### `config`
@@ -265,9 +261,9 @@ All of this is per couple and free to change:
   `npm i @fontsource/<name>` plus an `@import` per weight), font stacks in
   `tokens.css`, optional custom font block in `fonts.css`. Check licences for any
   paid font.
-- **Decor art:** `src/Images/` (florals, palace, feather, divider, wash,
+- **Decor art:** `src/Images/` (florals, palace, wash,
   Ganesha). Easiest is to replace files keeping the same names; otherwise edit
-  the imports in `Hero.jsx`, `Countdown.jsx`, `Footer.jsx`.
+  the imports in `Hero.jsx`, `Footer.jsx`.
 - **One-off sections or animations:** add components in `src/custom/` and
   list them in `src/custom/index.js` (`[{ id, Component }]`). They render after
   RSVP and before the footer, and receive the `invite` prop. Import GSAP from
@@ -292,7 +288,7 @@ Open and check each of:
 - `/<links.builder>`: the builder lists every function (no side switch); presets select the right ones; a copied link opens the same view as the live preview
 - RSVP opens WhatsApp to `host.rsvpWhatsApp`
 - Footer contacts, hashtag and sign-off
-- Countdown targets the right date
+- The hero shows the right wedding date
 
 Then the production build on Cloudflare's runtime:
 

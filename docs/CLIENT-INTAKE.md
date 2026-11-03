@@ -11,7 +11,7 @@ the bottom, then follow `docs/NEW-COUPLE-GUIDE.md`.
 ```text
 Hi! 😊 Congratulations once again! I'd love to make your family's digital wedding invitation.
 
-It's a small website your guests open on their phone: an opening envelope, the couple's names, a short film for each function, venue maps, a countdown, a reel of your photos, and RSVP straight to WhatsApp. You can choose which functions each guest sees and personalise it with their name. It stays off Google, so only people with the link can open it.
+It's a small website your guests open on their phone: an opening envelope, the couple's names, a short film for each function, venue maps, a reel of your photos, and RSVP straight to WhatsApp. You can choose which functions each guest sees and personalise it with their name. It stays off Google, so only people with the link can open it.
 
 To build it I need the details below. Send them whenever you can, in parts or as voice notes, whatever is easiest.
 
@@ -21,7 +21,7 @@ To build it I need the details below. Send them whenever you can, in parts or as
 • A wedding hashtag, if you have one
 
 *2. The main ceremony*
-• Date and time of the pheras / main ceremony (the countdown counts to this)
+• Date and time of the pheras / main ceremony
 
 *3. Your family's invitation*
 • Who is inviting, e.g. "Mrs. & Mr. Rajesh Mehta" or "The Mehta Family"

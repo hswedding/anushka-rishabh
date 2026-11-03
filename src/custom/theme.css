@@ -1,59 +1,187 @@
-/* Ivory & Sage — the colours the base hard-codes outside tokens.css (gold-dust
-   grain, the hero's bokeh, the films' gilt frame, the scratch-card glow),
-   re-tinted for Anushka & Rishabh. Loaded from src/custom/theme.js, after
-   components.css, so equal-specificity rules here win without touching base
-   files (keeps `git merge upstream/main` clean). */
+/* Ivory & Sage for Anushka & Rishabh — the couple's look, layered over the
+   base styles. Loaded from src/custom/theme.js, after components.css, so
+   equal-specificity rules here win without touching base files (keeps
+   `git merge upstream/main` clean).
+
+   The suite: an ivory card inside a mehrab (arched window) of gold foil, then
+   the films and the RSVP laid on sage silk — each band rises as a shallow
+   arch with a gold edge — and ivory arched place cards for the venues. */
 
 /* ivory paper with a whisper of sage grain */
-body {
-  background-image: radial-gradient(#46553b0a 1px, transparent 1.4px);
+body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
+
+/* ---- Shared ---------------------------------------------------------------- */
+.display { color: var(--gold-deep); }
+.btn { text-decoration: none; }
+.page .btn {
+  font-family: var(--font-body); font-weight: 600; font-size: 1.08rem; letter-spacing: 0.03em;
+}
+.btn--primary, .btn--gold {
+  background: var(--silk); color: var(--on-silk); border-color: transparent;
+  box-shadow: 0 10px 24px -12px #2f3f3299, inset 0 0 0 1px #dcc5944d;
+}
+.btn--primary:hover, .btn--gold:hover { background: var(--silk-deep); }
+
+/* ---- Hero: the card in its arched frame ------------------------------------ */
+.hero { background: radial-gradient(140% 80% at 50% -10%, var(--gold-wash), transparent 60%); }
+.decor--hero-wash { opacity: 0.3; }
+/* Two foil hairlines 7px apart. z-index -2 puts the frame under the corner
+   florals (-1), so they tuck over it like flowers on a printed card. */
+.hero__inner {
+  position: relative;
+  width: min(100%, 420px);
+  padding: clamp(92px, 25vw, 124px) var(--sp-5) var(--sp-7);
+  gap: var(--sp-3);
+}
+.hero__inner::before,
+.hero__inner::after {
+  content: ""; position: absolute; z-index: -2; pointer-events: none;
+  border: 1px solid var(--gold);
+  border-radius: 999px 999px 4px 4px;
+}
+.hero__inner::before {
+  inset: 0;
+  background: radial-gradient(90% 55% at 50% 20%, var(--white), #fffdf800 75%);
+}
+.hero__inner::after { inset: 7px; border-color: var(--gold-light); }
+
+/* "॥ शुभ विवाह ॥" — the card's heading, in gold */
+.hero__invocation { font-size: clamp(1.2rem, 5.2vw, 1.4rem); color: var(--gold-ink); }
+.hero__guest { font-size: 1.9rem; color: var(--gold-deep); }
+.hero__hosts {
+  font-weight: 600; font-size: clamp(1.18rem, 5vw, 1.38rem); line-height: 1.3;
+  color: var(--text-dark); letter-spacing: 0.01em;
+}
+.hero__line { font-size: clamp(1.12rem, 4.7vw, 1.28rem); }
+.hero__names { font-size: clamp(3.2rem, 15.5vw, 5rem); line-height: 1.05; }
+.hero__amp { font-size: 0.6em; margin: var(--sp-3) 0 var(--sp-1); }
+.hero__parents {
+  font-weight: 600; font-size: clamp(1.04rem, 4.4vw, 1.16rem);
+  color: var(--text-mid); margin-top: var(--sp-1);
+}
+/* the date, set off by a foil rule with a diamond on it */
+.hero__date { position: relative; margin-top: var(--sp-4); padding-top: var(--sp-5); }
+.hero__date::before {
+  content: ""; position: absolute; top: 4px; left: 50%; translate: -50% 0;
+  width: 150px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.hero__date::after {
+  content: ""; position: absolute; top: 0; left: 50%; translate: -50% 0; rotate: 45deg;
+  width: 8px; height: 8px; background: var(--cream); border: 1px solid var(--gold);
+}
+.hero__date-day { color: var(--gold-ink); font-size: 1.15rem; }
+.hero__date-main {
+  font-weight: 600; font-size: clamp(1.5rem, 6.4vw, 1.75rem);
+  letter-spacing: 0.04em; color: var(--gold-deep);
+}
+.hero__scroll {
+  font-family: var(--font-body); font-style: italic; font-size: 1.05rem;
+  letter-spacing: 0.02em; text-transform: none; color: var(--gold-strong);
 }
 
-/* hero: soft sage + champagne bokeh instead of marigold and blush */
-.hero {
+/* ---- Sage silk bands (films, RSVP) ----------------------------------------- */
+.film, .rsvp {
   background:
-    radial-gradient(circle 90px at 12% 18%, #b7c3a62e, transparent 70%),
-    radial-gradient(circle 60px at 88% 12%, #d9c79b33, transparent 70%),
-    radial-gradient(circle 70px at 84% 76%, #b7c3a626, transparent 70%),
-    radial-gradient(circle 40px at 8% 70%, #d9c79b26, transparent 70%),
-    radial-gradient(140% 80% at 50% -10%, var(--gold-wash), transparent 60%);
+    radial-gradient(75% 45% at 50% 50%, var(--silk-glow), transparent 75%),
+    var(--silk);
+  color: var(--on-silk);
 }
-
-/* "॥ शुभ विवाह ॥" heading — a touch larger and airier than an invocation */
-.hero__invocation {
-  font-size: clamp(1.15rem, 5vw, 1.35rem);
-  color: var(--gold-strong);
+/* where a band begins it rises as a shallow arch, edged in gold */
+:not(.film) + .film, .rsvp {
+  border-radius: 50% 50% 0 0 / clamp(44px, 10vw, 96px) clamp(44px, 10vw, 96px) 0 0;
+  box-shadow: inset 0 1px 0 #dcc594a6;
+  padding-top: calc(var(--sp-7) + var(--sp-6));
 }
+.film .display, .rsvp .display { color: var(--gold-pale); }
 
-/* the film frame: sage leaf with a champagne hairline inside */
+/* ---- Films ------------------------------------------------------------------ */
+.film + .film::before {
+  content: ""; display: block; width: 88px; height: 1px; margin: 0 auto var(--sp-7);
+  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+}
+.film__deva { color: var(--gold-light); font-size: 1.15rem; }
+.film__date { color: var(--on-silk-mid); }
+/* a thin gilt edge around the film, lifted off the silk */
 .film__frame {
-  background:
-    linear-gradient(160deg, #e3e9da, #a9b998 30%, #74876a 56%, #c3cfb4 80%, #e3e9da);
+  padding: 6px; border-radius: 26px;
+  background: linear-gradient(160deg, #f3e6c4, #c4a466 30%, #8f7140 55%, #e3cf9f 80%, #f3e6c4);
+  box-shadow: 0 40px 70px -30px #0b130dcc;
 }
-.film__frame::before { border-color: #f2ecdccc; }
-.film__meta { color: var(--gold-strong); }
+.film__frame::before { inset: 3px; border-radius: 23px; border-color: #fff8e180; }
+.film__video { border-radius: 20px; }
+.film__sheen { inset: 6px; border-radius: 20px; }
+.film__meta {
+  font-family: var(--font-body); font-size: 1.12rem; color: var(--gold-light);
+}
+.film__meta a { color: var(--on-silk); text-decoration-color: var(--gold); }
 
-/* scratch card: soften the marigold foil to champagne, and let the reveal
-   bloom in champagne too */
-.scratch__canvas { filter: saturate(0.5) brightness(1.05); }
-@keyframes scratch-bloom {
-  30% { box-shadow: 0 0 0 3px var(--gold-light), 0 0 52px 16px #d9c79bcc; }
+/* ---- Venues: arched place cards --------------------------------------------- */
+.venue__card {
+  background: var(--white);
+  border: 1px solid var(--gold-light);
+  border-radius: 50% 50% 10px 10px / 120px 120px 10px 10px;
+  box-shadow: inset 0 0 0 6px var(--white), inset 0 0 0 7px #e9dcbc,
+    0 24px 48px -28px #3e514166;
+  padding-top: 76px;
+}
+.venue__fn { font-size: clamp(1.7rem, 7vw, 2rem); }
+.venue__when { font-size: 1.12rem; }
+.venue__name { font-size: 1.2rem; }
+.venue__area { font-size: 1.05rem; }
+.venue__map {
+  border: 1px solid var(--gold-light); border-radius: 10px; box-shadow: none;
 }
 
-/* the hashtag reads in sage (champagne is too pale for thin script) */
-.footer__hashtag { color: var(--gold-strong); }
+/* ---- RSVP: the reply card on silk ------------------------------------------- */
+.rsvp { padding-bottom: var(--sp-8); }
+.rsvp__lead { color: var(--on-silk-mid); font-size: 1.1rem; }
+.rsvp__panel {
+  border: 1px solid var(--gold-light); border-radius: 14px;
+  box-shadow: inset 0 0 0 6px var(--white), inset 0 0 0 7px #e9dcbc,
+    0 40px 70px -30px #0b130dcc;
+}
+.field__label { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; }
+.rsvp__success { color: var(--text-dark); }
 
+/* ---- Footer ----------------------------------------------------------------- */
+.footer__crest { color: var(--gold); }
+.footer__sign { color: var(--text-mid); }
+.footer__contacts .btn {
+  min-height: 44px; padding: 0 18px; font-family: var(--font-body);
+  font-size: 1.05rem; color: var(--gold-deep); border-color: var(--gold-light);
+}
+.footer__hashtag { font-size: 2rem; color: var(--gold-strong); }
 /* Hindi lines in the footer: Devanagari type, never tracked or upper-cased
    (tracking breaks the shirorekha) */
 .footer__closing dt,
 .footer__closing dd { font-family: var(--font-deva); }
 .footer__closing dt {
   letter-spacing: 0; text-transform: none; font-size: 1rem;
-  color: var(--gold-strong);
+  color: var(--gold-ink);
 }
-.footer__closing dd { font-size: 1.15rem; }
+.footer__closing dd { font-size: 1.2rem; }
+
+/* ---- Envelope, music toggle -------------------------------------------------- */
+.envelope__cta {
+  font-family: var(--font-display); font-size: 1.85rem; color: var(--gold-pale);
+  background: #2f3f32d9; border-color: #dcc59499; text-shadow: none;
+}
+.envelope__loading, .envelope__skip {
+  background: #2f3f32b3; color: var(--gold-pale); border-color: #dcc59466;
+  font-family: var(--font-body); font-style: italic; font-size: 1rem;
+  text-transform: none; letter-spacing: 0.02em;
+}
+.envelope__skip:hover { background: #2f3f32e6; }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 #dcc59466; }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 12px #dcc59400; }
+}
+.music-toggle {
+  background: var(--white); border-color: var(--gold-light); color: var(--gold-deep);
+}
 
 /* builder: sage nudge and shadows */
-@keyframes nudge { 50% { box-shadow: 0 0 0 5px #5e6f5033; } }
-.builder__share { box-shadow: 0 -8px 24px #46553b0f; }
-.photos__card { box-shadow: 0 1px 2px #46553b14, var(--shadow-md); }
+@keyframes nudge { 50% { box-shadow: 0 0 0 5px #3e514133; } }
+.builder__share { box-shadow: 0 -8px 24px #3e51410f; }
+.photos__card { box-shadow: 0 1px 2px #3e514114, var(--shadow-md); }

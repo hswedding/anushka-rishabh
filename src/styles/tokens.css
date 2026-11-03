@@ -1,54 +1,60 @@
 /* Design tokens — Anushka & Rishabh (Jain family): IVORY & SAGE, the colours
-   the family chose. Ivory paper, a sage-green family for headings, labels and
-   buttons, and a quiet champagne gold kept only for ornament (dividers, the
-   "&", the film frames' gilt edge) so it echoes the gold in the floral art.
+   the family chose, set like a printed card suite laid on sage silk. Ivory
+   paper for the card scenes, a deep "silk" sage for the bands the films and
+   the RSVP sit on, and antique gold kept to foil hairlines and the "&".
 
    The variable names are the base's: the `--gold-*` family is the site-wide
    accent, so its text tones (strong/deep), surfaces and borders are sage here,
-   while `--gold` / `--gold-light` / `--gold-pale` stay champagne for ornament.
-   Text contrast on ivory: --gold-strong 5.1:1, --gold-deep 7.5:1,
-   --text-light 4.6:1; white on the --rani button 5.4:1.
+   while `--gold` / `--gold-light` / `--gold-pale` are the gold foil.
+   Text contrast on ivory: --gold-strong 5.3:1, --gold-deep 8.1:1,
+   --gold-ink 4.7:1, --text-light 4.7:1. On --silk: --on-silk 7.4:1,
+   --on-silk-mid 5.5:1, --gold-light 5.1:1.
    Plus a spacing + z-index scale (ui-ux-pro-max: 4/8pt rhythm, layered z-index). */
 :root {
-  /* base — ivory paper */
-  --cream: #faf7f0; --cream-2: #f4efe3; --cream-3: #ebe5d5; --white: #fff;
+  /* base — ivory paper (cards sit a shade lighter than the page) */
+  --cream: #fbf8f1; --cream-2: #f5f0e4; --cream-3: #ece6d6; --white: #fffdf8;
+
+  /* sage silk — the dark bands under the films and the RSVP */
+  --silk: #3e5141; --silk-deep: #2f3f32; --silk-glow: #587259;
+  --on-silk: #f4eedf; --on-silk-mid: #c9d3c2;
 
   /* accent family (sage), named `gold-*` in the base */
-  --gold-wash: #f5f4ea;      /* palest sage-ivory tint (section washes) */
-  --gold-soft: #e5ebdc;      /* light sage surface (icon chips, focus halo) */
-  --gold-mid: #b7c3a6;       /* soft sage (ornament, revealed scratch edge) */
-  --gold-border: #d6ddc9;    /* hairline sage borders */
-  --gold-strong: #5e6f50;    /* small-caps labels — 5.1:1 on ivory */
-  --gold-deep: #46553b;      /* headings / links — 7.5:1 on ivory */
-  /* champagne — ornament only (dividers, ampersand, frame gilt, focus ring) */
-  --gold: #b39a64;
-  --gold-light: #d9c79b; --gold-pale: #f2ecdc;
+  --gold-wash: #f4f3e8;      /* palest sage-ivory tint (section washes) */
+  --gold-soft: #e3eadb;      /* light sage surface (icon chips, focus halo) */
+  --gold-mid: #a9ba9e;       /* soft sage (ornament) */
+  --gold-border: #d5ddc9;    /* hairline sage borders */
+  --gold-strong: #5a6d52;    /* small labels — 5.3:1 on ivory */
+  --gold-deep: #3e5141;      /* headings / links — 8.1:1 on ivory */
+  /* antique gold — foil only (frames, rules, ampersand, focus ring) */
+  --gold: #b39257;
+  --gold-light: #dcc594; --gold-pale: #f3ebd8;
+  --gold-ink: #8a6a32;       /* gold you can read — 4.7:1 on ivory */
 
-  /* primary buttons and chosen chips — deep sage (the base's rani slot) */
-  --rani: #5e6f50; --rani-deep: #46553b; --rani-text: #4a5a3f;
+  /* primary buttons and chosen chips — the silk sage (the base's rani slot) */
+  --rani: #4a604c; --rani-deep: #3e5141; --rani-text: #3e5141;
   --blush: #d9c9a8; --blush-pale: #f6f1e6;
 
   /* foliage (matches the sage leaves in the floral corners) */
-  --leaf: #8fa37e; --leaf-deep: #5c6e4f; --leaf-pale: #eef1e7;
+  --leaf: #8fa58a; --leaf-deep: #5a6d52; --leaf-pale: #eef1e7;
 
-  /* type — a green-leaning charcoal reads softer than black on ivory */
-  --text-dark: #2f3329; --text-mid: #565b4d; --text-light: #6e7364; --border: #e7e4d6;
+  /* type — a green-leaning ink reads softer than black on ivory */
+  --text-dark: #26302a; --text-mid: #4f5a50; --text-light: #6a7366; --border: #e6e1d2;
 
-  /* shadows — soft olive */
-  --shadow: 0 24px 64px -12px #46553b1f;
-  --shadow-sm: 0 8px 24px #46553b0f;
-  --shadow-md: 0 16px 48px -8px #46553b24;
+  /* shadows — soft sage */
+  --shadow: 0 24px 64px -12px #3e51411f;
+  --shadow-sm: 0 8px 24px #3e51410f;
+  --shadow-md: 0 16px 48px -8px #3e514124;
 
   /* dark surface slot (unused by the film envelope; kept for the base) */
-  --maroon: #46553b; --maroon-deep: #2f3a28; --maroon-light: #5e6f50;
-  --wax: #f4efe3; --wax-shadow: #c9bfa4;
+  --maroon: #3e5141; --maroon-deep: #2f3f32; --maroon-light: #5a6d52;
+  --wax: #f5f0e4; --wax-shadow: #c9bfa4;
 
-  /* fonts */
-  --font-display: "Distrela", "Great Vibes", "Italianno", cursive;
+  /* fonts — one script (it matches the films' lettering) and one serif */
+  --font-display: "Distrela", "Great Vibes", cursive;
   --font-body: "Cormorant Garamond", Georgia, serif;
-  --font-serif: "Playfair Display", Georgia, serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Tenor Sans", sans-serif;
-  --font-script: "Italianno", cursive;
+  --font-script: "Great Vibes", cursive;
   --font-deva: "Tiro Devanagari Sanskrit", "Cormorant Garamond", serif;
   --stable-vh: 100svh;
 

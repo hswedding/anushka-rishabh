@@ -57,8 +57,9 @@ function Film({ event, src: preloaded, ready, onStart }) {
   return (
     <section className="film section" id={`film-${event.id}`} ref={wrap}>
       <div className="section__inner film__inner">
-        <p className="eyebrow film__reveal">{event.dateLabel} · {event.dayLabel}</p>
         <h2 className="display film__reveal">{event.name}</h2>
+        {event.nameDeva && <p className="film__deva film__reveal" lang="hi">{event.nameDeva}</p>}
+        <p className="film__date film__reveal">{event.dayLabel}, {event.dateLabel}</p>
 
         <div className="film__frame film__reveal" data-state={state} aria-busy={state === 'loading'}>
           <video
