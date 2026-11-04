@@ -6,15 +6,19 @@
  *  The Sheets calls and the tab's look are in ./sheets.js.
  *
  *    POST /api/rsvp    { name, phone, party, arrival, guestName, functions }
- *                      → one row (functions: the event ids on their link)
+ *                      → one row (functions: the event ids on their link,
+ *                      listed under "Invited to" and ✓ in each one's column)
  *    GET  /api/sheet   the saved sheet link, the account's email (X-Builder)
  *    POST /api/sheet   { url } → set up the RSVPs tab, save   (X-Builder header)
  * ========================================================================== */
 import { config, events } from '../src/data.js';
-import { appendRow, setupTab, sheetIdOf, sheetUrl, serviceEmail } from './sheets.js';
+import { appendRow, layoutOf, setupTab, sheetIdOf, sheetUrl, serviceEmail } from './sheets.js';
 
 // Columns A–F match the rows written before the tab was formatted, so a
-// sheet that already holds RSVPs keeps lining up.
+// sheet that already holds RSVPs keeps lining up. Then one ✓ column per
+// function, its header totalling the Guests of its ✓ rows — rename, add or
+// remove a function in data.js only before RSVPs come in, or the old rows'
+// ✓s sit under the wrong headers.
 const COLUMNS = [
   { header: 'Received', kind: 'datetime', width: 170 },
   { header: 'Name', kind: 'text', width: 180 },
@@ -23,7 +27,9 @@ const COLUMNS = [
   { header: 'Arriving', kind: 'date', width: 140 },
   { header: 'Name on their link', kind: 'text', width: 170 },
   { header: 'Invited to', kind: 'list', width: 300 },
+  ...events.map((e) => ({ header: e.name, kind: 'check', width: 130, tally: 'Guests' })),
 ];
+const LAYOUT = layoutOf(COLUMNS);
 const COLOURS = { header: '#3e5141', band: '#f4f3e8' }; // tokens.css --gold-deep / --gold-wash
 
 export async function handleApi(request, env) {
@@ -53,31 +59,37 @@ async function rsvp(request, env) {
   const row = [
     new Date(), name, phone, Math.min(Math.max(Number(a.party) || 1, 1), 20),
     cell(a.arrival, 10), cell(a.guestName), functions,
+    ...events.map((e) => (asked.has(e.id) ? '✓' : '')),
   ];
 
-  const tab = await env.SETTINGS.get('sheetTab');
+  const tab = await savedTab(env);
   try {
-    if (tab == null) throw new Error('no tab yet');
-    await appendRow(env.GOOGLE_SA_KEY, id, Number(tab), COLUMNS, row);
+    if (tab?.layout !== LAYOUT) throw new Error('tab not set up for these columns');
+    await appendRow(env.GOOGLE_SA_KEY, id, tab.gid, COLUMNS, row);
   } catch {
-    // First RSVP since the sheet was saved without a tab, or the tab was
-    // deleted: (re)make it, then write.
+    // First RSVP since the sheet was saved without a tab, the functions in
+    // data.js changed, or the tab was deleted: (re)make it, then write.
     await appendRow(env.GOOGLE_SA_KEY, id, await setup(env, id), COLUMNS, row);
   }
   return json({ ok: true });
 }
 
+/** { gid, layout } of the RSVPs tab as last set up, or null. */
+async function savedTab(env) {
+  try { return JSON.parse(await env.SETTINGS.get('sheetTab')); } catch { return null; }
+}
+
 async function setup(env, id) {
   const gid = await setupTab(env.GOOGLE_SA_KEY, id, COLUMNS, COLOURS);
-  await env.SETTINGS.put('sheetTab', String(gid));
+  await env.SETTINGS.put('sheetTab', JSON.stringify({ gid, layout: LAYOUT }));
   return gid;
 }
 
 async function sheet(request, env) {
   if (request.headers.get('X-Builder') !== config.links.builder) return json({ error: 'Forbidden' }, 403);
   if (request.method === 'GET') {
-    const [id, tab] = await Promise.all([env.SETTINGS.get('sheet'), env.SETTINGS.get('sheetTab')]);
-    return json({ url: sheetUrl(id, tab), email: serviceEmail(env.GOOGLE_SA_KEY) });
+    const [id, tab] = await Promise.all([env.SETTINGS.get('sheet'), savedTab(env)]);
+    return json({ url: sheetUrl(id, tab?.gid), email: serviceEmail(env.GOOGLE_SA_KEY) });
   }
 
   const { url } = await request.json().catch(() => ({}));

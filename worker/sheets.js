@@ -5,9 +5,12 @@
  *  (here) and in a Vercel function (Wedding-Invitation keeps it as
  *  api/_sheets.js) — keep the copies in step.
  *
- *  A column is { header, kind, width }; `kind` picks how its cells are stored
- *  and shown (KINDS). Rows go in with appendCells as typed values — a guest's
- *  "=…" is a string, never a formula, and dates are real dates that sort.
+ *  A column is { header, kind, width, tally }; `kind` picks how its cells are
+ *  stored and shown (KINDS). A `tally` column (a function's ✓ column) names
+ *  the column it adds up: its header shows the running total under the name,
+ *  e.g. "Haldi / 42 coming" = the Guests of every ✓ row. Rows go in with
+ *  appendCells as typed values — a guest's "=…" is a string, never a
+ *  formula, and dates are real dates that sort.
  * ========================================================================== */
 
 export const TAB = 'RSVPs';
@@ -21,6 +24,7 @@ export const sheetUrl = (id, gid) =>
 const KINDS = {
   text: { wrapStrategy: 'WRAP' },
   list: { wrapStrategy: 'WRAP' },
+  check: { horizontalAlignment: 'CENTER', textFormat: { bold: true } },
   number: { horizontalAlignment: 'CENTER' },
   datetime: { numberFormat: { type: 'DATE_TIME', pattern: 'd mmm yyyy, h:mm am/pm' } },
   date: { numberFormat: { type: 'DATE', pattern: 'ddd, d mmm yyyy' } },
@@ -55,10 +59,32 @@ export function appendRow(saKey, id, gid, columns, values) {
   });
 }
 
-/** The RSVPs tab's id, or null when the sheet has none yet. */
-export async function findTab(saKey, id) {
+/** The column headers, in order — when they change, the tab needs setting up again. */
+export const layoutOf = (columns) => columns.map((c) => c.header).join('|');
+
+/** The RSVPs tab's id when its header row already matches `columns`, else
+ *  null (no tab yet, or the functions in data.js changed since). */
+export async function tabFor(saKey, id, columns) {
   const meta = await sheets(saKey, `${id}?fields=${encodeURIComponent('sheets.properties(sheetId,title)')}`);
-  return meta.sheets?.find((s) => s.properties.title === TAB)?.properties.sheetId ?? null;
+  const gid = meta.sheets?.find((s) => s.properties.title === TAB)?.properties.sheetId;
+  if (gid == null) return null;
+  const top = (await sheets(saKey, `${id}/values/${encodeURIComponent(`'${TAB}'!1:1`)}`)).values?.[0] || [];
+  // A tally header reads "Haldi\n42 coming": compare the name line only.
+  return columns.every((c, i) => String(top[i] ?? '').split('\n')[0] === c.header) ? gid : null;
+}
+
+/** Spreadsheet column letter for a 0-based index: 0 → A, 26 → AA. */
+const letter = (i) => (i >= 26 ? letter(Math.floor(i / 26) - 1) : '') + String.fromCharCode(65 + (i % 26));
+
+/** A header cell: the name, or for a tally column the name over its total. */
+function headerValue(c, columns) {
+  const sum = columns.findIndex((x) => x.header === c.tally);
+  if (sum < 0) return { stringValue: c.header };
+  const own = letter(columns.indexOf(c));
+  const by = letter(sum);
+  return {
+    formulaValue: `="${c.header.replace(/"/g, '""')}"&CHAR(10)&SUMIF(${own}$2:${own},"✓",${by}$2:${by})&" coming"`,
+  };
 }
 
 /**
@@ -96,7 +122,7 @@ export async function setupTab(saKey, id, columns, { header = '#3e5141', band = 
     { updateCells: {
         start: { sheetId: gid, rowIndex: 0, columnIndex: 0 },
         rows: [{ values: columns.map((c) => ({
-          userEnteredValue: { stringValue: c.header },
+          userEnteredValue: headerValue(c, columns),
           userEnteredFormat: {
             backgroundColor: rgb(header),
             textFormat: { bold: true, fontSize: 11, foregroundColor: rgb('#ffffff') },
@@ -107,7 +133,7 @@ export async function setupTab(saKey, id, columns, { header = '#3e5141', band = 
     } },
     { updateDimensionProperties: {
         range: { sheetId: gid, dimension: 'ROWS', startIndex: 0, endIndex: 1 },
-        properties: { pixelSize: 36 }, fields: 'pixelSize',
+        properties: { pixelSize: columns.some((c) => c.tally) ? 56 : 36 }, fields: 'pixelSize',
     } },
     ...columns.map((c, i) => ({ updateDimensionProperties: {
         range: { sheetId: gid, dimension: 'COLUMNS', startIndex: i, endIndex: i + 1 },

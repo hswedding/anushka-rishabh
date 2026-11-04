@@ -143,11 +143,16 @@ The RSVP form posts to `/api/rsvp` on the Worker (`worker/rsvp.js`), which
 appends one row to the **RSVPs** tab of the Google Sheet the family saved in
 the builder:
 
-| Received | Name | Phone | Guests | Arriving | Name on their link | Invited to |
-|---|---|---|---|---|---|---|
-| 4 Nov 2026, 7:15 pm | Asha Mehta | +91 98… | 3 | Fri, 11 Dec 2026 | Asha ji | Haldi, The Wedding |
+| Received | Name | Phone | Guests | Arriving | Name on their link | Invited to | Engagement & Sangeet<br>12 coming | Haldi<br>30 coming | The Wedding<br>41 coming |
+|---|---|---|---|---|---|---|---|---|---|
+| 4 Nov 2026, 7:15 pm | Asha Mehta | +91 98… | 3 | Fri, 11 Dec 2026 | Asha ji | Haldi, The Wedding | | ✓ | ✓ |
 
-*Invited to* lists the functions on the guest's own link. The tab is set up
+*Invited to* lists the functions on the guest's own link, and each function
+has its own ✓ column whose header keeps a running total of the *Guests* on
+its ✓ rows — the head count per function (filter a column on ✓ for the
+names). The function columns come from `events` in `src/data.js`: add, rename
+or remove a function before RSVPs arrive, since old rows keep their ✓s where
+they were (the tab's header row is redone on the next RSVP). The tab is set up
 by `worker/sheets.js`: a bold coloured header row that stays put while
 scrolling, sized columns, alternating row colours and a filter on every
 column; times and dates are real dates (sortable), and a guest's text is
