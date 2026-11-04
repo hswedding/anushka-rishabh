@@ -1,6 +1,7 @@
 import { lazy, Suspense, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { gsap, useGSAP } from '../lib/gsap.js';
+import { selectedEvents } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
 
 // The phone field's library and country data are a third of the page's JS, so
@@ -54,7 +55,12 @@ export default function Rsvp({ invite }) {
       const res = await fetch('/api/rsvp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, guestName: invite.guestName }),
+        // The functions on this guest's link, for the sheet's "Invited to".
+        body: JSON.stringify({
+          ...form,
+          guestName: invite.guestName,
+          functions: selectedEvents(invite.eventIds).map((e) => e.id),
+        }),
       });
       if (!res.ok) throw new Error(res.status);
       setStatus('success');

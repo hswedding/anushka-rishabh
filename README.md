@@ -140,10 +140,22 @@ token from the snippet into `site.cloudflareAnalyticsToken` in `src/data.js`.
 ### RSVP sheet
 
 The RSVP form posts to `/api/rsvp` on the Worker (`worker/rsvp.js`), which
-appends one row — received time, name, phone, guests, arrival, the guest name
-on their link — to the Google Sheet the family saved in the builder. The
-sheet id lives in the `SETTINGS` KV namespace (created by the first
-`wrangler deploy`). A Google service account writes the rows:
+appends one row to the **RSVPs** tab of the Google Sheet the family saved in
+the builder:
+
+| Received | Name | Phone | Guests | Arriving | Name on their link | Invited to |
+|---|---|---|---|---|---|---|
+| 4 Nov 2026, 7:15 pm | Asha Mehta | +91 98… | 3 | Fri, 11 Dec 2026 | Asha ji | Haldi, The Wedding |
+
+*Invited to* lists the functions on the guest's own link. The tab is set up
+by `worker/sheets.js`: a bold coloured header row that stays put while
+scrolling, sized columns, alternating row colours and a filter on every
+column; times and dates are real dates (sortable), and a guest's text is
+always stored as text. It takes over the first tab if that is empty or already
+holds RSVPs, otherwise adds the tab in front, and saving the sheet again in
+the builder re-applies the look. The sheet id and the tab's id live in the
+`SETTINGS` KV namespace (created by the first `wrangler deploy`). A Google
+service account writes the rows:
 
 1. **Once for the studio:** Google Cloud console → create a project → enable
    the **Google Sheets API** → IAM → **Service accounts** → create one → Keys
@@ -155,8 +167,8 @@ sheet id lives in the `SETTINGS` KV namespace (created by the first
 3. **The family:** makes a Google Sheet, Share → General access → **Anyone
    with the link → Editor** (or shares it with the service account's
    `client_email`), and pastes its link into the builder's **RSVP Google
-   Sheet** → Save. Saving checks the sheet is editable and writes a header
-   row on an empty sheet. RSVPs fail with a "try again" until a sheet is saved.
+   Sheet** → Save. Saving checks the sheet is editable and sets up the
+   RSVPs tab. RSVPs fail with a "try again" until a sheet is saved.
 
 `/api/*` doesn't exist under `npm run dev` — test the form with `npm run cf:dev`.
 
