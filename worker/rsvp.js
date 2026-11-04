@@ -1,18 +1,36 @@
 /* ============================================================================
  *  RSVP → Google Sheet. The family pastes a sheet link in the builder (shared
- *  "Anyone with the link → Editor"); it's kept in KV and every RSVP is
- *  appended to it as one row. A Google service account does the writing: its
- *  JSON key is the GOOGLE_SA_KEY secret (README "RSVP sheet").
+ *  as Editor with the service account); it's kept in KV and every RSVP is
+ *  appended to its "RSVPs" tab as one row. A Google service account does the
+ *  writing: its JSON key is the GOOGLE_SA_KEY secret (README "RSVP sheet").
+ *  The Sheets calls and the tab's look are in ./sheets.js.
  *
- *    POST /api/rsvp    { name, phone, party, arrival, guestName } → one row
+ *    POST /api/rsvp    { name, phone, party, arrival, guestName, functions }
+ *                      → one row (functions: the event ids on their link,
+ *                      listed under "Invited to" and ✓ in each one's column)
  *    GET  /api/sheet   the saved sheet link, the account's email (X-Builder)
- *    POST /api/sheet   { url } → check access, save    (X-Builder header)
+ *    POST /api/sheet   { url } → set up the RSVPs tab, save   (X-Builder header)
  * ========================================================================== */
-import { config } from '../src/data.js';
+import { config, events } from '../src/data.js';
+import { appendRow, layoutOf, setupTab, sheetIdOf, sheetUrl, serviceEmail } from './sheets.js';
 
-const HEADER = ['Received', 'Name', 'Phone', 'Guests', 'Arrival', 'Invited as'];
-const SHEET_RE = /\/spreadsheets\/d\/([\w-]{20,})/;
-const sheetUrl = (id) => (id ? `https://docs.google.com/spreadsheets/d/${id}/edit` : '');
+// Columns A–F match the rows written before the tab was formatted, so a
+// sheet that already holds RSVPs keeps lining up. Then one ✓ column per
+// function, its header totalling the Guests of its ✓ rows — rename, add or
+// remove a function in data.js only before RSVPs come in, or the old rows'
+// ✓s sit under the wrong headers.
+const COLUMNS = [
+  { header: 'Received', kind: 'datetime', width: 170 },
+  { header: 'Name', kind: 'text', width: 180 },
+  { header: 'Phone', kind: 'text', width: 150 },
+  { header: 'Guests', kind: 'number', width: 80 },
+  { header: 'Arriving', kind: 'date', width: 140 },
+  { header: 'Name on their link', kind: 'text', width: 170 },
+  { header: 'Invited to', kind: 'list', width: 300 },
+  ...events.map((e) => ({ header: e.name, kind: 'check', width: 130, tally: 'Guests' })),
+];
+const LAYOUT = layoutOf(COLUMNS);
+const COLOURS = { header: '#3e5141', band: '#f4f3e8' }; // tokens.css --gold-deep / --gold-wash
 
 export async function handleApi(request, env) {
   const { pathname } = new URL(request.url);
@@ -33,90 +51,55 @@ async function rsvp(request, env) {
   const name = cell(a.name);
   const phone = cell(a.phone, 20);
   if (!name || !phone) return json({ error: 'Name and phone are required' }, 400);
+  // Only real functions, in the order of the day, by their names.
+  const asked = new Set(Array.isArray(a.functions) ? a.functions : []);
+  const functions = events.filter((e) => asked.has(e.id)).map((e) => e.name).join(', ');
   // ponytail: anyone can POST here (as anyone could send the old WhatsApp
   // RSVP); add a Turnstile check if a sheet ever fills with spam.
   const row = [
-    new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-    name, phone, Math.min(Number(a.party) || 1, 20), cell(a.arrival, 10), cell(a.guestName),
+    new Date(), name, phone, Math.min(Math.max(Number(a.party) || 1, 1), 20),
+    cell(a.arrival, 10), cell(a.guestName), functions,
+    ...events.map((e) => (asked.has(e.id) ? '✓' : '')),
   ];
-  // RAW, so a guest's "=…" lands as text, never as a formula.
-  await sheets(env, `${id}/values/A1:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, 'POST', { values: [row] });
+
+  const tab = await savedTab(env);
+  try {
+    if (tab?.layout !== LAYOUT) throw new Error('tab not set up for these columns');
+    await appendRow(env.GOOGLE_SA_KEY, id, tab.gid, COLUMNS, row);
+  } catch {
+    // First RSVP since the sheet was saved without a tab, the functions in
+    // data.js changed, or the tab was deleted: (re)make it, then write.
+    await appendRow(env.GOOGLE_SA_KEY, id, await setup(env, id), COLUMNS, row);
+  }
   return json({ ok: true });
+}
+
+/** { gid, layout } of the RSVPs tab as last set up, or null. */
+async function savedTab(env) {
+  try { return JSON.parse(await env.SETTINGS.get('sheetTab')); } catch { return null; }
+}
+
+async function setup(env, id) {
+  const gid = await setupTab(env.GOOGLE_SA_KEY, id, COLUMNS, COLOURS);
+  await env.SETTINGS.put('sheetTab', JSON.stringify({ gid, layout: LAYOUT }));
+  return gid;
 }
 
 async function sheet(request, env) {
   if (request.headers.get('X-Builder') !== config.links.builder) return json({ error: 'Forbidden' }, 403);
   if (request.method === 'GET') {
-    // The service account's address, for the builder's "share it with …" hint.
-    let email = '';
-    try { email = JSON.parse(env.GOOGLE_SA_KEY).client_email || ''; } catch { /* not set yet */ }
-    return json({ url: sheetUrl(await env.SETTINGS.get('sheet')), email });
+    const [id, tab] = await Promise.all([env.SETTINGS.get('sheet'), savedTab(env)]);
+    return json({ url: sheetUrl(id, tab?.gid), email: serviceEmail(env.GOOGLE_SA_KEY) });
   }
 
   const { url } = await request.json().catch(() => ({}));
-  const id = SHEET_RE.exec(url || '')?.[1];
+  const id = sheetIdOf(url);
   if (!id) return json({ error: 'That isn’t a Google Sheets link.' }, 400);
-  // Write row 1 back as it is (or the header, on an empty sheet): proves the
-  // sheet is editable before any guest's RSVP depends on it.
-  const top = await sheets(env, `${id}/values/A1:F1?valueRenderOption=FORMULA`);
-  await sheets(env, `${id}/values/A1:F1?valueInputOption=USER_ENTERED`, 'PUT', { values: top.values ?? [HEADER] });
+  // Setting up the tab proves the sheet is editable before any guest's RSVP
+  // depends on it; only then is it saved.
+  const gid = await setup(env, id);
   await env.SETTINGS.put('sheet', id);
-  return json({ url: sheetUrl(id) });
+  return json({ url: sheetUrl(id, gid) });
 }
-
-async function sheets(env, path, method = 'GET', body) {
-  const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${path}`, {
-    method,
-    headers: { Authorization: `Bearer ${await accessToken(env)}`, 'Content-Type': 'application/json' },
-    body: body && JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    // Google's own reason too: a 403 is also what a disabled Sheets API gives.
-    const why = data.error?.message || `Google Sheets error ${res.status}`;
-    throw new Error(res.status === 403 || res.status === 404
-      ? `Can’t edit that sheet — share it with the service account as Editor. (Google: ${why})`
-      : why);
-  }
-  return data;
-}
-
-/* ---- Google sign-in as the service account (OAuth JWT bearer) ------------- */
-let cached; // { token, exp } — reused while this Worker instance lives
-
-async function accessToken(env) {
-  if (cached?.exp > Date.now()) return cached.token;
-  if (!env.GOOGLE_SA_KEY) throw new Error('The GOOGLE_SA_KEY secret is not set.');
-  const key = JSON.parse(env.GOOGLE_SA_KEY);
-  const now = Math.floor(Date.now() / 1000);
-  const part = (o) => b64url(new TextEncoder().encode(JSON.stringify(o)));
-  const unsigned = `${part({ alg: 'RS256', typ: 'JWT' })}.${part({
-    iss: key.client_email,
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    aud: 'https://oauth2.googleapis.com/token',
-    iat: now,
-    exp: now + 3600,
-  })}`;
-  const der = Uint8Array.from(atob(key.private_key.replace(/-----[^-]+-----|\s/g, '')), (c) => c.charCodeAt(0));
-  const signer = await crypto.subtle.importKey(
-    'pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']
-  );
-  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', signer, new TextEncoder().encode(unsigned));
-
-  const res = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: `${unsigned}.${b64url(new Uint8Array(sig))}`,
-    }),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error_description || 'Google sign-in failed');
-  cached = { token: data.access_token, exp: Date.now() + (data.expires_in - 60) * 1000 };
-  return cached.token;
-}
-
-const b64url = (bytes) =>
-  btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
 const json = (data, status = 200) => Response.json(data, { status });

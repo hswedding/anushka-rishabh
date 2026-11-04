@@ -40,7 +40,7 @@ export default function Builder() {
     e.preventDefault();
     setSheetMsg('Saving…');
     sheetApi({ method: 'POST', body: JSON.stringify({ url: sheetUrl }) })
-      .then((d) => { setSheetUrl(d.url); setSheetMsg('Saved — every RSVP now lands in this sheet.'); })
+      .then((d) => { setSheetUrl(d.url); setSheetMsg('Saved — every RSVP now lands in this sheet’s “RSVPs” tab.'); })
       .catch((err) => setSheetMsg(err.message));
   };
 
