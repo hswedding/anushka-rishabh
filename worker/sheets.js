@@ -1,8 +1,8 @@
 /* ============================================================================
  *  Google Sheets for RSVPs — a formatted "RSVPs" tab and one typed row per
  *  reply, written as a Google service account (its JSON key is `saKey`).
- *  Plain fetch + WebCrypto, so the same file runs in a Cloudflare Worker and
- *  in a Vercel function (invite-base keeps it in worker/, Vercel sites in
+ *  Plain fetch + WebCrypto, so the same file runs in a Cloudflare Worker
+ *  (here) and in a Vercel function (Wedding-Invitation keeps it as
  *  api/_sheets.js) — keep the copies in step.
  *
  *  A column is { header, kind, width }; `kind` picks how its cells are stored
