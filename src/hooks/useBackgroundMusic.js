@@ -4,24 +4,24 @@ import { gsap } from '../lib/gsap.js';
 /* App-wide background score — one looped <audio> element that follows the
    global sound toggle in App.jsx. Fades in/out so it never snaps on.
 
-   Autoplay with sound needs a user gesture. The envelope film plays by itself
-   (muted), so there's no tap to open it. The returned `unlock` is for a tap
-   that comes before the music should play (one during the envelope film): it
-   starts the score silently inside that gesture and pauses it again, which
-   lets it play later without another tap. Otherwise the browser blocks the
-   first attempt and we retry on each tap or key press until one is allowed —
-   a scroll doesn't count, so we keep listening. A tap on the sound toggle
-   itself is left to the toggle.
+   The music is on by default, but no browser plays sound before the guest
+   has touched the page (it's their rule, not ours). So the score tries to
+   start the moment `playing` turns on — with the envelope film — which works
+   wherever the browser allows it (e.g. a returning visitor in Chrome). Where
+   it's refused, `blocked` turns true and the score starts on the guest's
+   first tap or key press anywhere — a scroll doesn't count, so we keep
+   listening. The sound toggle shows "off" while blocked, and `start` (called
+   from its tap) starts the score rather than muting it.
 
-   Nothing is fetched until `buffer` turns on (the envelope film starts) or playback
-   starts, so the score never competes with the envelope film for bandwidth;
-   the film's run is ample time for it to be ready by the reveal.
+   Nothing is fetched until `buffer` turns on (the envelope film starts) or
+   playback starts.
 
    Phones keep a page's audio going after the guest leaves the browser, so the
    score stops while the page is hidden and fades back in on return. */
 export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) {
   const audioRef = useRef(null);
   const [visible, setVisible] = useState(!document.hidden);
+  const [blocked, setBlocked] = useState(false);
 
   useEffect(() => {
     const onChange = () => {
@@ -36,8 +36,6 @@ export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) 
     return () => document.removeEventListener('visibilitychange', onChange);
   }, []);
   playing = playing && visible;
-  const playingRef = useRef(playing);
-  playingRef.current = playing;
 
   useEffect(() => {
     const audio = new Audio();
@@ -57,6 +55,17 @@ export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) 
     if (buffer && audioRef.current) audioRef.current.preload = 'auto';
   }, [buffer, src]);
 
+  // Play and fade up. Inside a tap this is always allowed.
+  const start = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return Promise.reject();
+    // Older Safari returns undefined from play() instead of a promise.
+    return Promise.resolve(audio.play()).then(() => {
+      setBlocked(false);
+      gsap.to(audio, { volume, duration: 1.4 });
+    });
+  }, [volume]);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -68,37 +77,26 @@ export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) 
     }
 
     let cancelled = false;
-    const fadeIn = () => { if (!cancelled) gsap.to(audio, { volume, duration: 1.4 }); };
-    // Older Safari returns undefined from play() instead of a promise.
-    const attempt = () => Promise.resolve(audio.play()).then(fadeIn);
-
-    // pointerup, not pointerdown: a touch only counts as a gesture on release.
-    const events = ['pointerup', 'keydown'];
-    const stop = () => events.forEach((t) => window.removeEventListener(t, retry));
+    // pointerup/touchend, not pointerdown: a touch only counts as a gesture
+    // on release. The toggle handles its own tap (see `start`).
+    const events = ['pointerup', 'touchend', 'click', 'keydown'];
+    const stop = () => events.forEach((t) => window.removeEventListener(t, retry, true));
     const retry = (e) => {
       if (e.target.closest?.('.music-toggle')) return;
-      attempt().then(stop, () => {});
+      if (!cancelled) start().then(stop, () => {});
     };
 
-    attempt().catch(() => {
-      if (!cancelled) events.forEach((t) => window.addEventListener(t, retry));
+    start().catch(() => {
+      if (cancelled) return;
+      setBlocked(true);
+      events.forEach((t) => window.addEventListener(t, retry, true));
     });
 
     return () => {
       cancelled = true;
       stop();
     };
-  }, [playing, volume]);
+  }, [playing, start]);
 
-  // Call from inside a tap: plays the score at zero volume for a moment so
-  // the browser counts it as started by the guest, then pauses it again
-  // unless it should be playing by then.
-  return useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio || !audio.paused || playingRef.current) return;
-    audio.volume = 0;
-    Promise.resolve(audio.play()).then(() => {
-      if (!playingRef.current) audio.pause();
-    }, () => {});
-  }, []);
+  return { blocked: playing && blocked, start };
 }

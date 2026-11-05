@@ -111,8 +111,10 @@ export default function Rsvp({ invite }) {
             </div>
 
             <Field id="party" label="Number of guests" error={errors.party} required>
-              <input id="party" className="field__input" type="number" inputMode="numeric"
-                min="1" max="20" value={form.party} onChange={set('party')} />
+              {/* whole numbers only: a key that isn't a digit is ignored (no "2.5", no "-1") */}
+              <input id="party" className="field__input" type="text" inputMode="numeric"
+                pattern="[0-9]*" maxLength={2} autoComplete="off" value={form.party}
+                onChange={(e) => { if (/^\d*$/.test(e.target.value)) set('party')(e.target.value); }} />
             </Field>
 
             <Field id="arrival" label="Date of arrival">

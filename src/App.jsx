@@ -24,18 +24,24 @@ export default function App({ invite, preview }) {
   // off — those open straight away, and the envelope film never loads.
   const envelope = invite.sections.envelope && !preview;
   const [opened, setOpened] = useState(!envelope);
-  // App-wide sound: the looping background score. On by default — browsers
-  // only let audio start after a tap, so it starts at the reveal if the guest
-  // tapped during the envelope film, else on their first tap. The preview is
-  // muted.
+  // App-wide sound: the looping background score, on by default (the
+  // preview is muted). It starts with the envelope film wherever the browser
+  // allows sound straight away, else on the guest's first tap — see
+  // useBackgroundMusic.
   const [soundOn, setSoundOn] = useState(!preview);
-  // The envelope film has started — the score buffers while it plays.
+  // The envelope film has started — the score buffers and starts with it.
   const [filmStarted, setFilmStarted] = useState(false);
 
   // The score runs for the whole page — the films carry no audio of their own,
   // so nothing ever interrupts it except the toggle.
-  // A tap during the envelope film unlocks it, so it starts at the reveal.
-  const unlockMusic = useBackgroundMusic(config.bgMusic, opened && soundOn, filmStarted);
+  const music = useBackgroundMusic(config.bgMusic, soundOn && (opened || filmStarted), filmStarted);
+  const soundAudible = soundOn && !music.blocked;
+  // A tap on the toggle is a gesture, so turning the sound on always works.
+  const toggleSound = () => {
+    if (soundAudible) { setSoundOn(false); return; }
+    setSoundOn(true);
+    music.start().catch(() => {});
+  };
 
   // Lock scroll behind the envelope; refresh scroll positions once revealed.
   useEffect(() => {
@@ -68,7 +74,7 @@ export default function App({ invite, preview }) {
     <>
       <Petals active={opened} />
 
-      {envelope && !opened && <Envelope onStart={() => setFilmStarted(true)} onTap={unlockMusic} onOpen={() => setOpened(true)} />}
+      {envelope && !opened && <Envelope onStart={() => setFilmStarted(true)} onOpen={() => setOpened(true)} />}
 
       <main className="page" id="main-content" aria-hidden={!opened}>
         <Hero invite={invite} />
@@ -86,11 +92,11 @@ export default function App({ invite, preview }) {
         <button
           type="button"
           className="music-toggle"
-          onClick={() => setSoundOn((s) => !s)}
-          aria-label={soundOn ? 'Mute sound' : 'Unmute sound'}
-          aria-pressed={soundOn}
+          onClick={toggleSound}
+          aria-label={soundAudible ? 'Mute sound' : 'Play sound'}
+          aria-pressed={soundAudible}
         >
-          <Icon name={soundOn ? 'speaker' : 'speakerOff'} size={20} />
+          <Icon name={soundAudible ? 'speaker' : 'speakerOff'} size={20} />
         </button>
       )}
     </>

@@ -13,12 +13,12 @@ const STALL_TIMEOUT_MS = 8000;
    plays by itself as soon as the page loads — no "tap to open", no skip —
    then the page is revealed when it ends.
 
-   Browsers only autoplay video muted, so the film starts silent; a tap while
-   it plays turns its sound on (and lets the background score start at the
-   reveal). If the browser refuses even muted autoplay (iOS Low Power Mode),
-   the film errors, or it stalls, the page is revealed straight away. Reduced
-   motion skips the film entirely. */
-export default function Envelope({ onStart, onTap, onOpen }) {
+   Browsers only autoplay video muted, and the film stays silent: the
+   background score (App.jsx) is the sound, starting with the film wherever
+   the browser allows. If the browser refuses even muted autoplay (iOS Low
+   Power Mode), the film errors, or it stalls, the page is revealed straight
+   away. Reduced motion skips the film entirely. */
+export default function Envelope({ onStart, onOpen }) {
   const root = useRef(null);
   const videoRef = useRef(null);
   const watchdog = useRef(null);
@@ -64,21 +64,12 @@ export default function Envelope({ onStart, onTap, onOpen }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // A tap during the film is a user gesture: its sound may come on, and the
-  // background score gets unlocked to start at the reveal.
-  const onTapFilm = () => {
-    const video = videoRef.current;
-    if (video && video.muted && !closing.current) video.muted = false;
-    onTap?.();
-  };
-
   return (
     <div
       className="envelope"
       ref={root}
       role="dialog"
       aria-label="Wedding invitation — opening"
-      onPointerUp={onTapFilm}
     >
       <video
         ref={videoRef}
