@@ -16,7 +16,7 @@ const PhoneInput = lazy(() => import('react-phone-number-input'));
 export default function Rsvp({ invite }) {
   const root = useRef(null);
   const [form, setForm] = useState({
-    name: '', phone: '', party: 1, arrival: '',
+    name: '', phone: '', party: '', arrival: '',
   });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | success
@@ -35,6 +35,9 @@ export default function Rsvp({ invite }) {
     const e = {};
     if (!form.name.trim()) e.name = 'Please tell us your name.';
     if (!form.phone || form.phone.length < 8) e.phone = 'Add a valid phone number.';
+    const party = Number(form.party);
+    if (!Number.isInteger(party) || party < 1 || party > 20)
+      e.party = 'Please tell us how many guests (1–20).';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -107,7 +110,7 @@ export default function Rsvp({ invite }) {
               {errors.phone && <p className="field__err" role="alert">{errors.phone}</p>}
             </div>
 
-            <Field id="party" label="Number of guests">
+            <Field id="party" label="Number of guests" error={errors.party} required>
               <input id="party" className="field__input" type="number" inputMode="numeric"
                 min="1" max="20" value={form.party} onChange={set('party')} />
             </Field>

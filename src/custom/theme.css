@@ -119,7 +119,9 @@ body, input, select, textarea { font-variant-numeric: lining-nums; }
   background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
 }
 .film__deva { color: var(--gold-light); font-size: 1.15rem; }
-.film__date { color: var(--on-silk-mid); }
+/* the family asked for just the function's name over each film — its date
+   is in the film itself and on the venue cards */
+.film__date { display: none; }
 /* a thin gilt edge around the film, lifted off the silk */
 .film__frame {
   padding: 6px; border-radius: 26px;
