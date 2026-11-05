@@ -4,21 +4,22 @@ import { gsap } from '../lib/gsap.js';
 /* App-wide background score — one looped <audio> element that follows the
    global sound toggle in App.jsx. Fades in/out so it never snaps on.
 
-   The music is on by default, but no browser plays sound before the guest
-   has touched the page (it's their rule, not ours). So the score tries to
-   start the moment `playing` turns on — with the envelope film — which works
-   wherever the browser allows it (e.g. a returning visitor in Chrome). Where
-   it's refused, `blocked` turns true and the score starts on the guest's
-   first tap or key press anywhere — a scroll doesn't count, so we keep
-   listening. The sound toggle shows "off" while blocked, and `start` (called
-   from its tap) starts the score rather than muting it.
+   Nothing is fetched until the guest's first tap. With the envelope, that's
+   the "Tap to Open": App calls `unlock` inside it, which starts loading the
+   score and plays it muted for a moment so the browser counts it as started
+   by the guest (iOS Safari needs this for each element); the score then
+   starts when `playing` turns on — at the reveal, once the film has ended.
 
-   Nothing is fetched until `buffer` turns on (the envelope film starts) or
-   playback starts.
+   Without a tap first (links without the envelope), the score tries to start
+   at once — some browsers allow that — and if refused, `blocked` turns true
+   and it starts on the guest's first tap or key press anywhere (a scroll
+   doesn't count, so we keep listening). The sound toggle shows "off" while
+   blocked, and `start` (called from its tap) starts the score rather than
+   muting it.
 
    Phones keep a page's audio going after the guest leaves the browser, so the
    score stops while the page is hidden and fades back in on return. */
-export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) {
+export default function useBackgroundMusic(src, playing, volume = 0.35) {
   const audioRef = useRef(null);
   const [visible, setVisible] = useState(!document.hidden);
   const [blocked, setBlocked] = useState(false);
@@ -36,6 +37,8 @@ export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) 
     return () => document.removeEventListener('visibilitychange', onChange);
   }, []);
   playing = playing && visible;
+  const playingRef = useRef(playing);
+  playingRef.current = playing;
 
   useEffect(() => {
     const audio = new Audio();
@@ -51,14 +54,11 @@ export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) 
     };
   }, [src]);
 
-  useEffect(() => {
-    if (buffer && audioRef.current) audioRef.current.preload = 'auto';
-  }, [buffer, src]);
-
   // Play and fade up. Inside a tap this is always allowed.
   const start = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return Promise.reject();
+    audio.muted = false;
     // Older Safari returns undefined from play() instead of a promise.
     return Promise.resolve(audio.play()).then(() => {
       setBlocked(false);
@@ -98,5 +98,19 @@ export default function useBackgroundMusic(src, playing, buffer, volume = 0.35) 
     };
   }, [playing, start]);
 
-  return { blocked: playing && blocked, start };
+  // Call from inside a tap that comes before the score should play (the
+  // envelope's): loads it and clears it to play later without another tap.
+  // Muted, not volume 0 — iOS ignores volume.
+  const unlock = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || !audio.paused || playingRef.current) return;
+    audio.preload = 'auto';
+    audio.muted = true;
+    Promise.resolve(audio.play()).then(
+      () => { if (!playingRef.current) audio.pause(); audio.muted = false; },
+      () => { audio.muted = false; },
+    );
+  }, []);
+
+  return { blocked: playing && blocked, start, unlock };
 }

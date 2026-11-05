@@ -92,9 +92,10 @@ in full, one at a time in page order, so it is on the phone before the guest
 reaches it (a film reached earlier streams straight away). A film starts when
 40% of it is on screen, plays through once without pausing and holds its last
 frame; if the phone blocks autoplay (Low Power Mode, data saver) a **Play
-film** button appears. The envelope film plays by itself on load, silent;
-the music starts with it wherever the browser allows sound without a tap,
-else on the guest's first tap anywhere. Keep new media off
+film** button appears. The envelope film waits on its first frame for the guest's
+"Tap to Open", then plays with its own sound; the music loads from that tap
+and starts when the film ends (on links without the envelope, on the guest's
+first tap anywhere). Keep new media off
 the envelope's critical path, and keep films lean: a guest's phone
 downloads every film on their link.
 
