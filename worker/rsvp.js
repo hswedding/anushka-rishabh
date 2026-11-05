@@ -12,7 +12,7 @@
  *    POST /api/sheet   { url } → set up the RSVPs tab, save   (X-Builder header)
  * ========================================================================== */
 import { config, events } from '../src/data.js';
-import { appendRow, layoutOf, setupTab, sheetIdOf, sheetUrl, serviceEmail } from './sheets.js';
+import { appendRow, headerOk, layoutOf, setupTab, sheetIdOf, sheetUrl, serviceEmail } from './sheets.js';
 
 // Columns A–F match the rows written before the tab was formatted, so a
 // sheet that already holds RSVPs keeps lining up. Then one ✓ column per
@@ -65,10 +65,13 @@ async function rsvp(request, env) {
   const tab = await savedTab(env);
   try {
     if (tab?.layout !== LAYOUT) throw new Error('tab not set up for these columns');
+    // The family may have deleted or cleared the header row since.
+    if (!(await headerOk(env.GOOGLE_SA_KEY, id, COLUMNS))) throw new Error('header row missing');
     await appendRow(env.GOOGLE_SA_KEY, id, tab.gid, COLUMNS, row);
   } catch {
     // First RSVP since the sheet was saved without a tab, the functions in
-    // data.js changed, or the tab was deleted: (re)make it, then write.
+    // data.js changed, the header row or the tab was deleted: (re)make it
+    // (header back on top, no reply overwritten), then write.
     await appendRow(env.GOOGLE_SA_KEY, id, await setup(env, id), COLUMNS, row);
   }
   return json({ ok: true });
