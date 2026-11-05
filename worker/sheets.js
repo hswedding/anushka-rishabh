@@ -62,15 +62,30 @@ export function appendRow(saKey, id, gid, columns, values) {
 /** The column headers, in order — when they change, the tab needs setting up again. */
 export const layoutOf = (columns) => columns.map((c) => c.header).join('|');
 
+const quote = (title) => `'${title.replace(/'/g, "''")}'`;
+const firstRow = async (saKey, id, title) =>
+  (await sheets(saKey, `${id}/values/${encodeURIComponent(`${quote(title)}!1:1`)}`)).values?.[0] || [];
+
+/** Whether the RSVPs tab still starts with the header row for `columns` —
+ *  false when the tab is gone, or its header row was deleted, cleared or
+ *  written for other functions. One read; run it before every append. */
+export async function headerOk(saKey, id, columns) {
+  try {
+    const top = await firstRow(saKey, id, TAB);
+    // A tally header reads "Haldi\n42 coming": compare the name line only.
+    return columns.every((c, i) => String(top[i] ?? '').split('\n')[0] === c.header);
+  } catch {
+    return false;
+  }
+}
+
 /** The RSVPs tab's id when its header row already matches `columns`, else
- *  null (no tab yet, or the functions in data.js changed since). */
+ *  null (no tab yet, the header row is missing, or the functions changed). */
 export async function tabFor(saKey, id, columns) {
   const meta = await sheets(saKey, `${id}?fields=${encodeURIComponent('sheets.properties(sheetId,title)')}`);
   const gid = meta.sheets?.find((s) => s.properties.title === TAB)?.properties.sheetId;
   if (gid == null) return null;
-  const top = (await sheets(saKey, `${id}/values/${encodeURIComponent(`'${TAB}'!1:1`)}`)).values?.[0] || [];
-  // A tally header reads "Haldi\n42 coming": compare the name line only.
-  return columns.every((c, i) => String(top[i] ?? '').split('\n')[0] === c.header) ? gid : null;
+  return (await headerOk(saKey, id, columns)) ? gid : null;
 }
 
 /** Spreadsheet column letter for a 0-based index: 0 → A, 26 → AA. */
@@ -93,7 +108,9 @@ function headerValue(c, columns) {
  * a filter on every column. Takes over the first tab when it is empty or
  * already holds RSVPs from before this tab existed (A1 = "Received");
  * otherwise adds the tab in front. Safe to run again — it re-applies the look
- * and rewrites only the header row.
+ * and rewrites only the header row. When row 1 holds a guest's RSVP (the
+ * header row was deleted), a fresh row is inserted above it for the header,
+ * so no reply is ever written over.
  */
 export async function setupTab(saKey, id, columns, { header = '#3e5141', band = '#f4f3e8' } = {}) {
   const meta = await sheets(saKey,
@@ -102,10 +119,13 @@ export async function setupTab(saKey, id, columns, { header = '#3e5141', band = 
   let tab = tabs.find((s) => s.properties.title === TAB);
   if (!tab && tabs.length) {
     const first = tabs.reduce((a, b) => (b.properties.index < a.properties.index ? b : a));
-    const range = encodeURIComponent(`'${first.properties.title.replace(/'/g, "''")}'!A1:Z20`);
+    const range = encodeURIComponent(`${quote(first.properties.title)}!A1:Z20`);
     const top = (await sheets(saKey, `${id}/values/${range}`)).values || [];
     if (!top.length || top[0][0] === 'Received') tab = first;
   }
+  // Row 1 is ours to (re)write only when it is empty or already a header.
+  const top = tab ? await firstRow(saKey, id, tab.properties.title) : [];
+  const makeRoom = top.some((v) => v !== '') && top[0] !== columns[0].header;
 
   const gid = tab ? tab.properties.sheetId : Math.floor(Math.random() * 2e9);
   const n = columns.length;
@@ -117,6 +137,9 @@ export async function setupTab(saKey, id, columns, { header = '#3e5141', band = 
           fields: 'title,gridProperties.frozenRowCount',
         } }
       : { addSheet: { properties: { sheetId: gid, title: TAB, index: 0, gridProperties: { frozenRowCount: 1 } } } },
+    ...(makeRoom ? [{ insertDimension: {
+        range: { sheetId: gid, dimension: 'ROWS', startIndex: 0, endIndex: 1 }, inheritFromBefore: false,
+    } }] : []),
     // Banding can't overlap, so drop any earlier one before adding ours.
     ...(tab?.bandedRanges || []).map((b) => ({ deleteBanding: { bandedRangeId: b.bandedRangeId } })),
     { updateCells: {

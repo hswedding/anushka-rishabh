@@ -159,7 +159,10 @@ scrolling, sized columns, alternating row colours and a filter on every
 column; times and dates are real dates (sortable), and a guest's text is
 always stored as text. It takes over the first tab if that is empty or already
 holds RSVPs, otherwise adds the tab in front, and saving the sheet again in
-the builder re-applies the look. The sheet id and the tab's id live in the
+the builder re-applies the look. Every RSVP first checks the header row is
+still there: if it was deleted or cleared, it is put back on top (in a new
+row above the guests' rows when it was deleted) before the reply is added.
+The sheet id and the tab's id live in the
 `SETTINGS` KV namespace (created by the first `wrangler deploy`). A Google
 service account writes the rows:
 
