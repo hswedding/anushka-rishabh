@@ -10,8 +10,17 @@
 /* ivory paper with a whisper of sage grain */
 body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 
+/* One typeface throughout. Cormorant's default figures are old-style
+   ("H-3", "201010" dip below the line like lowercase letters), which made
+   addresses, dates and phone numbers look like a different font; lining
+   figures sit at capital height like the rest of the text. */
+body, input, select, textarea { font-variant-numeric: lining-nums; }
+/* No sans on the invitation: its small print (form errors, the studio
+   credit) uses the main serif too. The family's builder keeps Tenor Sans. */
+.page { --font-sans: var(--font-body); }
+
 /* ---- Shared ---------------------------------------------------------------- */
-.display { color: var(--gold-deep); }
+.display { color: var(--gold-deep); text-wrap: balance; }
 .btn { text-decoration: none; }
 .page .btn {
   font-family: var(--font-body); font-weight: 600; font-size: 1.08rem; letter-spacing: 0.03em;
@@ -77,6 +86,7 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 .hero__date-main {
   font-weight: 600; font-size: clamp(1.5rem, 6.4vw, 1.75rem);
   letter-spacing: 0.04em; color: var(--gold-deep);
+  margin-right: -0.04em; /* the tracking after the last letter, so it centres true */
 }
 .hero__scroll {
   font-family: var(--font-body); font-style: italic; font-size: 1.05rem;
@@ -135,21 +145,28 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
 }
 .venue__fn { font-size: clamp(1.7rem, 7vw, 2rem); }
 .venue__when { font-size: 1.12rem; }
-.venue__name { font-size: 1.2rem; }
-.venue__area { font-size: 1.05rem; }
+/* the venue name leads; its address is clearly the smaller, quieter line,
+   wrapped in even lines so a pin code is never left alone on the last one */
+.venue__place { max-width: none; }
+.venue__name { font-size: 1.3rem; }
+.venue__area { font-size: 0.98rem; line-height: 1.4; text-wrap: balance; }
 .venue__map {
   border: 1px solid var(--gold-light); border-radius: 10px; box-shadow: none;
 }
 
 /* ---- RSVP: the reply card on silk ------------------------------------------- */
 .rsvp { padding-bottom: var(--sp-8); }
-.rsvp__lead { color: var(--on-silk-mid); font-size: 1.1rem; }
+/* a longer heading than the base's "Will you join us?" — a step smaller */
+.rsvp__title { font-size: clamp(2.5rem, 10.5vw, 4rem); line-height: 1.1; }
+.rsvp__lead { color: var(--on-silk-mid); font-size: 1.1rem; margin-top: var(--sp-3); }
 .rsvp__panel {
   border: 1px solid var(--gold-light); border-radius: 14px;
   box-shadow: inset 0 0 0 6px var(--white), inset 0 0 0 7px #ecd69a,
     0 40px 70px -30px #0b130dcc;
 }
 .field__label { font-family: var(--font-body); font-weight: 600; font-size: 1.05rem; }
+.field__err { font-size: 0.95rem; }
+.chip { font-size: 1rem; }
 .rsvp__success { color: var(--text-dark); }
 
 /* ---- Footer ----------------------------------------------------------------- */
@@ -160,18 +177,18 @@ body { background-image: radial-gradient(#3e51410a 1px, transparent 1.4px); }
   font-size: 1.05rem; color: var(--gold-deep); border-color: var(--gold-light);
 }
 .footer__hashtag { font-size: 2rem; color: var(--gold-strong); }
+/* the studio credit in the card's serif, sized to stay on one line from 360px
+   up; baseline-aligned so "Create Yours" sits on the same line as the rest.
+   Narrower, the link drops to its own line and the "|" goes. */
+.footer__credit { font-size: 0.88rem; align-items: baseline; }
+@media (max-width: 359px) { .footer__credit-sep { display: none; } }
 
 /* ---- Envelope, music toggle -------------------------------------------------- */
-.envelope__cta {
-  font-family: var(--font-display); font-size: 1.85rem; color: var(--gold-pale);
-  background: #2f3f32d9; border-color: #e9c76899; text-shadow: none;
-}
-.envelope__loading, .envelope__skip {
+.envelope__loading {
   background: #2f3f32b3; color: var(--gold-pale); border-color: #e9c76866;
   font-family: var(--font-body); font-style: italic; font-size: 1rem;
   text-transform: none; letter-spacing: 0.02em;
 }
-.envelope__skip:hover { background: #2f3f32e6; }
 @keyframes pulse {
   0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 #e9c76866; }
   50% { transform: scale(1.04); box-shadow: 0 0 0 12px #e9c76800; }

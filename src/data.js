@@ -30,7 +30,7 @@ export const wedding = {
 export const host = {
   side: 'bride',
   // No prayer line and no Ganesha image (per the form), and English only.
-  hosts: 'Mr. Pawan Kumar Jain & Mrs. Urmila Jain',
+  hosts: 'Mr. Pavan Kumar Jain & Mrs. Urmila Jain',
   inviteLine: 'joyfully invite you to celebrate the wedding of',
   parents: {
     bride: 'D/o Mrs. Anjuli & Mr. Amit Jain',
@@ -39,8 +39,6 @@ export const host = {
   sign: 'With love, The Jain Family',
   // Closes the builder's WhatsApp message.
   waSignoff: 'With love,\nThe Jain Family',
-  // RSVPs go to this WhatsApp number (digits + country code, no + or spaces).
-  rsvpWhatsApp: '919810421242',
   contacts: [
     { name: 'Amit Jain', phone: '+919810421242' },
     // ⟵ TODO Animesh Jain was named as the second contact but no number was
@@ -125,10 +123,23 @@ export const presets = {
    Files live in public/photos; shrink new ones first with
    scripts/compress-photos.ps1. Order here = order in the strip. Cards are
    portrait, so landscape shots get their sides cropped — `focus` (CSS
-   object-position x %) picks which part stays in frame.
-   ⟵ TODO the family is sending photos on WhatsApp; until then the section
-   stays hidden. Example: { src: '/photos/1.jpg', alt: 'Anushka and Rishabh …' } */
-export const photos = [];
+   object-position x %) picks which part stays in frame. */
+export const photos = [
+  { src: '/photos/1.jpg', alt: 'Anushka and Rishabh laughing, cheek to cheek' },
+  { src: '/photos/2.jpg', alt: 'Anushka and Rishabh holding hands in a sunlit garden' },
+  { src: '/photos/3.jpg', alt: 'Anushka and Rishabh laughing in front of blue wooden doors' },
+  { src: '/photos/4.jpg', alt: 'Rishabh chasing Anushka under the trees' },
+  { src: '/photos/5.jpg', alt: 'Anushka resting her head on Rishabh’s shoulder', focus: '45%' },
+  { src: '/photos/6.jpg', alt: 'Anushka and Rishabh sitting by an old carved door' },
+  { src: '/photos/7.jpg', alt: 'Anushka and Rishabh sitting back to back on a bench', focus: '40%' },
+  { src: '/photos/8.jpg', alt: 'Anushka and Rishabh holding hands by blue doors' },
+];
+
+/* The RSVP section's heading and the line under it. */
+export const rsvpText = {
+  title: 'Looking forward to welcoming you',
+  lead: 'Kindly respond so we can celebrate with you.',
+};
 
 /* Toggleable parts (Hero / Venue & Travel / Footer always show). 'envelope'
    is the opening envelope video — without it the invitation opens straight
@@ -141,9 +152,6 @@ export const toggleableSections = [
 
 /* Global config ------------------------------------------------------------- */
 export const config = {
-  // WhatsApp number that RSVP submissions are sent to (digits + country code,
-  // no + or spaces). Fallback when host.rsvpWhatsApp is empty.
-  rsvpWhatsApp: '919810421242',
   // Looping background score, played while the sound toggle is on. Lives in
   // public/. The family's song: "I Think They Call This Love" (cover).
   bgMusic: '/music.mp3',

@@ -2,9 +2,11 @@
  *  Media Worker — adds HTTP Range support (206 Partial Content) for films and
  *  music. Cloudflare's static-asset server answers Range requests with the
  *  whole file (200), and Safari on iPhone/Mac refuses to play <video> served
- *  that way. wrangler.jsonc routes only media paths here (`run_worker_first`);
- *  every other file is served straight from static assets, untouched.
+ *  that way. wrangler.jsonc routes only media paths and /api/* (the RSVP
+ *  sheet, worker/rsvp.js) here (`run_worker_first`); every other file is
+ *  served straight from static assets, untouched.
  * ========================================================================== */
+import { handleApi } from './rsvp.js';
 
 // File sizes are written here by the `mediaSizes` plugin in vite.config.js on
 // every build (the asset server doesn't expose Content-Length to the Worker).
@@ -14,6 +16,7 @@ const RANGE_RE = /^bytes=(\d*)-(\d*)$/;
 
 export default {
   async fetch(request, env, ctx) {
+    if (new URL(request.url).pathname.startsWith('/api/')) return handleApi(request, env);
     const range = request.headers.get('Range');
 
     // Pass the request through as-is; if the asset server ever starts

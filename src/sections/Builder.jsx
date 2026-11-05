@@ -8,6 +8,17 @@ import Icon from '../components/Icons.jsx';
 // A `comesWith` event has no checkbox of its own: it joins its partner on the page.
 const choosable = events.filter((e) => !e.comesWith);
 
+/** The RSVP sheet setting, kept by the Worker (worker/rsvp.js). */
+async function sheetApi(init) {
+  const res = await fetch('/api/sheet', {
+    ...init,
+    headers: { 'X-Builder': config.links.builder, 'Content-Type': 'application/json' },
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Couldn’t reach the server — try again.');
+  return data;
+}
+
 /* Invitation builder — its own page at /{links.builder}. Pick what a guest
    sees (the hosting side is fixed for this single-family site); a live
    preview renders the real invitation and the share bar builds their link. */
@@ -17,6 +28,21 @@ export default function Builder() {
   const [copied, setCopied] = useState(null);
 
   useEffect(() => { document.title = 'Invitation Builder'; }, []);
+
+  // Where RSVPs land: one sheet for every link, saved on the server.
+  const [sheetUrl, setSheetUrl] = useState('');
+  const [sheetMsg, setSheetMsg] = useState('');
+  const [sheetEmail, setSheetEmail] = useState('');
+  useEffect(() => {
+    sheetApi().then((d) => { setSheetUrl(d.url || ''); setSheetEmail(d.email || ''); }).catch(() => {});
+  }, []);
+  const saveSheet = (e) => {
+    e.preventDefault();
+    setSheetMsg('Saving…');
+    sheetApi({ method: 'POST', body: JSON.stringify({ url: sheetUrl }) })
+      .then((d) => { setSheetUrl(d.url); setSheetMsg('Saved — every RSVP now lands in this sheet’s “RSVPs” tab.'); })
+      .catch((err) => setSheetMsg(err.message));
+  };
 
   const path = sharePath(state);
   const shareUrl = siteUrl(path);
@@ -127,6 +153,21 @@ export default function Builder() {
               ))}
             </ul>
           </div>
+
+          <form className="panel__group" onSubmit={saveSheet}>
+            <label className="panel__field">
+              <span>RSVP Google Sheet <small>(Share it as Editor with {sheetEmail || 'the site’s Google account'})</small></span>
+              <input
+                type="url" required value={sheetUrl}
+                placeholder="https://docs.google.com/spreadsheets/d/…"
+                onChange={(e) => { setSheetUrl(e.target.value); setSheetMsg(''); }}
+              />
+            </label>
+            <button type="submit" className="btn btn--sm" disabled={sheetMsg === 'Saving…'}>
+              Save sheet
+            </button>
+            {sheetMsg && <p className="panel__note" role="status">{sheetMsg}</p>}
+          </form>
 
           <details className="panel__group builder__ready">
             <summary className="panel__group-label">Ready-made link</summary>

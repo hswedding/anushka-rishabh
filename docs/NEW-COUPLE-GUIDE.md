@@ -104,7 +104,6 @@ groom-side site the groom first (`orderedCouple` in `lib/config.js`).
 | `parents.bride`, `parents.groom` | `'D/o Mrs. Neha & Mr. Rajesh Mehta'` | Line under each name, wrapping only after an `&` like `hosts`. Omit a key to hide it |
 | `sign` | `'With love, the Mehta Family'` | Footer sign-off, right under "Thank You" (the couple's names aren't repeated there) |
 | `waSignoff` | `'With Best Regards,\nMehta Family'` | Optional. Added at the end of the WhatsApp message the builder sends (`\n` starts a new line). Omit to end on the link |
-| `rsvpWhatsApp` | `'919800000000'` | RSVPs go here (falls back to `config.rsvpWhatsApp`) |
 | `contacts` | `[{ name: 'Rajesh Mehta', phone: '+919800000000' }]` | Footer tap-to-call list. Phones with `+` and country code |
 | `closing` | `[{ label: 'RSVP', lines: ['Mehta Family'] }, { label: 'With Best Compliments From', lines: ['Nanke & Dadke'] }]` | Optional printed-card style lines in the footer, under the contacts: each `label` is a small heading over its `lines`. Omit for none |
 
@@ -199,7 +198,6 @@ Venue & Travel and Footer always show.
 
 | Field | Notes |
 | --- | --- |
-| `rsvpWhatsApp` | Fallback RSVP number (digits with country code, no `+` or spaces) when `host.rsvpWhatsApp` is empty |
 | `bgMusic` | Looping music path in `public/`. Encode spaces as `%20` here |
 | `siteUrl` | Leave `''` (auto-detected). Set it only if a custom domain should be used in share links built on another domain |
 | `links` | Secret page ids: `builder` (the family's builder) and `all` (the ready-made every-function link), each opened at `https://<site>/<id>`. Fresh random ids per site: `node scripts/new-links.mjs`. Changing an id revokes that link |
@@ -286,7 +284,7 @@ Open and check each of:
 - `/` and any made-up path: the closed "open the link you received" page
 - `/<links.all>`: hosts, invocation, name order (the host's child first), parents lines, every film
 - `/<links.builder>`: the builder lists every function (no side switch); presets select the right ones; a copied link opens the same view as the live preview
-- RSVP opens WhatsApp to `host.rsvpWhatsApp`
+- RSVP: under `npm run cf:dev` with `.dev.vars`, save a test sheet in the builder and send an RSVP — a row appears (README "RSVP sheet")
 - Footer contacts, hashtag and sign-off
 - The hero shows the right wedding date
 
@@ -312,6 +310,8 @@ curl -sI -H "Range: bytes=0-1" "http://localhost:8787/videos/envelop.mp4"   # ex
    it to the couple for review with a page path added (`/<links.all>`, or
    `/<links.builder>`; the bare root shows the closed page), then merge to
    `main` to go live.
+5. Set the `GOOGLE_SA_KEY` secret (README "RSVP sheet"), or RSVPs can't be
+   saved.
 
 After deploy, check on a real phone (ideally an iPhone too): envelope film
 plays, films play, a builder-made guest link opens, and the WhatsApp preview shows
@@ -322,6 +322,10 @@ title, text and image.
 ## 7. Hand over to the family
 
 Send the family its builder link: `https://<site>/<links.builder>`.
+
+First they make a Google Sheet, share it as **Editor** with the service
+account email the builder shows, and paste it into **RSVP Google Sheet → Save
+sheet**: every guest's RSVP lands there as a row.
 
 In the builder they pick a guest's functions (or a preset) and sections,
 optionally type the guest's name, check the live preview, then copy the link

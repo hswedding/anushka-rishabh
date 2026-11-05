@@ -34,46 +34,22 @@
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover;
 }
-.envelope__tap {
-  position: absolute; inset: 0; width: 100%;
-  display: flex; align-items: flex-end; justify-content: center;
-  padding-bottom: max(14vh, env(safe-area-inset-bottom));
-  border: none; cursor: pointer;
-  /* bottom scrim so the CTA reads on light video frames */
-  background: linear-gradient(180deg, transparent 55%, #00000066);
-}
-.envelope__cta {
-  font-family: var(--font-script); font-size: 1.9rem; color: var(--gold-light);
-  margin: 0; display: inline-flex; align-items: center; gap: 10px;
-  padding: 12px 30px 14px; border-radius: 999px;
-  background: #000000a6; border: 1px solid #e9d4b580;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  text-shadow: 0 2px 12px #000000cc;
-  animation: pulse 2.4s var(--ease-soft) infinite;
-}
 @keyframes pulse {
   0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 #d4af3766; }
   50% { transform: scale(1.04); box-shadow: 0 0 0 12px #d4af3700; }
 }
 .envelope__loading {
   position: absolute; left: 50%; bottom: max(14vh, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
+  translate: -50% 0; /* not transform: pulse animates that, and would undo it */
   padding: 8px 18px; border-radius: 999px;
   background: #00000073; color: var(--gold-light);
   font-family: var(--font-sans); font-size: 0.75rem;
   text-transform: uppercase; letter-spacing: 0.2em;
-  animation: pulse 2.4s var(--ease-soft) infinite;
+  /* held back, so a film that starts at once never flashes it */
+  animation: envelope-hint-in 0.4s var(--ease-soft) 0.8s both,
+    pulse 2.4s var(--ease-soft) 1.2s infinite;
 }
-.envelope__skip {
-  position: absolute; right: var(--sp-5); bottom: max(var(--sp-5), env(safe-area-inset-bottom));
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px; border: 1px solid #e9d4b566; border-radius: 999px;
-  background: #00000059; color: var(--gold-light);
-  font-family: var(--font-sans); font-size: 0.75rem;
-  text-transform: uppercase; letter-spacing: 0.2em;
-  transition: background 0.18s var(--ease-soft);
-}
-.envelope__skip:hover { background: #00000080; }
+@keyframes envelope-hint-in { from { opacity: 0; } }
 
 /* ---- Hero (scene 1) ------------------------------------------------------- */
 .hero {
