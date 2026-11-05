@@ -24,16 +24,18 @@ export default function App({ invite, preview }) {
   // off — those open straight away, and the envelope film never loads.
   const envelope = invite.sections.envelope && !preview;
   const [opened, setOpened] = useState(!envelope);
-  // App-wide sound: the looping background score. On by default — the
-  // envelope tap is the gesture that lets the browser start audio; without
-  // the envelope it starts on the guest's first tap. The preview is muted.
+  // App-wide sound: the looping background score. On by default — browsers
+  // only let audio start after a tap, so it starts at the reveal if the guest
+  // tapped during the envelope film, else on their first tap. The preview is
+  // muted.
   const [soundOn, setSoundOn] = useState(!preview);
-  // The envelope tap — the score starts buffering while the film plays.
-  const [tapped, setTapped] = useState(false);
+  // The envelope film has started — the score buffers while it plays.
+  const [filmStarted, setFilmStarted] = useState(false);
 
   // The score runs for the whole page — the films carry no audio of their own,
   // so nothing ever interrupts it except the toggle.
-  useBackgroundMusic(config.bgMusic, opened && soundOn, tapped);
+  // A tap during the envelope film unlocks it, so it starts at the reveal.
+  const unlockMusic = useBackgroundMusic(config.bgMusic, opened && soundOn, filmStarted);
 
   // Lock scroll behind the envelope; refresh scroll positions once revealed.
   useEffect(() => {
@@ -66,7 +68,7 @@ export default function App({ invite, preview }) {
     <>
       <Petals active={opened} />
 
-      {envelope && !opened && <Envelope onStart={() => setTapped(true)} onOpen={() => setOpened(true)} />}
+      {envelope && !opened && <Envelope onStart={() => setFilmStarted(true)} onTap={unlockMusic} onOpen={() => setOpened(true)} />}
 
       <main className="page" id="main-content" aria-hidden={!opened}>
         <Hero invite={invite} />

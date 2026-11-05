@@ -197,16 +197,3 @@ export function buildWhatsAppShare(url, guestName, coupleNames, signoff = '') {
     (signoff ? `\n\n${signoff}` : '');
   return `${WA_SEND}?text=${encodeURIComponent(msg)}`;
 }
-
-/** WhatsApp link that delivers a completed RSVP to the hosts. */
-export function buildRsvpWhatsApp(number, answers) {
-  const lines = [
-    '🎉 *RSVP — Wedding*',
-    `Name: ${answers.name || '—'}`,
-    `Phone: ${answers.phone || '—'}`,
-    `Guests: ${answers.party || '1'}`,
-    `Arrival: ${answers.arrival || '—'}`,
-  ];
-  const text = encodeURIComponent(lines.join('\n'));
-  return `${WA_SEND}?phone=${number}&text=${text}`;
-}

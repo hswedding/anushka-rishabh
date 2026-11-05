@@ -92,8 +92,10 @@ in full, one at a time in page order, so it is on the phone before the guest
 reaches it (a film reached earlier streams straight away). A film starts when
 40% of it is on screen, plays through once without pausing and holds its last
 frame; if the phone blocks autoplay (Low Power Mode, data saver) a **Play
-film** button appears. The music buffers from the envelope tap (on links
-without the envelope it starts on the guest's first tap). Keep new media off
+film** button appears. The envelope film plays by itself on load, muted (a
+tap during it turns its sound on), so the music buffers while it plays and
+starts at the reveal if the guest tapped during the film, else on their
+first tap. Keep new media off
 the envelope's critical path, and keep films lean: a guest's phone
 downloads every film on their link.
 
@@ -136,6 +138,46 @@ root shows the closed page).
 
 **Analytics (optional):** dashboard → Web Analytics → add a site → copy the
 token from the snippet into `site.cloudflareAnalyticsToken` in `src/data.js`.
+
+### RSVP sheet
+
+The RSVP form posts to `/api/rsvp` on the Worker (`worker/rsvp.js`), which
+appends one row to the **RSVPs** tab of the Google Sheet the family saved in
+the builder:
+
+| Received | Name | Phone | Guests | Arriving | Name on their link | Invited to | Engagement & Sangeet<br>12 coming | Haldi<br>30 coming | The Wedding<br>41 coming |
+|---|---|---|---|---|---|---|---|---|---|
+| 4 Nov 2026, 7:15 pm | Asha Mehta | +91 98… | 3 | Fri, 11 Dec 2026 | Asha ji | Haldi, The Wedding | | ✓ | ✓ |
+
+*Invited to* lists the functions on the guest's own link, and each function
+has its own ✓ column whose header keeps a running total of the *Guests* on
+its ✓ rows — the head count per function (filter a column on ✓ for the
+names). The function columns come from `events` in `src/data.js`: add, rename
+or remove a function before RSVPs arrive, since old rows keep their ✓s where
+they were (the tab's header row is redone on the next RSVP). The tab is set up
+by `worker/sheets.js`: a bold coloured header row that stays put while
+scrolling, sized columns, alternating row colours and a filter on every
+column; times and dates are real dates (sortable), and a guest's text is
+always stored as text. It takes over the first tab if that is empty or already
+holds RSVPs, otherwise adds the tab in front, and saving the sheet again in
+the builder re-applies the look. The sheet id and the tab's id live in the
+`SETTINGS` KV namespace (created by the first `wrangler deploy`). A Google
+service account writes the rows:
+
+1. **Once for the studio:** Google Cloud console → create a project → enable
+   the **Google Sheets API** → IAM → **Service accounts** → create one → Keys
+   → **Add key → JSON**. The same key serves every family's site.
+2. **Once per site:** `npx wrangler secret put GOOGLE_SA_KEY` and paste the
+   whole JSON file (or Worker → Settings → Variables and Secrets → Secret).
+   For `npm run cf:dev`, put `GOOGLE_SA_KEY='<json on one line>'` in
+   `.dev.vars` (git-ignored).
+3. **The family:** makes a Google Sheet, Share → General access → **Anyone
+   with the link → Editor** (or shares it with the service account's
+   `client_email`), and pastes its link into the builder's **RSVP Google
+   Sheet** → Save. Saving checks the sheet is editable and sets up the
+   RSVPs tab. RSVPs fail with a "try again" until a sheet is saved.
+
+`/api/*` doesn't exist under `npm run dev` — test the form with `npm run cf:dev`.
 
 ## Sending different guests different functions
 

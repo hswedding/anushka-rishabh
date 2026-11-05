@@ -70,7 +70,6 @@ Once I have these I'll send you a preview link to check before anything goes out
 | Closing line | `host.sign` | |
 | Contact numbers | `host.contacts` | `+` and country code |
 | WhatsApp sign-off | `host.waSignoff` | `\n` for a new line; omit for none |
-| RSVP WhatsApp | `host.rsvpWhatsApp` | Digits only, with country code |
 | Functions | `events[]` + a venue `const` per venue | `id` kebab-case; film path in `video` |
 | Dress code | `events[].dressCode` | Mainly goes into the film; only the colour dot shows in the builder |
 | Photos | `public/photos/` (run `scripts/compress-photos.ps1` first) + `photos` in `src/data.js` | 4–8 photos for the photo reel; also material for the films |

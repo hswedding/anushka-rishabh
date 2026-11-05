@@ -1,20 +1,20 @@
 import { lazy, Suspense, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { gsap, useGSAP } from '../lib/gsap.js';
-import { config, host } from '../data.js';
-import { buildRsvpWhatsApp } from '../lib/config.js';
+import { selectedEvents } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
+import { rsvpText } from '../data.js';
 
 // The phone field's library and country data are a third of the page's JS, so
 // they load on their own — fetched as the page mounts, long before a guest
 // scrolls down here. The fallback is the same-sized input, so nothing shifts.
 const PhoneInput = lazy(() => import('react-phone-number-input'));
 
-/* Scene 6 — RSVP. Validates client-side, fires confetti, then opens a
-   pre-filled WhatsApp message to the hosts (no backend). */
+/* Scene 6 — RSVP. Validates client-side, posts the answers to the Worker,
+   which appends them to the family's Google Sheet (worker/rsvp.js), then
+   fires confetti. */
 export default function Rsvp({ invite }) {
   const root = useRef(null);
-  const rsvpNumber = host.rsvpWhatsApp || config.rsvpWhatsApp;
   const [form, setForm] = useState({
     name: '', phone: '', party: 1, arrival: '',
   });
@@ -48,36 +48,43 @@ export default function Rsvp({ invite }) {
     fire(0.2, { spread: 100, decay: 0.91, scalar: 0.9 });
   };
 
-  const onSubmit = (ev) => {
+  const onSubmit = async (ev) => {
     ev.preventDefault();
     if (!validate()) return;
     setStatus('sending');
-    const url = buildRsvpWhatsApp(rsvpNumber, form);
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // The functions on this guest's link, for the sheet's "Invited to".
+        body: JSON.stringify({
+          ...form,
+          guestName: invite.guestName,
+          functions: selectedEvents(invite.eventIds).map((e) => e.id),
+        }),
+      });
+      if (!res.ok) throw new Error(res.status);
       setStatus('success');
       celebrate();
-      window.open(url, '_blank', 'noopener');
-    }, 700);
+    } catch {
+      setStatus('idle');
+      setErrors({ form: 'We couldn’t send your RSVP just now — please try again.' });
+    }
   };
 
   return (
     <section className="rsvp section" id="rsvp-section" ref={root}>
       <div className="section__inner">
-        <h2 className="display">Will you join us?</h2>
+        <h2 className="display rsvp__title">{rsvpText.title}</h2>
         <p className="rsvp__lead">
-          Kindly respond so we can celebrate with you. Your reply opens WhatsApp,
-          pre-filled — just press send.
+          {rsvpText.lead}
         </p>
 
         {status === 'success' ? (
           <div className="rsvp__panel rsvp__success card" role="status">
             <span className="rsvp__check"><Icon name="check" size={40} /></span>
             <h3 className="serif-h">Thank you, {form.name.split(' ')[0]}!</h3>
-            <p>If WhatsApp didn’t open, tap below to send your RSVP.</p>
-            <a className="btn btn--primary" href={buildRsvpWhatsApp(rsvpNumber, form)}
-              target="_blank" rel="noopener noreferrer">
-              <Icon name="whatsapp" size={18} /> Send on WhatsApp
-            </a>
+            <p>We’ve received your RSVP.</p>
           </div>
         ) : (
           <form className="rsvp__panel card" onSubmit={onSubmit} noValidate>
@@ -110,11 +117,10 @@ export default function Rsvp({ invite }) {
                 value={form.arrival} onChange={set('arrival')} />
             </Field>
 
+            {errors.form && <p className="field__err" role="alert">{errors.form}</p>}
             <button type="submit" className="btn btn--primary rsvp__submit"
               disabled={status === 'sending'}>
-              {status === 'sending'
-                ? 'Sending…'
-                : <><Icon name="whatsapp" size={18} /> Send RSVP</>}
+              {status === 'sending' ? 'Sending…' : 'Send RSVP'}
             </button>
           </form>
         )}
