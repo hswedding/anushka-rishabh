@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { gsap, useGSAP } from '../lib/gsap.js';
 import { selectedEvents } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
+import { rsvpText } from '../data.js';
 
 // The phone field's library and country data are a third of the page's JS, so
 // they load on their own — fetched as the page mounts, long before a guest
@@ -74,9 +75,9 @@ export default function Rsvp({ invite }) {
   return (
     <section className="rsvp section" id="rsvp-section" ref={root}>
       <div className="section__inner">
-        <h2 className="display">Will you join us?</h2>
+        <h2 className="display rsvp__title">{rsvpText.title}</h2>
         <p className="rsvp__lead">
-          Kindly respond so we can celebrate with you.
+          {rsvpText.lead}
         </p>
 
         {status === 'success' ? (

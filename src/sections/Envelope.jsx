@@ -1,25 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from '../lib/gsap.js';
 import { useReducedMotion } from '../hooks/useReducedMotion.js';
-import Icon from '../components/Icons.jsx';
 import { config } from '../data.js';
 
-/* How long we let the film buffer (after tap, or mid-play stall) before
-   giving up and revealing the page — guests on slow mobile data must never
-   be stuck on a black screen. */
+/* How long we let the film buffer (at load, or mid-play stall) before giving
+   up and revealing the page — guests on slow mobile data must never be stuck
+   on the envelope. */
 const STALL_TIMEOUT_MS = 8000;
 
 /* Scene 0 — the envelope film IS the opening screen. It sits full-screen on
-   its first frame (also the poster, so it shows before any video loads); a
-   tap plays it with sound, and when it ends (or is skipped) the page is
-   revealed. Reduced motion or a video error skips straight to the page. */
-export default function Envelope({ onStart, onOpen }) {
+   its first frame (also the poster, so it shows before any video loads) and
+   plays by itself as soon as the page loads — no "tap to open", no skip —
+   then the page is revealed when it ends.
+
+   Browsers only autoplay video muted, so the film starts silent; a tap while
+   it plays turns its sound on (and lets the background score start at the
+   reveal). If the browser refuses even muted autoplay (iOS Low Power Mode),
+   the film errors, or it stalls, the page is revealed straight away. Reduced
+   motion skips the film entirely. */
+export default function Envelope({ onStart, onTap, onOpen }) {
   const root = useRef(null);
   const videoRef = useRef(null);
   const watchdog = useRef(null);
+  const closing = useRef(false);
   const reduced = useReducedMotion();
-  const [playing, setPlaying] = useState(false);
-  const [buffering, setBuffering] = useState(false);
+  const [buffering, setBuffering] = useState(true);
 
   const clearWatchdog = () => {
     if (watchdog.current) { clearTimeout(watchdog.current); watchdog.current = null; }
@@ -28,31 +33,12 @@ export default function Envelope({ onStart, onOpen }) {
     clearWatchdog();
     watchdog.current = setTimeout(closeOverlay, STALL_TIMEOUT_MS);
   };
-  useEffect(() => clearWatchdog, []);
 
-  const open = () => {
-    if (playing) return;
-    if (reduced) {
-      gsap.set(root.current, { autoAlpha: 0 });
-      finish();
-      return;
-    }
-    const video = videoRef.current;
-    if (!video) return closeOverlay();
-    setPlaying(true);
-    onStart?.();
-    // Mobile browsers on cellular skip preload, so nothing may be buffered
-    // yet — show a hint and bail out if playback never starts.
-    setBuffering(true);
-    armWatchdog();
-    // A user gesture, so playing with sound is allowed; fall back to muted.
-    video.play().catch(() => {
-      video.muted = true;
-      video.play().catch(closeOverlay);
-    });
-  };
+  const finish = () => onOpen?.();
 
   const closeOverlay = () => {
+    if (closing.current) return;
+    closing.current = true;
     clearWatchdog();
     videoRef.current?.pause();
     gsap.to(root.current, {
@@ -60,14 +46,39 @@ export default function Envelope({ onStart, onOpen }) {
     });
   };
 
-  const finish = () => onOpen?.();
+  // Play on load.
+  useEffect(() => {
+    if (reduced) { finish(); return; }
+    const video = videoRef.current;
+    if (!video) { finish(); return; }
+    onStart?.();
+    // Muted is what lets a browser autoplay without a tap. Set the property
+    // (React doesn't reflect `muted` as an attribute, which iOS checks).
+    video.muted = true;
+    video.defaultMuted = true;
+    // Mobile browsers on cellular skip preload, so nothing may be buffered
+    // yet — bail out if playback never starts.
+    armWatchdog();
+    Promise.resolve(video.play()).catch(closeOverlay);
+    return clearWatchdog;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // A tap during the film is a user gesture: its sound may come on, and the
+  // background score gets unlocked to start at the reveal.
+  const onTapFilm = () => {
+    const video = videoRef.current;
+    if (video && video.muted && !closing.current) video.muted = false;
+    onTap?.();
+  };
 
   return (
     <div
       className="envelope"
       ref={root}
       role="dialog"
-      aria-label="Wedding invitation — tap to open"
+      aria-label="Wedding invitation — opening"
+      onPointerUp={onTapFilm}
     >
       <video
         ref={videoRef}
@@ -75,35 +86,17 @@ export default function Envelope({ onStart, onOpen }) {
         src={config.envelopeVideo}
         poster={config.envelopePoster || undefined}
         playsInline
+        muted
         preload="auto"
         onPlaying={() => { setBuffering(false); clearWatchdog(); }}
-        onWaiting={() => { if (playing) { setBuffering(true); armWatchdog(); } }}
+        onWaiting={() => { setBuffering(true); armWatchdog(); }}
         onEnded={closeOverlay}
         onError={() => closeOverlay()}
         aria-label="Envelope opening film"
       />
 
-      {!playing && (
-        <button
-          type="button"
-          className="envelope__tap"
-          onClick={open}
-          aria-label="Open the invitation"
-        >
-          <span className="envelope__cta">
-            <Icon name="sparkle" size={16} /> Tap to Open
-          </span>
-        </button>
-      )}
-
-      {playing && buffering && (
+      {buffering && (
         <span className="envelope__loading" aria-live="polite">Opening…</span>
-      )}
-
-      {playing && (
-        <button type="button" className="envelope__skip" onClick={closeOverlay}>
-          Skip <Icon name="sparkle" size={14} />
-        </button>
       )}
     </div>
   );

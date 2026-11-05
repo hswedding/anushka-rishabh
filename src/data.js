@@ -135,6 +135,12 @@ export const photos = [
   { src: '/photos/8.jpg', alt: 'Anushka and Rishabh holding hands by blue doors' },
 ];
 
+/* The RSVP section's heading and the line under it. */
+export const rsvpText = {
+  title: 'Looking forward to welcoming you',
+  lead: 'Kindly respond so we can celebrate with you.',
+};
+
 /* Toggleable parts (Hero / Venue & Travel / Footer always show). 'envelope'
    is the opening envelope video — without it the invitation opens straight
    away and the video never downloads. ------------------------------------- */
