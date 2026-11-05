@@ -177,11 +177,14 @@ body, input, select, textarea { font-variant-numeric: lining-nums; }
   font-size: 1.05rem; color: var(--gold-deep); border-color: var(--gold-light);
 }
 .footer__hashtag { font-size: 2rem; color: var(--gold-strong); }
-/* the studio credit in the card's serif, sized to stay on one line from 360px
-   up; baseline-aligned so "Create Yours" sits on the same line as the rest.
-   Narrower, the link drops to its own line and the "|" goes. */
-.footer__credit { font-size: 0.88rem; align-items: baseline; }
-@media (max-width: 359px) { .footer__credit-sep { display: none; } }
+/* The studio credit keeps HS Wedding Invites' own look (Tenor Sans, as on
+   every invite), in two centred lines: "Made with ♥ by HS Wedding Invites",
+   then "Create Yours →". The "|" turns into the line break: a full-width,
+   zero-height item that pushes the link onto its own row. */
+.footer__credit { font-family: "Tenor Sans", sans-serif; row-gap: var(--sp-2); }
+.footer__credit-sep {
+  flex-basis: 100%; height: 0; overflow: hidden; font-size: 0; color: transparent;
+}
 
 /* ---- Envelope, music toggle -------------------------------------------------- */
 .envelope__loading {
