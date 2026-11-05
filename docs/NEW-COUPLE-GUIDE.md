@@ -233,7 +233,7 @@ otherwise.
 | File | Rules |
 | --- | --- |
 | `videos/*.mp4` | **H.264 MP4** (Safari can't play other codecs), ≤ **25 MiB** each (Cloudflare's per-file limit), index up front (`+faststart`). Encode with the README "Films" command (CRF 20). Today's films are 1–7 MB. A film plays once and holds its last frame, so it must **end on a frame showing all the details**: trim any fade-out, outro or glitch after it (README "Films") |
-| `videos/envelop.mp4` | Opening film; plays by itself on load, silent (no audio track: `-an`), then reveals the page. CRF 14 (phones show it zoomed in) |
+| `videos/envelop.mp4` | Opening film; plays with sound on tap, then reveals the page. CRF 14 (phones show it zoomed in) |
 | `videos/envelop-poster.webp` | The envelope film's first frame (README "Films"); replace it together with `envelop.mp4` |
 | music `.mp3` | Looping background score; check the couple is OK using it |
 | `og-image.jpg` | 1200×630 preview image |

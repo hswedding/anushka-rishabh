@@ -69,8 +69,7 @@ Edit other base files only when the couple's design truly needs it.
 
 Encode a new film for `public/videos/` as H.264 with its index up front, so it
 starts streaming at once (CRF 20 is visually lossless here; use 14 for the
-envelope film, which phones show zoomed in, and add `-an` for it — the
-envelope is silent, the background music is the sound):
+envelope film, which phones show zoomed in):
 
 ```bash
 ffmpeg -i in.mp4 -c:v libx264 -preset slower -crf 20 -pix_fmt yuv420p -c:a copy -movflags +faststart out.mp4
@@ -82,7 +81,7 @@ last good frame (`-frames:v <n>` in the command above, `n` = frames to keep).
 
 `config.envelopePoster` (`videos/envelop-poster.webp`) is the envelope film's
 first frame: it shows, and is preloaded, before the film loads. Re-export it
-whenever the envelope film changes, or the opening screen jumps when it starts:
+whenever the envelope film changes, or the opening screen jumps on tap:
 
 ```bash
 ffmpeg -i envelop.mp4 -frames:v 1 -vf "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=bgra" -c:v libwebp -quality 95 envelop-poster.webp
