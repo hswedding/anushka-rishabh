@@ -16,7 +16,7 @@ const PhoneInput = lazy(() => import('react-phone-number-input'));
 export default function Rsvp({ invite }) {
   const root = useRef(null);
   const [form, setForm] = useState({
-    name: '', phone: '', party: 1, arrival: '',
+    name: '', phone: '', party: '', arrival: '',
   });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | success
