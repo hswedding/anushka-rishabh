@@ -69,8 +69,7 @@ Edit other base files only when the couple's design truly needs it.
 
 Encode a new film for `public/videos/` as H.264 with its index up front, so it
 starts streaming at once (CRF 20 is visually lossless here; use 14 for the
-envelope film, which phones show zoomed in, and add `-an` for it — the
-envelope is silent, the background music is the sound):
+envelope film, which phones show zoomed in):
 
 ```bash
 ffmpeg -i in.mp4 -c:v libx264 -preset slower -crf 20 -pix_fmt yuv420p -c:a copy -movflags +faststart out.mp4
@@ -82,7 +81,7 @@ last good frame (`-frames:v <n>` in the command above, `n` = frames to keep).
 
 `config.envelopePoster` (`videos/envelop-poster.webp`) is the envelope film's
 first frame: it shows, and is preloaded, before the film loads. Re-export it
-whenever the envelope film changes, or the opening screen jumps when it starts:
+whenever the envelope film changes, or the opening screen jumps on tap:
 
 ```bash
 ffmpeg -i envelop.mp4 -frames:v 1 -vf "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=bgra" -c:v libwebp -quality 95 envelop-poster.webp
@@ -93,9 +92,10 @@ in full, one at a time in page order, so it is on the phone before the guest
 reaches it (a film reached earlier streams straight away). A film starts when
 40% of it is on screen, plays through once without pausing and holds its last
 frame; if the phone blocks autoplay (Low Power Mode, data saver) a **Play
-film** button appears. The envelope film plays by itself on load, silent;
-the music starts with it wherever the browser allows sound without a tap,
-else on the guest's first tap anywhere. Keep new media off
+film** button appears. The envelope film waits on its first frame for the guest's
+"Tap to Open", then plays with its own sound; the music loads from that tap
+and starts when the film ends (on links without the envelope, on the guest's
+first tap anywhere). Keep new media off
 the envelope's critical path, and keep films lean: a guest's phone
 downloads every film on their link.
 
