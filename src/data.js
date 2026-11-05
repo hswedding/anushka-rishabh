@@ -93,7 +93,8 @@ export const events = [
     timeLabel: 'To be confirmed', icon: 'haldi',
     blurb: 'Turmeric, sunshine and blessings for the bride.',
     dressCode: { label: 'To be shared', color: '#e3c565' },
-    venue: silverSpoons,
+    // At the Radisson with the Engagement & Sangeet (per the family, 5 Nov).
+    venue: radissonKaushambi,
     video: '/videos/Anushka (Haldi).mp4',
   },
   {
