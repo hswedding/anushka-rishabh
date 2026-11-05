@@ -30,7 +30,7 @@ export const wedding = {
 export const host = {
   side: 'bride',
   // No prayer line and no Ganesha image (per the form), and English only.
-  hosts: 'Mr. Pawan Kumar Jain & Mrs. Urmila Jain',
+  hosts: 'Mr. Pavan Kumar Jain & Mrs. Urmila Jain',
   inviteLine: 'joyfully invite you to celebrate the wedding of',
   parents: {
     bride: 'D/o Mrs. Anjuli & Mr. Amit Jain',
@@ -134,6 +134,12 @@ export const photos = [
   { src: '/photos/7.jpg', alt: 'Anushka and Rishabh sitting back to back on a bench', focus: '40%' },
   { src: '/photos/8.jpg', alt: 'Anushka and Rishabh holding hands by blue doors' },
 ];
+
+/* The RSVP section's heading and the line under it. */
+export const rsvpText = {
+  title: 'Looking forward to welcoming you',
+  lead: 'Kindly respond so we can celebrate with you.',
+};
 
 /* Toggleable parts (Hero / Venue & Travel / Footer always show). 'envelope'
    is the opening envelope video — without it the invitation opens straight
