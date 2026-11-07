@@ -31,7 +31,7 @@ export const host = {
   side: 'bride',
   // No prayer line and no Ganesha image (per the form), and English only.
   hosts: 'Mr. Pavan Kumar Jain & Mrs. Urmila Jain',
-  inviteLine: 'joyfully invite you to celebrate the wedding of',
+  inviteLine: 'joyfully invite you to celebrate the wedding of their granddaughter',
   parents: {
     bride: 'D/o Mrs. Anjuli & Mr. Amit Jain',
     groom: 'S/o Mrs. Sarika & Mr. Sanjeev Jain',
