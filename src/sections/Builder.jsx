@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { events, presets, toggleableSections, config, host } from '../data.js';
 import {
   presetState, buildQuery, sharePath, siteUrl, buildWhatsAppShare, orderedCouple,
+  PREVIEW_READY, PREVIEW_GUEST_NAME,
 } from '../lib/config.js';
 import Icon from '../components/Icons.jsx';
 
@@ -51,12 +52,31 @@ export default function Builder() {
   const empty = state.eventIds.length === 0;
   const everyoneUrl = siteUrl(`/${config.links.all}`);
 
-  // reload the preview only once typing/toggling settles
-  const [previewPath, setPreviewPath] = useState(path);
+  // Reload the preview only once toggling settles. The guest name isn't part
+  // of its path: a reload per edit made each one slower than the last, so the
+  // name goes straight to the open preview instead (see App's preview link).
+  const basePath = sharePath({ ...state, guestName: '' });
+  const [previewPath, setPreviewPath] = useState(basePath);
   useEffect(() => {
-    const t = setTimeout(() => setPreviewPath(path), 450);
+    const t = setTimeout(() => setPreviewPath(basePath), 450);
     return () => clearTimeout(t);
-  }, [path]);
+  }, [basePath]);
+
+  const frameRef = useRef(null);
+  const guestName = state.guestName.trim();
+  const sendName = useCallback(() => {
+    frameRef.current?.contentWindow?.postMessage(
+      { type: PREVIEW_GUEST_NAME, name: guestName }, window.location.origin);
+  }, [guestName]);
+  useEffect(sendName, [sendName]);
+  // A freshly loaded preview asks for the name once it's listening.
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.source === frameRef.current?.contentWindow && e.data?.type === PREVIEW_READY) sendName();
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [sendName]);
 
   // the preset the current selection matches, if any (guest name aside)
   const current = buildQuery({ ...state, guestName: '' });
@@ -188,7 +208,7 @@ export default function Builder() {
 
         <aside className="builder__preview" aria-label="Live preview">
           <div className="builder__phone">
-            <iframe title="Invitation preview" src={`${previewPath}#preview`} />
+            <iframe ref={frameRef} title="Invitation preview" src={`${previewPath}#preview`} />
           </div>
         </aside>
       </div>

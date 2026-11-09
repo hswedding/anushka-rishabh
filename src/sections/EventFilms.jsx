@@ -96,7 +96,7 @@ function Film({ event, src: preloaded, ready, onStart }) {
   );
 }
 
-export default function EventFilms({ events, side, ready }) {
+export default function EventFilms({ events, side, ready, prefetch = true }) {
   // `video` is a single film; `videoBySide` holds one per hosting side —
   // side variants get their own, joint shows both (groom first, like the hero).
   const films = events.flatMap((e) => {
@@ -112,11 +112,13 @@ export default function EventFilms({ events, side, ready }) {
   // Once the invitation is open, download every film in full, one at a time
   // in page order, so each is on the phone before the guest reaches it —
   // `preload` alone isn't enough (iOS ignores it). A film reached before its
-  // turn streams straight away instead and is skipped here.
+  // turn streams straight away instead and is skipped here. The builder's
+  // preview skips this: it reloads on every change, and each reload would
+  // restart the downloads and slow the next one.
   const [downloaded, setDownloaded] = useState({});
   const started = useRef(new Set());
   useEffect(() => {
-    if (!ready || !queue) return;
+    if (!ready || !prefetch || !queue) return;
     const ctrl = new AbortController();
     const urls = [];
     (async () => {
@@ -134,7 +136,7 @@ export default function EventFilms({ events, side, ready }) {
       }
     })();
     return () => { ctrl.abort(); urls.forEach((u) => URL.revokeObjectURL(u)); };
-  }, [ready, queue]);
+  }, [ready, prefetch, queue]);
 
   if (!films.length) return null;
   return films.map((e) => (

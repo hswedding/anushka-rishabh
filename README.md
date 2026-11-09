@@ -68,8 +68,9 @@ Edit other base files only when the couple's design truly needs it.
 ### Films
 
 Encode a new film for `public/videos/` as H.264 with its index up front, so it
-starts streaming at once (CRF 20 is visually lossless here; use 14 for the
-envelope film, which phones show zoomed in):
+starts streaming at once (CRF 20 is visually lossless here; use 14 for a
+landscape envelope film, which phones show zoomed in; a portrait one passes
+at 20):
 
 ```bash
 ffmpeg -i in.mp4 -c:v libx264 -preset slower -crf 20 -pix_fmt yuv420p -c:a copy -movflags +faststart out.mp4
@@ -86,6 +87,11 @@ whenever the envelope film changes, or the opening screen jumps on tap:
 ```bash
 ffmpeg -i envelop.mp4 -frames:v 1 -vf "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=bgra" -c:v libwebp -quality 95 envelop-poster.webp
 ```
+
+The **`site-performance` skill** (`.claude/skills/site-performance/SKILL.md`)
+does all of this with its scripts: it audits the media, encodes each film at
+the smallest size that still scores visually identical (VMAF), and exports
+the envelope poster. Run it whenever a film or the art changes.
 
 Event films load nothing until the envelope is open; then each one downloads
 in full, one at a time in page order, so it is on the phone before the guest
