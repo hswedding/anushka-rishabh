@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
-import { selectedEvents } from './lib/config.js';
+import { selectedEvents, PREVIEW_READY, PREVIEW_GUEST_NAME } from './lib/config.js';
 import { config } from './data.js';
 import { gsap, ScrollTrigger } from './lib/gsap.js';
 import { useReducedMotion } from './hooks/useReducedMotion.js';
@@ -17,7 +17,32 @@ import Petals from './components/Petals.jsx';
 import Icon from './components/Icons.jsx';
 import customSections from './custom/index.js';
 
-export default function App({ invite, preview }) {
+export default function App({ invite: link, preview }) {
+  // The builder's preview takes the guest name from the builder as it's typed
+  // (no reload); anywhere else, only from the link.
+  const [previewName, setPreviewName] = useState(link.guestName);
+  const invite = preview ? { ...link, guestName: previewName } : link;
+  const lastName = useRef(link.guestName);
+  useEffect(() => {
+    if (!preview || window.parent === window) return;
+    const onMessage = (e) => {
+      if (e.source !== window.parent || e.origin !== window.location.origin) return;
+      if (e.data?.type !== PREVIEW_GUEST_NAME) return;
+      const name = String(e.data.name || '').slice(0, 80);
+      if (name === lastName.current) return;
+      lastName.current = name;
+      setPreviewName(name);
+      // Scrolled away from the greeting? Bring it back, as a reload used to.
+      if (window.scrollY > window.innerHeight / 2) {
+        if (window.__lenis) window.__lenis.scrollTo(0);
+        else window.scrollTo(0, 0);
+      }
+    };
+    window.addEventListener('message', onMessage);
+    window.parent.postMessage({ type: PREVIEW_READY }, window.location.origin);
+    return () => window.removeEventListener('message', onMessage);
+  }, [preview]);
+
   const events = selectedEvents(invite.eventIds);
   const reduced = useReducedMotion();
   // No envelope for the builder's live preview, or for links that turned it
@@ -77,10 +102,10 @@ export default function App({ invite, preview }) {
 
       <main className="page" id="main-content" aria-hidden={!opened}>
         <Hero invite={invite} />
-        {invite.sections.photos && <Photos />}
-        <EventFilms events={events} side={invite.side} ready={opened} />
+        {invite.sections.photos && <Photos ready={opened} />}
+        <EventFilms events={events} side={invite.side} ready={opened} prefetch={!preview} />
         <Venue events={events} />
-        {invite.sections.rsvp && <Rsvp invite={invite} />}
+        {invite.sections.rsvp && <Rsvp invite={invite} ready={opened} />}
         {customSections.map(({ id, Component }) => (
           <Component key={id} invite={invite} />
         ))}

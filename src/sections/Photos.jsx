@@ -11,8 +11,12 @@ const EASE = 0.04;  // how fast a fling settles back into the drift (per frame)
 
 /* Scene 2½ — the couple's photos as an endless, slowly drifting reel of prints.
    Drag/swipe to browse (with momentum); hover, focus or the pause button stop
-   the drift; arrow keys nudge it. Reduced motion → no drift, drag still works. */
-export default function Photos() {
+   the drift; arrow keys nudge it. Reduced motion → no drift, drag still works.
+   The photos load only once the envelope is open (`ready`): the reel sits near
+   the top, inside the browser's lazy-load distance, so loading="lazy" alone
+   would fetch them behind the envelope while its film is still loading. The
+   cards keep their size empty, so nothing shifts. */
+export default function Photos({ ready = true }) {
   const root = useRef(null);
   const track = useRef(null);
   const reduced = useReducedMotion();
@@ -118,9 +122,11 @@ export default function Photos() {
                   className={`photos__card${i % 2 ? ' photos__card--tilt' : ''}`}
                   aria-hidden={copy > 0 || undefined}
                 >
-                  <img src={p.src} alt={copy ? '' : p.alt} draggable="false"
-                    loading="lazy" decoding="async"
-                    style={p.focus ? { objectPosition: p.focus } : undefined} />
+                  {ready && (
+                    <img src={p.src} alt={copy ? '' : p.alt} draggable="false"
+                      loading="lazy" decoding="async"
+                      style={p.focus ? { objectPosition: p.focus } : undefined} />
+                  )}
                 </li>
               ))
             )}

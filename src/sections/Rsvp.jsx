@@ -6,14 +6,21 @@ import Icon from '../components/Icons.jsx';
 import { rsvpText } from '../data.js';
 
 // The phone field's library and country data are a third of the page's JS, so
-// they load on their own — fetched as the page mounts, long before a guest
-// scrolls down here. The fallback is the same-sized input, so nothing shifts.
+// they load on their own — fetched once the envelope is open (`ready`), long
+// before a guest scrolls down here, and never competing with the envelope film
+// (the field also fetches its flag from another host). The placeholder is the
+// same-sized input, so nothing shifts.
 const PhoneInput = lazy(() => import('react-phone-number-input'));
+const phonePlaceholder = (
+  <div className="PhoneInput rsvp__phone">
+    <input id="phone" className="PhoneInputInput" type="tel" disabled />
+  </div>
+);
 
 /* Scene 6 — RSVP. Validates client-side, posts the answers to the Worker,
    which appends them to the family's Google Sheet (worker/rsvp.js), then
    fires confetti. */
-export default function Rsvp({ invite }) {
+export default function Rsvp({ invite, ready = true }) {
   const root = useRef(null);
   const [form, setForm] = useState({
     name: '', phone: '', party: '', arrival: '',
@@ -98,15 +105,13 @@ export default function Rsvp({ invite }) {
 
             <div className={`field ${errors.phone ? 'field--error' : ''}`}>
               <label className="field__label" htmlFor="phone">Phone <span aria-hidden>*</span></label>
-              <Suspense fallback={
-                <div className="PhoneInput rsvp__phone">
-                  <input id="phone" className="PhoneInputInput" type="tel" disabled />
-                </div>
-              }>
-                <PhoneInput
-                  id="phone" international defaultCountry="IN" value={form.phone}
-                  onChange={(v) => set('phone')(v || '')} className="rsvp__phone" />
-              </Suspense>
+              {ready ? (
+                <Suspense fallback={phonePlaceholder}>
+                  <PhoneInput
+                    id="phone" international defaultCountry="IN" value={form.phone}
+                    onChange={(v) => set('phone')(v || '')} className="rsvp__phone" />
+                </Suspense>
+              ) : phonePlaceholder}
               {errors.phone && <p className="field__err" role="alert">{errors.phone}</p>}
             </div>
 

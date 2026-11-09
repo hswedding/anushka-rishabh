@@ -177,6 +177,11 @@ export function sharePath(state) {
   return `/${q === buildQuery(presetState('all')) ? config.links.all : encodeToken(q)}`;
 }
 
+/* The builder and its live preview (same origin, an iframe at #preview) talk
+   by postMessage, so the guest name updates without reloading the preview. */
+export const PREVIEW_READY = 'invite:preview-ready';
+export const PREVIEW_GUEST_NAME = 'invite:preview-guest-name';
+
 /** Absolute URL for a path on this site. */
 export function siteUrl(path) {
   return (config.siteUrl || window.location.origin).replace(/\/$/, '') + path;
